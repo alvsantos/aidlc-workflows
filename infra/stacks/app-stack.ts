@@ -16,6 +16,7 @@ export interface AppStackProps extends cdk.StackProps {
   envName: string;
 }
 
+//New comment
 interface EnvConfig {
   memorySize: number;
   logRetention: logs.RetentionDays;
@@ -202,7 +203,8 @@ export class AppStack extends cdk.Stack {
   /**
    * Create the HTTP API Gateway with Lambda proxy integration and access logging.
    * HTTP API chosen over REST API: lower cost ($1/M vs $3.50/M), lower latency.
-   * Access logging is required by SECURITY-02. (BR-INFRA-06)
+   * Access logging is configured via CfnStage escape hatch (CDK L2 HttpStageOptions
+   * does not expose accessLogSettings directly). (SECURITY-02, BR-INFRA-06)
    */
   private _createHttpApi(
     envName: string,
@@ -223,29 +225,32 @@ export class AppStack extends cdk.Stack {
       createDefaultStage: false,
     });
 
-    httpApi.addStage("DefaultStage", {
+    const stage = httpApi.addStage("DefaultStage", {
       stageName: envName,
       autoDeploy: true,
       throttle: {
         rateLimit: config.throttleRateLimit,
         burstLimit: config.throttleBurstLimit,
       },
-      accessLogSettings: {
-        destinationArn: accessLogGroup.logGroupArn,
-        // Access log format captures key fields for debugging and auditing (SECURITY-02)
-        format: JSON.stringify({
-          requestId: "$context.requestId",
-          sourceIp: "$context.identity.sourceIp",
-          requestTime: "$context.requestTime",
-          httpMethod: "$context.httpMethod",
-          routeKey: "$context.routeKey",
-          status: "$context.status",
-          protocol: "$context.protocol",
-          responseLatency: "$context.responseLatency",
-          userAgent: "$context.identity.userAgent",
-        }),
-      },
     });
+
+    // Configure access logging via CfnStage escape hatch — CDK L2 HttpStageOptions
+    // does not expose accessLogSettings in this CDK version. (SECURITY-02)
+    const cfnStage = stage.node.defaultChild as apigwv2.CfnStage;
+    cfnStage.accessLogSettings = {
+      destinationArn: accessLogGroup.logGroupArn,
+      format: JSON.stringify({
+        requestId: "$context.requestId",
+        sourceIp: "$context.identity.sourceIp",
+        requestTime: "$context.requestTime",
+        httpMethod: "$context.httpMethod",
+        routeKey: "$context.routeKey",
+        status: "$context.status",
+        protocol: "$context.protocol",
+        responseLatency: "$context.responseLatency",
+        userAgent: "$context.identity.userAgent",
+      }),
+    };
 
     return httpApi;
   }
