@@ -71,5 +71,3 @@ jobs:
       environment: dev
       stack-name: AppStack-dev
       aws-region: us-east-1
-    secrets:
-      aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}

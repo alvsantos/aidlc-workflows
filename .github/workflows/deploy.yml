@@ -67,7 +67,7 @@ jobs:
         # No stored access keys — short-lived credentials via OIDC (BR-PIPE-01, SECURITY-12)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.aws-role-arn }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN || vars.AWS_ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
           role-session-name: GitHubActions-${{ inputs.environment }}-${{ github.run_id }}
 
