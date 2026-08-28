@@ -1,0 +1,9 @@
+# Dev/test dependencies — NOT bundled into Lambda zip artifact
+# Install locally and in CI for linting and unit tests
+
+pytest==7.4.4
+pytest-cov==4.1.0
+flake8==6.1.0
+
+# Needed to run tests locally — mirrors Lambda runtime dependency
+aws-lambda-powertools==2.43.1

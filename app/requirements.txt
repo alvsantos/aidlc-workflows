@@ -1,0 +1,4 @@
+# Runtime dependencies — bundled into Lambda zip artifact by CDK
+# All versions pinned exactly for reproducible Lambda builds (SECURITY-10, NFR-03)
+
+aws-lambda-powertools==2.43.1

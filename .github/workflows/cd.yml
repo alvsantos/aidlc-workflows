@@ -1,0 +1,39 @@
+# CD Workflow — triggered on push (merge) to the `main` branch
+#
+# Deploys to the production environment.
+# Only runs when code reaches main (merged from dev) — never on PRs.
+# (FR-04, BR-PIPE-04, S-11)
+#
+# Branch strategy:
+#   dev → merge to main → this workflow runs → deploy prod
+
+name: CD
+
+on:
+  push:
+    branches:
+      - main  # Triggers only when commits land on main (BR-PIPE-04)
+    paths-ignore:
+      - "README.md"
+      - "aidlc-docs/**"
+      - "*.md"
+
+# OIDC permissions — applied at workflow level (BR-PIPE-06, SECURITY-12)
+permissions:
+  id-token: write  # Required for OIDC token request
+  contents: read   # Required for checkout
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Deploy to prod — runs directly on merge to main (no test gate needed here
+  # because ci.yml already ran tests on the PR before merge)
+  # ---------------------------------------------------------------------------
+  deploy-prod:
+    name: Deploy to prod
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: prod
+      stack-name: AppStack-prod
+      aws-region: us-east-1
+    secrets:
+      aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}

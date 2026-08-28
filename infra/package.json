@@ -1,0 +1,24 @@
+{
+  "name": "flask-lambda-api-infra",
+  "version": "0.1.0",
+  "description": "AWS CDK infrastructure for Flask Lambda API",
+  "scripts": {
+    "build": "tsc",
+    "cdk": "cdk",
+    "synth:dev": "npx cdk synth --context envName=dev",
+    "synth:prod": "npx cdk synth --context envName=prod",
+    "deploy:dev": "npx cdk deploy AppStack-dev --context envName=dev --require-approval never",
+    "deploy:prod": "npx cdk deploy AppStack-prod --context envName=prod --require-approval never",
+    "destroy:dev": "npx cdk destroy AppStack-dev --context envName=dev"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.143.0",
+    "constructs": "10.3.0"
+  },
+  "devDependencies": {
+    "typescript": "5.4.5",
+    "ts-node": "10.9.2",
+    "@types/node": "18.19.31",
+    "aws-cdk": "2.143.0"
+  }
+}
