@@ -112,6 +112,13 @@ export class PipelineStack extends cdk.Stack {
               // Scoped to CDK bootstrap roles in this account (least-privilege — SECURITY-06)
               resources: [`arn:aws:iam::${this.account}:role/cdk-*`],
             }),
+            new iam.PolicyStatement({
+              sid: "AllowCdkBootstrapVersionCheck",
+              effect: iam.Effect.ALLOW,
+              actions: ["ssm:GetParameter"],
+              // CDK reads this SSM parameter to verify bootstrap stack version
+              resources: [`arn:aws:ssm:*:${this.account}:parameter/cdk-bootstrap/*/version`],
+            }),
           ],
         }),
       },
