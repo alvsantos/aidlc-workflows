@@ -16,7 +16,7 @@ export interface AppStackProps extends cdk.StackProps {
   envName: string;
 }
 
-//New comment
+//New comment 2
 interface EnvConfig {
   memorySize: number;
   logRetention: logs.RetentionDays;
