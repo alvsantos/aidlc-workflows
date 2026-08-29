@@ -8,8 +8,8 @@
 #   with:
 #     environment: dev
 #     stack-name: AppStack-dev
-#   secrets:
-#     aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+#
+# Requires AWS_ROLE_ARN to be set as a GitHub Actions Secret or Variable on the repo.
 
 name: Deploy
 
@@ -29,10 +29,6 @@ on:
         required: false
         type: string
         default: "us-east-1"
-    secrets:
-      aws-role-arn:
-        description: "IAM role ARN to assume via OIDC (GitHubActionsDeployRole)"
-        required: true
 
 jobs:
   deploy:
