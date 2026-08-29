@@ -302,6 +302,102 @@ cdk deploy AppStack-dev --require-approval never
 
 ---
 
+## Pipeline Evidence
+
+The following screenshots document the end-to-end CI/CD pipeline running successfully on AWS CodeBuild as a GitHub Actions self-hosted runner.
+
+### 1. CodeBuild Project Connected to GitHub
+
+The `flask-lambda-api-runner` CodeBuild project provisioned by `PipelineStack` (CDK), connected to the `alvsantos/aidlc-workflows` GitHub repository with the `CodeBuildGitHubRunnerRole` service role.
+
+![CodeBuild project flask-lambda-api-runner connected to GitHub](evidences/Screenshot%202026-08-28%20at%2020.05.36.png)
+
+---
+
+### 2. GitHub PR Triggering the CI Pipeline
+
+Pull Request #3 (`feature/initial-setup` → `dev`) triggering the CI workflow. The check shows `1 in progress` (deploy job) and `2 successful checks` — the CodeBuild build succeeded and `CI / Lint, Test & Synth` passed.
+
+![PR #3 showing CI checks triggered](evidences/Screenshot%202026-08-28%20at%2020.57.12.png)
+
+---
+
+### 3. GitHub Actions CI Workflow — Queued and Picked Up by CodeBuild
+
+The `Lint, Test & Synth` job queued with the CodeBuild runner label `codebuild-flask-lambda-api-runner-33219189728-1`, waiting for the runner to pick it up.
+
+![GitHub Actions CI job queued — CodeBuild runner label](evidences/Screenshot%202026-08-28%20at%2020.06.10.png)
+
+---
+
+### 4. CI Workflow Graph — Both Jobs Visible
+
+GitHub Actions workflow summary for CI run triggered by PR, showing the two-job pipeline: `Lint, Test & Synth` → `Deploy to dev / deploy`.
+
+![CI workflow graph showing Lint+Test and Deploy to dev jobs](evidences/Screenshot%202026-08-28%20at%2020.05.54.png)
+
+---
+
+### 5. CI Run #17 — Full Success (4m 39s)
+
+Complete CI pipeline success:
+- **Lint, Test & Synth**: 1m 32s — flake8, pytest (18 tests), cdk synth
+- **Deploy to dev / Deploy AppStack-dev**: 2m 23s — OIDC authentication + `cdk deploy AppStack-dev`
+- **Total duration**: 4m 39s
+- **Triggered by**: `alvsantos` synchronizing PR #3 from `feature/initial-setup`
+
+![CI run #17 success — both jobs green, total 4m 39s](evidences/Screenshot%202026-08-28%20at%2021.59.19.png)
+
+---
+
+### 6. AppStack-dev Deployed — CloudFormation CREATE_COMPLETE
+
+`AppStack-dev` successfully created by CloudFormation with all 10 resources: `LambdaLogGroup`, `ApiAccessLogGroup`, `LambdaExecutionRole`, `ApiFunction` (Lambda), `HttpApi`, `DefaultRoute`, `DefaultStage`, `HttpApiF5A9A8A7` (API Gateway v2), `CDKMetadata`. Stack status: **CREATE_COMPLETE** at 2026-08-28 21:56:53 UTC-0300.
+
+![AppStack-dev CloudFormation CREATE_COMPLETE with 10 resources](evidences/Screenshot%202026-08-28%20at%2022.02.23.png)
+
+---
+
+### 7. Live API — GET /health
+
+The deployed Flask Lambda API responding at `rqc1mhwga7.execute-api.us-east-1.amazonaws.com/dev/health`:
+
+```json
+{
+  "status": "ok",
+  "environment": "dev"
+}
+```
+
+![GET /health returning status ok and environment dev](evidences/Screenshot%202026-08-28%20at%2022.03.42.png)
+
+---
+
+### 8. Live API — GET /hello/arthur
+
+The parameterised greeting endpoint responding at `/dev/hello/arthur`:
+
+```json
+{
+  "message": "Hello, arthur!"
+}
+```
+
+![GET /hello/arthur returning Hello, arthur!](evidences/Screenshot%202026-08-28%20at%2022.04.02.png)
+
+| Stage | Tool | Result | Duration |
+|---|---|---|---|
+| CI triggered | GitHub Actions (`ci.yml` on `pull_request` to `dev`) | ✅ | — |
+| Runner allocation | AWS CodeBuild (`flask-lambda-api-runner`) | ✅ | ~30s |
+| Lint | flake8 | ✅ | — |
+| Unit tests | pytest (18 tests) | ✅ | — |
+| IaC validation | `cdk synth AppStack-dev` | ✅ | — |
+| AWS auth | OIDC → `GitHubActionsDeployRole` | ✅ | — |
+| Deploy to dev | `cdk deploy AppStack-dev` | ✅ | 2m 23s |
+| **Total** | | **✅ Success** | **4m 39s** |
+
+---
+
 ## References
 
 - [AWS Blocks documentation](https://docs.aws.amazon.com/blocks/)

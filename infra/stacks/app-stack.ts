@@ -16,7 +16,7 @@ export interface AppStackProps extends cdk.StackProps {
   envName: string;
 }
 
-//New comment 2
+//New comment 3
 interface EnvConfig {
   memorySize: number;
   logRetention: logs.RetentionDays;
@@ -149,7 +149,7 @@ export class AppStack extends cdk.Stack {
     return new iam.Role(this, "LambdaExecutionRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
       description:
-        "Least-privilege execution role for flask-lambda-api — CloudWatch Logs write only",
+        "Least-privilege execution role for flask-lambda-api. CloudWatch Logs write only.",
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName(
           "service-role/AWSLambdaBasicExecutionRole"
@@ -183,6 +183,17 @@ export class AppStack extends cdk.Stack {
             "pip install -r requirements.txt -t /asset-output && cp -r . /asset-output",
           ],
         },
+        // Exclude local dev artifacts from the asset bundle
+        exclude: [
+          ".venv",
+          "__pycache__",
+          "*.pyc",
+          ".pytest_cache",
+          "tests",
+          "htmlcov",
+          ".coverage",
+          "*.egg-info",
+        ],
       }),
       role,
       memorySize: config.memorySize,

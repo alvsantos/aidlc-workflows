@@ -8,8 +8,8 @@
 #   with:
 #     environment: dev
 #     stack-name: AppStack-dev
-#   secrets:
-#     aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+#
+# Requires AWS_ROLE_ARN to be set as a GitHub Actions Secret or Variable on the repo.
 
 name: Deploy
 
@@ -29,10 +29,6 @@ on:
         required: false
         type: string
         default: "us-east-1"
-    secrets:
-      aws-role-arn:
-        description: "IAM role ARN to assume via OIDC (GitHubActionsDeployRole)"
-        required: true
 
 jobs:
   deploy:
@@ -54,11 +50,6 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
       - name: Install app dev dependencies
         # Install app requirements so CDK asset bundling can verify them
         run: pip install -r app/requirements-dev.txt
@@ -68,11 +59,42 @@ jobs:
         working-directory: infra
         run: npm ci
 
+      - name: Debug — verify role ARN is set
+        run: |
+          if [ -z "${{ secrets.AWS_ROLE_ARN }}${{ vars.AWS_ROLE_ARN }}" ]; then
+            echo "ERROR: AWS_ROLE_ARN is not set in GitHub Secrets or Variables"
+            exit 1
+          fi
+          echo "Role ARN prefix: $(echo '${{ secrets.AWS_ROLE_ARN || vars.AWS_ROLE_ARN }}' | cut -c1-30)..."
+
+      - name: Debug — print OIDC token claims
+        # Fetches a GitHub OIDC token and decodes the JWT payload to show
+        # the exact sub and job_workflow_ref claims AWS trust policy must match.
+        # Remove this step once OIDC is confirmed working.
+        run: |
+          TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value')
+          echo "--- JWT Claims ---"
+          echo "$TOKEN" | cut -d'.' -f2 | base64 -d 2>/dev/null | python3 -m json.tool || \
+          echo "$TOKEN" | cut -d'.' -f2 | python3 -c "
+          import sys, base64, json
+          payload = sys.stdin.read().strip()
+          # pad base64
+          payload += '=' * (4 - len(payload) % 4)
+          decoded = base64.urlsafe_b64decode(payload)
+          data = json.loads(decoded)
+          print('sub:', data.get('sub'))
+          print('job_workflow_ref:', data.get('job_workflow_ref'))
+          print('repository:', data.get('repository'))
+          print('ref:', data.get('ref'))
+          print('event_name:', data.get('event_name'))
+          "
+
       - name: Configure AWS credentials via OIDC
         # No stored access keys — short-lived credentials via OIDC (BR-PIPE-01, SECURITY-12)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.aws-role-arn }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN || vars.AWS_ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
           role-session-name: GitHubActions-${{ inputs.environment }}-${{ github.run_id }}
 

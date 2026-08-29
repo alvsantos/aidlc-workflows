@@ -36,11 +36,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
       - name: Set up Node.js 18
         uses: actions/setup-node@v4
         with:
@@ -50,7 +45,7 @@ jobs:
         run: pip install -r app/requirements-dev.txt
 
       - name: Lint — flake8
-        run: flake8 app/ --max-line-length=100 --exclude=app/tests
+        run: flake8 app/ --max-line-length=100 --exclude=app/tests,app/.venv
 
       - name: Unit tests — pytest
         run: pytest app/tests/ -v --tb=short
@@ -76,5 +71,3 @@ jobs:
       environment: dev
       stack-name: AppStack-dev
       aws-region: us-east-1
-    secrets:
-      aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
