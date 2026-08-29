@@ -149,7 +149,7 @@ export class AppStack extends cdk.Stack {
     return new iam.Role(this, "LambdaExecutionRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
       description:
-        "Least-privilege execution role for flask-lambda-api — CloudWatch Logs write only",
+        "Least-privilege execution role for flask-lambda-api. CloudWatch Logs write only.",
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName(
           "service-role/AWSLambdaBasicExecutionRole"
