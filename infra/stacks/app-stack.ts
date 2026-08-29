@@ -183,6 +183,17 @@ export class AppStack extends cdk.Stack {
             "pip install -r requirements.txt -t /asset-output && cp -r . /asset-output",
           ],
         },
+        // Exclude local dev artifacts from the asset bundle
+        exclude: [
+          ".venv",
+          "__pycache__",
+          "*.pyc",
+          ".pytest_cache",
+          "tests",
+          "htmlcov",
+          ".coverage",
+          "*.egg-info",
+        ],
       }),
       role,
       memorySize: config.memorySize,
