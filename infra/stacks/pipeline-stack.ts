@@ -94,10 +94,13 @@ export class PipelineStack extends cdk.Stack {
           StringEquals: {
             "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
           },
-          // Scope to repos under the same GitHub owner — covers reusable workflow sub claim variants.
-          // Tighten to `repo:${githubRepo}:*` once the exact sub claim format is confirmed via CloudTrail.
+          // Use job_workflow_ref for reusable workflow OIDC — more reliable than sub claim
+          // which varies based on pull_request vs push event context.
           StringLike: {
-            "token.actions.githubusercontent.com:sub": `repo:${githubRepo.split("/")[0]}/*`,
+            "token.actions.githubusercontent.com:sub":
+              `repo:${githubRepo}:*`,
+            "token.actions.githubusercontent.com:job_workflow_ref":
+              `${githubRepo}/.github/workflows/deploy.yml@*`,
           },
         }
       ),
