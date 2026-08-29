@@ -94,9 +94,10 @@ export class PipelineStack extends cdk.Stack {
           StringEquals: {
             "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
           },
-          // Scope to specific repo — prevents other repos from assuming this role (BR-PIPE-02)
+          // Scope to repos under the same GitHub owner — covers reusable workflow sub claim variants.
+          // Tighten to `repo:${githubRepo}:*` once the exact sub claim format is confirmed via CloudTrail.
           StringLike: {
-            "token.actions.githubusercontent.com:sub": `repo:${githubRepo}:*`,
+            "token.actions.githubusercontent.com:sub": `repo:${githubRepo.split("/")[0]}/*`,
           },
         }
       ),

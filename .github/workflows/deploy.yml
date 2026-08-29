@@ -59,6 +59,14 @@ jobs:
         working-directory: infra
         run: npm ci
 
+      - name: Debug — verify role ARN is set
+        run: |
+          if [ -z "${{ secrets.AWS_ROLE_ARN }}${{ vars.AWS_ROLE_ARN }}" ]; then
+            echo "ERROR: AWS_ROLE_ARN is not set in GitHub Secrets or Variables"
+            exit 1
+          fi
+          echo "Role ARN prefix: $(echo '${{ secrets.AWS_ROLE_ARN || vars.AWS_ROLE_ARN }}' | cut -c1-30)..."
+
       - name: Configure AWS credentials via OIDC
         # No stored access keys — short-lived credentials via OIDC (BR-PIPE-01, SECURITY-12)
         uses: aws-actions/configure-aws-credentials@v4
