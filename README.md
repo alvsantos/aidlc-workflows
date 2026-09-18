@@ -310,3 +310,54 @@ cdk deploy AppStack-dev --require-approval never
 - [Configuring OIDC for GitHub Actions + AWS](https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
 - [AI-DLC methodology](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
 - [aidlc-amit-verma Kiro Power](https://github.com/aws-samples/sample-ai-dlc-kiro-power)
+
+---
+
+## PR Test-Quality Gate (Iteration 2)
+
+`ci.yml` includes a two-stage **test-quality gate** on pull requests to `dev`:
+
+1. **Stage 1 — Coverage gate (deterministic, blocking)**: runs `pytest --cov` (app) and `npm test -- --coverage` (infra) and enforces a per-component line-coverage minimum (default 80%).
+2. **Stage 2 — Business-rule adequacy (AI, only if Stage 1 passes)**: the **Kiro CLI (headless)** judges whether the new/changed tests validate the affected business rules. `KIRO_API_KEY` is fetched at runtime from **AWS Secrets Manager via OIDC** — no static key in GitHub.
+
+A required status check `pr-test-quality-gate` blocks merge unless both stages pass (fail-closed on any error).
+
+### One-time bootstrap
+
+```bash
+# 1. Store the Kiro API key in Secrets Manager
+aws secretsmanager create-secret \
+  --name pr-gate/kiro-api-key \
+  --secret-string "<YOUR_KIRO_API_KEY>" \
+  --region us-east-1
+
+# 2. Deploy the IAM change (scoped secretsmanager:GetSecretValue on GitHubActionsDeployRole)
+cd infra
+npx cdk deploy PipelineStack \
+  --context envName=pipeline \
+  --context githubRepo=<owner>/<repo> \
+  --context kiroSecretArn=<the-secret-arn>
+```
+
+### GitHub repo configuration (Settings → Actions → Variables)
+
+| Variable | Example | Purpose |
+|---|---|---|
+| `AWS_ROLE_ARN` | `arn:aws:iam::…:role/GitHubActionsDeployRole` | OIDC role (existing) |
+| `AWS_REGION` | `us-east-1` | Secrets Manager region |
+| `KIRO_SECRET_ARN` | `arn:aws:secretsmanager:…:secret:pr-gate/kiro-api-key-*` | Kiro key secret |
+| `KIRO_CLI_VERSION` | e.g. `1.2.3` | pinned Kiro CLI version |
+| `APP_COVERAGE_MIN` | `80` | app coverage threshold |
+| `INFRA_COVERAGE_MIN` | `80` | infra coverage threshold |
+
+Then, in **Settings → Branches → Branch protection for `dev`**, mark **`pr-test-quality-gate`** as a required status check.
+
+> **Note**: The `Install Kiro CLI` step in `ci.yml` is a pinned placeholder — set `KIRO_CLI_VERSION` and the official installer URL/checksum before first run.
+
+### Key rotation
+
+Rotate the key by updating the Secrets Manager secret value — no workflow change is needed (the key is read at runtime):
+
+```bash
+aws secretsmanager put-secret-value --secret-id pr-gate/kiro-api-key --secret-string "<NEW_KEY>"
+```

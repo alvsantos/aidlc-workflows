@@ -66,6 +66,113 @@ jobs:
         run: npx cdk synth AppStack-dev --context envName=dev
 
   # ---------------------------------------------------------------------------
+  # Job: PR Test-Quality Gate (unit: pr-test-quality-gate)
+  #   Stage 1 (deterministic): run app + infra tests with coverage; enforce
+  #     per-component coverage minimums (blocking). No AWS credentials needed.
+  #   Stage 2 (AI, only if Stage 1 passes): Kiro CLI headless judges whether the
+  #     new tests validate the affected business rules. KIRO_API_KEY is fetched
+  #     from AWS Secrets Manager via OIDC (no static key in GitHub).
+  #   Publishes a required status check "pr-test-quality-gate" (fail-closed).
+  # ---------------------------------------------------------------------------
+  quality-gate:
+    name: PR Test-Quality Gate
+    runs-on: codebuild-flask-lambda-api-runner-${{ github.run_id }}-${{ github.run_attempt }}
+    permissions:
+      id-token: write      # OIDC (Stage 2 secret fetch)
+      contents: read       # checkout
+      pull-requests: write # PR comment
+      statuses: write      # commit status (the required check)
+    env:
+      APP_COVERAGE_MIN: ${{ vars.APP_COVERAGE_MIN || '80' }}
+      INFRA_COVERAGE_MIN: ${{ vars.INFRA_COVERAGE_MIN || '80' }}
+      STAGE2_TIMEOUT_SECONDS: '300'
+      AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      KIRO_SECRET_ARN: ${{ vars.KIRO_SECRET_ARN }}
+      KIRO_CLI_VERSION: ${{ vars.KIRO_CLI_VERSION }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install app dev dependencies
+        run: pip install -r app/requirements-dev.txt
+
+      - name: Install infra dependencies
+        working-directory: infra
+        run: npm ci  # exact versions (SECURITY-10)
+
+      - name: Ensure jq is available
+        run: command -v jq >/dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y jq)
+
+      - name: Install Kiro CLI (pinned)
+        # Pinned version (SECURITY-10). Install method per official distribution.
+        run: |
+          if ! command -v kiro-cli >/dev/null 2>&1; then
+            echo "Installing kiro-cli ${KIRO_CLI_VERSION:-<version required>}"
+            # Download the pinned official binary (URL/checksum documented in README bootstrap).
+            # Placeholder install step — replace with the official pinned installer:
+            #   curl -fsSL https://.../kiro-cli-${KIRO_CLI_VERSION}.tar.gz | tar xz -C /usr/local/bin
+            echo "::error::kiro-cli install not configured — set KIRO_CLI_VERSION and installer URL"; exit 1
+          fi
+
+      - name: Stage 1 — tests + coverage (deterministic)
+        id: stage1
+        run: |
+          set -o pipefail
+          bash .github/scripts/pr-gate/run_stage1.sh | tee stage1.out
+          echo "verdict=$(tail -n1 stage1.out)" >> "$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials via OIDC (Stage 2)
+        if: steps.stage1.outputs.verdict == 'PASS'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: pr-gate-${{ github.run_id }}
+
+      - name: Stage 2 — business-rule adequacy (Kiro CLI)
+        id: stage2
+        if: steps.stage1.outputs.verdict == 'PASS'
+        env:
+          RATIONALE_OUT: stage2_rationale.txt
+          # BUSINESS_RULE_CONTEXT / CHANGED_TEST_FILES assembled below
+        run: |
+          # Gather changed test files (bounded) and business-rule context for the prompt.
+          CHANGED="$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+                      | grep -E '(test_|_test|\.test\.|/tests/)' || true)"
+          export CHANGED_TEST_FILES="$(echo "$CHANGED" | head -c 20000)"
+          export BUSINESS_RULE_CONTEXT="$(cat aidlc-docs/construction/*/functional-design/business-rules.md 2>/dev/null | head -c 20000)"
+          echo "verdict=$(bash .github/scripts/pr-gate/run_stage2.sh)" >> "$GITHUB_OUTPUT"
+
+      - name: Compute gate verdict + report
+        if: always()
+        run: |
+          S1='${{ steps.stage1.outputs.verdict }}'
+          S2='${{ steps.stage2.outputs.verdict }}'
+          [ -n "$S1" ] || { S1="ERROR"; }
+          if [ "$S1" = "PASS" ]; then S2="${S2:-ERROR}"; else S2="SKIPPED"; fi
+          ERR="false"; [ "$S1" = "ERROR" ] && ERR="true"
+          VERDICT="$(bash .github/scripts/pr-gate/compute_verdict.sh "$S1" "$S2" "$ERR")"
+          RATIONALE="$(cat stage2_rationale.txt 2>/dev/null || true)"
+          BODY="### PR Test-Quality Gate: $VERDICT
+          - Stage 1 (tests + coverage): $S1
+          - Stage 2 (business-rule adequacy): $S2
+          ${RATIONALE:+> $RATIONALE}"
+          bash .github/scripts/pr-gate/report.sh "$VERDICT" "$BODY"
+
+  # ---------------------------------------------------------------------------
   # Job 2: Deploy to dev — only runs if all test steps pass (BR-PIPE-03)
   # ---------------------------------------------------------------------------
   deploy-dev:

@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "cdk": "cdk",
+    "test": "jest --coverage --coverageReporters=json-summary --coverageReporters=text",
     "synth:dev": "npx cdk synth --context envName=dev",
     "synth:prod": "npx cdk synth --context envName=prod",
     "deploy:dev": "npx cdk deploy AppStack-dev --context envName=dev --require-approval never",
@@ -19,6 +20,15 @@
     "typescript": "5.4.5",
     "ts-node": "10.9.2",
     "@types/node": "18.19.31",
-    "aws-cdk": "2.143.0"
+    "aws-cdk": "2.143.0",
+    "jest": "29.7.0",
+    "ts-jest": "29.1.2",
+    "@types/jest": "29.5.12"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/*.test.ts"],
+    "collectCoverageFrom": ["stacks/**/*.ts", "app.ts"]
   }
 }

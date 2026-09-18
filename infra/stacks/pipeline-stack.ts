@@ -14,6 +14,16 @@ export interface PipelineStackProps extends cdk.StackProps {
    * Used to scope the OIDC trust policy to this specific repo (BR-PIPE-02).
    */
   githubRepo: string;
+
+  /**
+   * ARN of the AWS Secrets Manager secret holding the Kiro CLI API key used by
+   * the PR test-quality gate (Stage 2). The deploy role is granted least-privilege
+   * secretsmanager:GetSecretValue on THIS ARN only.
+   *
+   * Optional: if omitted, a wildcard-free default pattern scoped to
+   * "pr-gate/kiro-api-key-*" in this account/region is used.
+   */
+  kiroSecretArn?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -32,13 +42,13 @@ export class PipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props);
 
-    const { githubRepo } = props;
+    const { githubRepo, kiroSecretArn } = props;
 
     // Step 1: OIDC Identity Provider for GitHub Actions (S-12)
     const oidcProvider = this._createOidcProvider();
 
     // Step 2: IAM role assumed by GitHub Actions via OIDC (S-12, BR-PIPE-01/02)
-    const deployRole = this._createDeployRole(oidcProvider, githubRepo);
+    const deployRole = this._createDeployRole(oidcProvider, githubRepo, kiroSecretArn);
 
     // Step 3: CodeBuild service role (S-13)
     const codeBuildRole = this._createCodeBuildRole(deployRole);
@@ -81,8 +91,15 @@ export class PipelineStack extends cdk.Stack {
    */
   private _createDeployRole(
     provider: iam.OpenIdConnectProvider,
-    githubRepo: string
+    githubRepo: string,
+    kiroSecretArn?: string
   ): iam.Role {
+    // Least-privilege ARN for the Kiro key secret used by the PR test-quality gate.
+    // Scoped to a single secret name pattern (no wildcards on account/region) — SECURITY-06.
+    const kiroSecretResource =
+      kiroSecretArn ??
+      `arn:aws:secretsmanager:${this.region}:${this.account}:secret:pr-gate/kiro-api-key-*`;
+
     const role = new iam.Role(this, "GitHubActionsDeployRole", {
       roleName: "GitHubActionsDeployRole",
       description:
@@ -111,6 +128,14 @@ export class PipelineStack extends cdk.Stack {
               actions: ["sts:AssumeRole"],
               // Scoped to CDK bootstrap roles in this account (least-privilege — SECURITY-06)
               resources: [`arn:aws:iam::${this.account}:role/cdk-*`],
+            }),
+            // PR test-quality gate (Stage 2): read ONLY the Kiro API key secret.
+            // Least-privilege — single secret ARN, single action (SECURITY-06/12).
+            new iam.PolicyStatement({
+              sid: "AllowReadKiroApiKey",
+              effect: iam.Effect.ALLOW,
+              actions: ["secretsmanager:GetSecretValue"],
+              resources: [kiroSecretResource],
             }),
           ],
         }),
