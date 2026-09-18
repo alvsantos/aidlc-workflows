@@ -1,0 +1,34 @@
+# Tech Stack Decisions — Unit: pr-review-agent
+
+| Concern | Decision | Rationale |
+|---|---|---|
+| Agent language | **Python 3.11** | Matches existing `app/`; enables Hypothesis for PBT; already installed on the runner via `setup-python`. |
+| Review engine | **Kiro CLI (headless)** — `kiro-cli chat --no-interactive` | User decision (2026-09-17). Agentic, repo-aware reviewer. |
+| Engine auth | **`KIRO_API_KEY`** fetched at runtime from **AWS Secrets Manager** via the existing **OIDC** role (no static key in GitHub) | User decision (2026-09-17): keep OIDC-only posture; avoid long-lived GitHub secret. Enables rotation + CloudTrail audit. |
+| AWS auth in workflow | `aws-actions/configure-aws-credentials@<pinned>` (OIDC) → assume review role → `aws secretsmanager get-secret-value` | Reuses the pipeline's OIDC pattern; short-lived STS credentials only. |
+| Kiro CLI install | **Pinned-version install step** in the workflow (download official binary) | Q2=A. Reproducible builds; satisfies SECURITY-10 (no floating `latest`). Version pinned via `KIRO_CLI_VERSION` env. |
+| GitHub API client | **`gh` CLI** (`gh api`, `gh pr review`, status via `gh api`) authenticated with `GH_TOKEN`/`GITHUB_TOKEN` | Q1=C. Minimal Python deps; `gh` is well-maintained and commonly present; auth via built-in token. |
+| Subprocess handling | Python `subprocess.run` with explicit `timeout`, arg lists (no shell string interpolation) | Prevents command injection (SECURITY-05); enforces timeout (fail-closed). |
+| PBT framework | **Hypothesis** | PBT-09; Python-native, strong shrinking + seed reproducibility. |
+| Example-based tests | **pytest** | Matches existing `app/tests`. |
+| Output contract | Kiro CLI instructed to emit **strict JSON** (findings array with severity/category/file/line/title/detail) | Enables deterministic, pure `compute_verdict` + PBT round-trip properties. |
+| Dependency pinning | `requirements.txt` with exact versions; `gh` and `kiro-cli` pinned | SECURITY-10. |
+
+## Configuration (environment variables)
+| Var | Default | Purpose |
+|---|---|---|
+| `KIRO_API_KEY` | (fetched at runtime from Secrets Manager) | Kiro CLI auth — injected into the review job env, never stored in GitHub |
+| `KIRO_SECRET_ARN` | (repo variable) | ARN of the Secrets Manager secret holding the Kiro key |
+| `AWS_ROLE_ARN` | (repo variable) | OIDC role assumed to read the secret (existing OIDC pattern) |
+| `AWS_REGION` | `us-east-1` | Region for Secrets Manager |
+| `GH_TOKEN` | `GITHUB_TOKEN` | gh CLI auth (least-privilege scopes) |
+| `KIRO_CLI_VERSION` | pinned | Kiro CLI version to install |
+| `MAX_DIFF_BYTES` | `204800` (~200 KB) | Oversized-PR skip threshold (Q3=B) |
+| `REVIEW_TIMEOUT_SECONDS` | `300` (5 min) | Per-invocation timeout, fail-closed (Q4=A) |
+| `BASE_BRANCH` | `dev` | Branch the agent reviews PRs against |
+
+## Rejected Alternatives
+- **PyGithub / requests**: rejected in favor of `gh` CLI (Q1=C) to minimize Python deps and reuse the runner's token-based auth.
+- **Pre-baked CLI in runner image**: rejected (Q2) — pinned install step is more reproducible and auditable.
+- **`KIRO_API_KEY` as a plain GitHub secret**: rejected (user decision 2026-09-17) — a long-lived static key in GitHub is inconsistent with the OIDC-only baseline and has no built-in rotation. Superseded by Secrets-Manager-via-OIDC retrieval.
+- **Reverting to Amazon Bedrock**: considered; user chose to keep Kiro CLI with the Secrets Manager mitigation instead.

@@ -49,6 +49,10 @@ if (envName === "pipeline") {
 
   new PipelineStack(app, "PipelineStack", {
     githubRepo,
+    // Optional: ARN of the Secrets Manager secret holding the Kiro CLI API key
+    // used by the PR test-quality gate. Pass via --context kiroSecretArn=...
+    // If omitted, PipelineStack scopes to "pr-gate/kiro-api-key-*" in this account/region.
+    kiroSecretArn: app.node.tryGetContext("kiroSecretArn"),
     description: "CI/CD infrastructure: CodeBuild runner, OIDC provider, IAM deploy role",
     tags: {
       Project: "flask-lambda-api",

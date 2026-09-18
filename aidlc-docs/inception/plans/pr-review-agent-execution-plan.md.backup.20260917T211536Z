@@ -1,0 +1,176 @@
+# Execution Plan — PR Review Agent
+
+## Detailed Analysis Summary
+
+### Transformation Scope (Brownfield)
+- **Transformation Type**: Feature addition (new pipeline capability) — not an architectural transformation
+- **Primary Changes**:
+  1. New GitHub Actions workflow (`.github/workflows/pr-review.yml`) triggered on PRs to `dev`
+  2. New review agent implementation (Python) that: fetches the PR diff, invokes the **Kiro CLI headless** (`kiro-cli chat --no-interactive`), classifies findings by severity, posts comments, sets a status check, and auto-approves clean PRs
+  3. Workflow config: install/pin the Kiro CLI on the runner and expose `KIRO_API_KEY` (GitHub secret) to the review job (no AWS IAM/Bedrock change required)
+- **Related Components**: existing `ci.yml` (coexists), CodeBuild runner. **Note**: `PipelineStack`/IAM is NOT modified (engine is Kiro CLI, not Bedrock).
+
+### Change Impact Assessment
+- **User-facing changes**: No (developer-tooling; affects the PR workflow, not the deployed API)
+- **Structural changes**: No (adds a component; existing architecture unchanged)
+- **Data model changes**: No
+- **API changes**: No (consumes GitHub API + Kiro CLI; exposes none)
+- **NFR impact**: Yes — Security (`KIRO_API_KEY` + GitHub token handling, constrained CLI tool posture), cost/latency (CLI invocations), observability
+
+### Component Relationships (Brownfield)
+- **Primary Component**: `pr-review-agent` (new)
+- **Infrastructure Components**: none in CDK — the "infrastructure" is the GitHub Actions workflow config (Kiro CLI install + `KIRO_API_KEY` secret). `pipeline-stack.ts` is NOT modified.
+- **Shared Components**: none (self-contained agent)
+- **Dependent Components**: none (nothing depends on the agent)
+- **Supporting Components**: existing CodeBuild runner
+
+Change types:
+- `pr-review-agent`: **Major** (new component) — Critical priority
+- New workflow YAML (`pr-review.yml`): **Major** (new) — Critical priority
+- Repo config (add `KIRO_API_KEY` secret + branch-protection required check): **Config** — Important priority
+
+### Risk Assessment
+- **Risk Level**: **Low-to-Medium**
+  - Isolated feature; failure affects only PR review, not production deploys
+  - Security-sensitive (handles GitHub token + `KIRO_API_KEY` + sends diffs to an LLM; CLI can invoke tools) raises it from Low to Medium
+- **Rollback Complexity**: Easy (delete/disable the workflow; remove the secret)
+- **Testing Complexity**: Moderate (mock the Kiro CLI subprocess + GitHub APIs; PBT on pure logic)
+
+## Workflow Visualization
+
+### Mermaid Diagram
+
+```mermaid
+flowchart TD
+    Start(["User Request: PR Review Agent"])
+
+    subgraph INCEPTION["INCEPTION PHASE"]
+        WD["Workspace Detection<br/><b>COMPLETED</b>"]
+        RE["Reverse Engineering<br/><b>SKIPPED</b>"]
+        RA["Requirements Analysis<br/><b>COMPLETED</b>"]
+        US["User Stories<br/><b>SKIP</b>"]
+        WP["Workflow Planning<br/><b>COMPLETED</b>"]
+        AD["Application Design<br/><b>SKIP</b>"]
+        UG["Units Generation<br/><b>SKIP</b>"]
+    end
+
+    subgraph CONSTRUCTION["CONSTRUCTION PHASE"]
+        FD["Functional Design<br/><b>EXECUTE</b>"]
+        NFRA["NFR Requirements<br/><b>EXECUTE</b>"]
+        NFRD["NFR Design<br/><b>EXECUTE</b>"]
+        ID["Infrastructure Design<br/><b>EXECUTE</b>"]
+        CG["Code Generation<br/><b>EXECUTE</b>"]
+        BT["Build and Test<br/><b>EXECUTE</b>"]
+    end
+
+    subgraph OPERATIONS["OPERATIONS PHASE"]
+        OPS["Operations<br/><b>PLACEHOLDER</b>"]
+    end
+
+    Start --> WD
+    WD --> RA
+    RA --> WP
+    WP --> FD
+    FD --> NFRA
+    NFRA --> NFRD
+    NFRD --> ID
+    ID --> CG
+    CG --> BT
+    BT --> End(["Complete"])
+
+    style WD fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
+    style RA fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
+    style WP fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
+    style CG fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
+    style BT fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
+    style FD fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style NFRA fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style NFRD fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style ID fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style RE fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
+    style US fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
+    style AD fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
+    style UG fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
+    style OPS fill:#FFF59D,stroke:#F57F17,stroke-width:2px,color:#000
+    style Start fill:#CE93D8,stroke:#6A1B9A,stroke-width:3px,color:#000
+    style End fill:#CE93D8,stroke:#6A1B9A,stroke-width:3px,color:#000
+    linkStyle default stroke:#333,stroke-width:2px
+```
+
+### Text Alternative
+
+```
+INCEPTION PHASE
+- Workspace Detection ....... COMPLETED
+- Reverse Engineering ....... SKIPPED (Iteration 1 docs current)
+- Requirements Analysis ..... COMPLETED
+- User Stories .............. SKIP (single actor, dev-tooling feature)
+- Workflow Planning ......... COMPLETED (this document)
+- Application Design ........ SKIP (single self-contained component)
+- Units Generation .......... SKIP (single unit)
+
+CONSTRUCTION PHASE (single unit: pr-review-agent)
+- Functional Design ......... EXECUTE (severity logic, diff parsing, verdict rules)
+- NFR Requirements .......... EXECUTE (tech stack: language, Bedrock model, PBT framework)
+- NFR Design ................ EXECUTE (security patterns, fail-safe, prompt-injection defense)
+- Infrastructure Design ..... EXECUTE (IAM least-privilege Bedrock, workflow/runner wiring)
+- Code Generation ........... EXECUTE (workflow YAML + agent code + tests)
+- Build and Test ............ EXECUTE (unit + PBT + integration instructions)
+
+OPERATIONS PHASE
+- Operations ................ PLACEHOLDER
+```
+
+## Phases to Execute
+
+### 🔵 INCEPTION PHASE
+- [x] Workspace Detection (COMPLETED)
+- [x] Reverse Engineering (SKIPPED — Iteration 1 design docs are current)
+- [x] Requirements Analysis (COMPLETED)
+- [ ] User Stories - **SKIP**
+  - **Rationale**: Developer-tooling / CI feature with a single implicit actor (the developer opening a PR). No multiple personas or user-journey complexity. Requirements already capture behavior precisely.
+- [x] Workflow Planning (IN PROGRESS → COMPLETED on approval)
+- [ ] Application Design - **SKIP**
+  - **Rationale**: The feature is a single, self-contained component (the agent) plus one workflow file. No multi-component service layer or cross-component dependencies to design. Component-level design is adequately handled within Functional Design.
+- [ ] Units Generation - **SKIP**
+  - **Rationale**: Single unit of work (`pr-review-agent`). No decomposition needed.
+
+### 🟢 CONSTRUCTION PHASE (Unit: `pr-review-agent`)
+- [ ] Functional Design - **EXECUTE**
+  - **Rationale**: Non-trivial business logic — severity classification, diff parsing, verdict rules (block vs approve), and Kiro CLI output parsing. Also required for PBT-01 property identification (PBT extension enabled).
+- [ ] NFR Requirements - **EXECUTE**
+  - **Rationale**: Tech-stack decisions needed (agent language, Kiro CLI version/agent profile, PBT framework per PBT-09) plus security/cost/observability requirements.
+- [ ] NFR Design - **EXECUTE**
+  - **Rationale**: Security Baseline is enabled and highly applicable (`KIRO_API_KEY`/token handling, constrained CLI tool posture, fail-safe, prompt-injection). NFR patterns must be designed explicitly.
+- [ ] Infrastructure Design - **EXECUTE**
+  - **Rationale**: Workflow/runner wiring, Kiro CLI install/pinning, and secret exposure scope need specification (SECURITY-10/12/13). No CDK/IAM change required.
+- [ ] Code Generation - **EXECUTE (ALWAYS)**
+  - **Rationale**: Implement the workflow YAML, the agent code, and tests (example-based + PBT).
+- [ ] Build and Test - **EXECUTE (ALWAYS)**
+  - **Rationale**: Build/lint/test instructions incl. PBT with seed logging (PBT-08) and integration test guidance.
+
+### 🟡 OPERATIONS PHASE
+- [ ] Operations - PLACEHOLDER
+
+## Package / Component Change Sequence (Brownfield)
+Single unit — no multi-package sequencing required. Within the unit:
+1. Agent code + pure logic (functional design → code) — Critical
+2. GitHub Actions workflow YAML (`pr-review.yml`) — Critical (depends on agent entry point)
+3. Repo config: add `KIRO_API_KEY` secret + require the new status check in branch protection — Important (config step, documented)
+
+## Estimated Timeline
+- **Total Stages to Execute**: 6 (all within Construction, single unit) + Workflow Planning
+- **Estimated Duration**: Short — one unit, moderate complexity
+
+## Success Criteria
+- **Primary Goal**: Autonomous **Kiro CLI (headless)**-powered reviewer runs on every PR to `dev`, comments, blocks on high-severity findings, and auto-approves clean PRs.
+- **Key Deliverables**:
+  - `.github/workflows/pr-review.yml`
+  - `pr-review-agent/` Python module (diff fetch, Kiro CLI invocation, severity classification, GitHub posting)
+  - Documented repo config: `KIRO_API_KEY` secret + branch-protection required check
+  - Unit tests + property-based tests + integration test instructions
+- **Quality Gates**:
+  - Security Baseline compliance (blocking) at each applicable stage
+  - PBT (Full) compliance (blocking) for pure logic
+  - `cdk synth` still passes; existing `ci.yml` unaffected
+- **Integration Testing**: Agent correctly comments/blocks/approves against a sample PR (mocked or dry-run)

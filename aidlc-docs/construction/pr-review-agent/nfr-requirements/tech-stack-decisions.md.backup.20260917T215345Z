@@ -1,0 +1,34 @@
+# Tech Stack Decisions — Unit: pr-test-quality-gate
+
+| Concern | Decision | Rationale |
+|---|---|---|
+| Gate orchestration | **Bash steps in `ci.yml`** invoking native toolchains | Thin glue; runs each component's own tests; no heavy runtime needed (C-01) |
+| `app/` tests + coverage | **pytest + pytest-cov** (`coverage.py`) | Existing app tooling; emits coverage.xml/term |
+| `infra/` tests + coverage | **TypeScript test runner with coverage** (e.g., `jest`/`vitest` via `npm test -- --coverage`, or `nyc`) | Native to CDK/TS; if not present, adding it is in scope (C-03) |
+| Coverage threshold | **Global min ~80% per component**, configurable via env | Q3=A |
+| Stage 2 AI engine | **Amazon Bedrock** (Claude family) via **existing OIDC role** — no stored key | Q1=X + user's OIDC-over-API-key preference; resolves earlier concern |
+| Stage 2 invocation | `aws bedrock-runtime invoke-model` (CLI) or SDK, with OIDC creds | Reuses pipeline OIDC pattern |
+| GitHub API | **built-in `GITHUB_TOKEN`** via `gh` CLI | Ephemeral, per-run; not a stored secret |
+| JSON handling | **`jq`** for coverage/adequacy parsing + verdict | Q3(bash-change)=A; standard, pinned |
+| Kiro CLI | **Developer-local only** (author tests); NOT in pipeline | user directive (FR-08) |
+| Pure-helper tests | **Example-based** shell tests (assertions/exit codes) for `parse_coverage`, `compute_gate_verdict`, `parse_adequacy_response` | PBT Partial → N/A for thin glue; example-based satisfies PBT-10 |
+| Supply chain | Pin actions to SHA/tag; `npm ci`; pinned Python deps; no `latest` | SECURITY-10 |
+
+## Configuration (environment variables)
+| Var | Default | Purpose |
+|---|---|---|
+| `AWS_ROLE_ARN` | (repo var) | OIDC role for Bedrock (Stage 2) |
+| `AWS_REGION` | `us-east-1` | Bedrock region |
+| `BEDROCK_MODEL_ID` | (repo var) | Model used for adequacy check |
+| `GH_TOKEN` | `GITHUB_TOKEN` | gh CLI auth (ephemeral) |
+| `APP_COVERAGE_MIN` | `80` | app coverage threshold |
+| `INFRA_COVERAGE_MIN` | `80` | infra coverage threshold |
+| `BASE_BRANCH` | `dev` | Branch the gate runs against |
+| `STAGE2_TIMEOUT_SECONDS` | `300` | Bedrock adequacy timeout, fail-closed |
+
+## PBT Framework (PBT-09, Partial)
+No PBT framework is adopted for this gate unit — it is thin CLI orchestration, and PBT is marked **N/A with rationale** (Partial mode). Product-code PBT belongs to the `app`/`infra` units. Pure helpers get example-based tests.
+
+## Rejected / Superseded
+- **Kiro CLI as pipeline review engine** + `KIRO_API_KEY` + Secrets-Manager retrieval — **superseded** by the scope pivot (2026-09-17). Kiro CLI is now developer-local; Stage 2 uses Bedrock via OIDC (no stored key).
+- **LLM diff-review of arbitrary code** — replaced by the narrower, post-gate business-rule adequacy check.

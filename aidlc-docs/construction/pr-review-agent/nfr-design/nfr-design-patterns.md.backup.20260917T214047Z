@@ -1,0 +1,89 @@
+# NFR Design Patterns — Unit: pr-review-agent
+
+## Pattern 1: OIDC → Secrets Manager Key Retrieval (SECURITY-12, SECURITY-06, CRED-01/02)
+
+The review job assumes the existing OIDC role (short-lived STS) and reads the Kiro key from Secrets Manager at runtime, then masks it. No static Kiro key in GitHub.
+
+```yaml
+permissions:
+  id-token: write   # request OIDC token
+  contents: read    # checkout
+  pull-requests: write   # post review/comments
+  statuses: write        # set commit status
+  checks: write
+
+steps:
+  - name: Configure AWS credentials via OIDC
+    uses: aws-actions/configure-aws-credentials@<pinned-sha>
+    with:
+      role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+      aws-region: ${{ vars.AWS_REGION }}
+      role-session-name: pr-review-${{ github.run_id }}
+
+  - name: Fetch Kiro API key from Secrets Manager
+    run: |
+      KEY=$(aws secretsmanager get-secret-value \
+        --secret-id "${{ vars.KIRO_SECRET_ARN }}" \
+        --query SecretString --output text)
+      echo "::add-mask::$KEY"                 # mask in logs (SECURITY-03)
+      echo "KIRO_API_KEY=$KEY" >> "$GITHUB_ENV"
+```
+
+## Pattern 2: Least-Privilege GetSecretValue (SECURITY-06)
+
+The review role's policy grants ONLY read on the specific secret ARN:
+
+```jsonc
+{
+  "Effect": "Allow",
+  "Action": "secretsmanager:GetSecretValue",
+  "Resource": "arn:aws:secretsmanager:us-east-1:<acct>:secret:pr-review/kiro-api-key-*"
+}
+```
+
+No wildcard actions/resources. OIDC trust scoped to `repo:<owner>/<repo>:*`.
+
+## Pattern 3: Ephemeral GitHub Auth via built-in token (SECURITY-12)
+
+`gh` CLI authenticates with the per-run `GITHUB_TOKEN` (not a stored secret), scoped via workflow `permissions:`:
+
+```yaml
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # ephemeral, minted per run
+```
+
+## Pattern 4: Injection-safe subprocess + constrained tools (SECURITY-05, BR-PRA-12)
+
+- Kiro CLI and `gh` are invoked via `subprocess.run([...], timeout=...)` with **argument lists** (never a shell string) — prevents command injection.
+- Kiro CLI is run WITHOUT `--trust-all-tools`; a constrained agent profile is used so untrusted PR content cannot trigger tool execution.
+- The prompt delimits untrusted diff content and instructs the model to ignore any instructions embedded within it.
+
+## Pattern 5: Fail-closed error handling (SECURITY-15, REL-01/03)
+
+```
+try:
+    key = fetch_secret()          # Secrets Manager
+    out = invoke_kiro_cli(prompt, timeout=REVIEW_TIMEOUT_SECONDS)
+    if out.returncode != 0: raise ReviewError(...)   # exit 1/2
+    findings = classify_findings(parse_cli_response(out.stdout))
+    verdict = compute_verdict(findings, error=None, oversized=False)
+except (BotoError, TimeoutExpired, ReviewError, ParseError) as e:
+    verdict = ERROR              # fail closed
+    set_status(FAILING, "AI review failed — see logs")
+finally:
+    # never leak secrets; resources released
+```
+
+Any failure → ERROR verdict → failing status check (never a silent pass).
+
+## Pattern 6: Idempotent comment upsert (REL-02, BR-PRA-14)
+
+The summary comment carries a hidden marker (e.g., `<!-- pr-review-agent -->`). On re-review, the agent finds and **updates** that comment rather than appending — deterministic across re-runs on the same head SHA.
+
+## Pattern 7: Pinned supply chain (SECURITY-10, SECURITY-13)
+- All `uses:` pinned to commit SHA (or exact tag)
+- `kiro-cli` installed at a pinned `KIRO_CLI_VERSION` from the official source
+- Python deps pinned to exact versions in `requirements.txt`
+
+## Pattern 8: Size guard (PERF-01, BR-PRA-07)
+Before invoking the CLI, total diff bytes are compared to `MAX_DIFF_BYTES`; oversized PRs short-circuit to SKIPPED_TOO_LARGE with a non-blocking comment — bounding cost/latency.

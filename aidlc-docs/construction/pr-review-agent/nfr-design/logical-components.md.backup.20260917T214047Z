@@ -1,0 +1,64 @@
+# Logical Components — Unit: pr-review-agent
+
+## Module Decomposition (Python package `pr_review_agent/`)
+
+```
+pr_review_agent/
+├── __main__.py        # entry point: orchestrates the flow, sets exit code
+├── config.py          # loads + validates env vars (MAX_DIFF_BYTES, timeout, ARNs, BASE_BRANCH)
+├── models.py          # dataclasses/enums: Severity, Verdict, Finding, DiffFile, ReviewResult
+├── verdict.py         # PURE: compute_verdict(), severity aggregation (primary PBT target)
+├── parsing.py         # PURE: parse_cli_response(), classify_findings(), detect_language()
+├── rendering.py       # PURE: render_summary() (markdown), status descriptions
+├── github_io.py       # I/O: gh CLI adapters (fetch_diff, upsert_comment, inline_comments, set_status, approve)
+├── kiro_io.py         # I/O: invoke_kiro_cli() subprocess w/ timeout, constrained tools
+└── secrets_io.py      # I/O: fetch_kiro_key() from Secrets Manager (boto3)
+```
+
+## Pure vs I/O Boundary
+
+| Layer | Modules | Testing |
+|---|---|---|
+| **Pure core** (no side effects) | `verdict.py`, `parsing.py`, `rendering.py`, `models.py` | Hypothesis (PBT) + pytest examples |
+| **I/O adapters** (side effects) | `github_io.py`, `kiro_io.py`, `secrets_io.py` | Mocked in integration tests; no PBT |
+| **Orchestration** | `__main__.py`, `config.py` | Integration tests with mocked adapters |
+
+This boundary keeps the deterministic verdict/parse/render logic testable in isolation (satisfies MNT-01 and the PBT-01 property set).
+
+## Logical Components / External Dependencies
+
+| Component | Role | Notes |
+|---|---|---|
+| GitHub Actions workflow (`pr-review.yml`) | Trigger + environment | on `pull_request` to `dev`; OIDC perms; CodeBuild runner |
+| AWS OIDC role (existing) | Short-lived AWS creds | reused; +scoped `GetSecretValue` policy |
+| AWS Secrets Manager secret | Stores `KIRO_API_KEY` | encrypted at rest; read at runtime; rotatable |
+| Kiro CLI (headless) | Review engine | pinned version; constrained tools; JSON output contract |
+| `gh` CLI | GitHub API adapter | authed via ephemeral `GITHUB_TOKEN` |
+| CodeBuild runner (existing) | Compute | reused via `runs-on` label |
+
+## Data-flow with components (text)
+
+```
+pull_request(dev) event
+   → workflow: setup (python, gh, pinned kiro-cli)
+   → configure-aws-credentials (OIDC)  → secrets_io.fetch_kiro_key()  → mask+export KIRO_API_KEY
+   → __main__: config.load()
+       → github_io.fetch_diff()            [gh]
+       → size guard (config.MAX_DIFF_BYTES) → [oversized] github_io.upsert_comment + set_status(pass) → exit 0
+       → build prompt (injection-safe)
+       → kiro_io.invoke_kiro_cli(timeout)  [subprocess, constrained tools]
+       → parsing.parse_cli_response / classify_findings   (PURE)
+       → verdict.compute_verdict           (PURE)
+       → rendering.render_summary          (PURE)
+       → github_io: upsert_comment (idempotent), inline_comments, set_status, approve(if APPROVE)
+   → exit code: 0 unless verdict==ERROR/BLOCK maps to failing check (status set via API; job exit reflects fail-closed)
+```
+
+## Error/exit-code mapping (REL-03, SECURITY-15)
+| Situation | Verdict | Commit status | Job outcome |
+|---|---|---|---|
+| Zero findings | APPROVE | success | success |
+| Only Medium/Low/Info | COMMENT | success (neutral) | success |
+| ≥1 High | BLOCK | failure | success (status conveys block) |
+| Oversized PR | SKIPPED_TOO_LARGE | success (non-blocking) | success |
+| Any error/timeout/exit≠0 | ERROR | failure | fail-closed |

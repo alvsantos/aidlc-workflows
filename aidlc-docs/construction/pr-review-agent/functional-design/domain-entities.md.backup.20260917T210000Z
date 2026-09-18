@@ -1,0 +1,76 @@
+# Domain Entities — Unit: pr-review-agent
+
+Technology-agnostic domain model for the autonomous PR review agent.
+
+## Entity: PullRequestContext
+Represents the PR under review and the metadata needed to fetch its diff and post results.
+
+| Attribute | Type | Description |
+|---|---|---|
+| repo_owner | string | GitHub repository owner |
+| repo_name | string | GitHub repository name |
+| pr_number | integer | Pull request number |
+| head_sha | string | Commit SHA of the PR head (target for the status check) |
+| base_ref | string | Base branch (expected: `dev`) |
+
+## Entity: DiffFile
+A single file's changes within the PR diff.
+
+| Attribute | Type | Description |
+|---|---|---|
+| path | string | File path |
+| language | string | Detected language (python, typescript, yaml, other) |
+| patch | string | Unified diff hunk text for the file |
+| added_lines | integer | Count of added lines |
+| removed_lines | integer | Count of removed lines |
+
+## Entity: ReviewInput
+The aggregated, size-bounded input handed to the model.
+
+| Attribute | Type | Description |
+|---|---|---|
+| files | list[DiffFile] | Files included in the review |
+| total_diff_bytes | integer | Total size of included diff |
+| truncated | boolean | Always false in current design (oversized PRs are skipped, not truncated — Q4=C) |
+
+## Entity: Finding
+A single issue identified by the model.
+
+| Attribute | Type | Description |
+|---|---|---|
+| severity | Severity | One of: High, Medium, Low, Info (Q1=B) |
+| category | string | One of: quality, correctness, security |
+| file_path | string \| null | File the finding refers to (null for repo-wide) |
+| line | integer \| null | Line number if applicable (for inline comments) |
+| title | string | Short summary of the issue |
+| detail | string | Explanation and suggested fix |
+
+## Value Object: Severity (enumeration)
+Ordered, highest to lowest: `High > Medium > Low > Info`. (Q1=B — 4 levels)
+
+## Entity: ReviewResult
+The outcome of a review, driving comments, status check, and approval.
+
+| Attribute | Type | Description |
+|---|---|---|
+| findings | list[Finding] | All findings |
+| verdict | Verdict | Computed decision (see business rules) |
+| summary_markdown | string | Human-readable summary comment body |
+| error | string \| null | Populated when the agent failed (drives fail-closed behavior) |
+
+## Value Object: Verdict (enumeration)
+- `APPROVE` — zero findings (Q3=A) → post approval review + passing status check
+- `COMMENT` — findings exist but none are blocking (no High) → post comments, neutral/passing status check, no approval
+- `BLOCK` — at least one High finding (Q2=A) → post comments + request-changes/failing status check
+- `SKIPPED_TOO_LARGE` — PR diff exceeded the size budget (Q4=C) → post informational comment, non-blocking passing check
+- `ERROR` — agent failed (Q5=A) → failing status check (fail closed)
+
+## Relationships (text)
+
+```
+PullRequestContext 1 --- * DiffFile
+DiffFile *          --- 1 ReviewInput (aggregation, size-bounded)
+ReviewInput 1       --> 1 ReviewResult (produced by model call + parsing)
+ReviewResult 1      --- * Finding
+ReviewResult 1      --- 1 Verdict (computed from findings/error/size)
+```

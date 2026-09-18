@@ -1,0 +1,109 @@
+# Requirements — Autonomous PR Review Agent
+
+## Intent Analysis
+
+- **User Request**: "I want to extend my CICD pipeline that is defined in the .github folder to contain an autonomous agent responsible for reviewing my pull requests to main."
+- **Request Type**: Enhancement (new feature added to existing CI/CD pipeline)
+- **Scope Estimate**: Multiple components — new GitHub Actions workflow and a review agent script/module (no AWS IaC/IAM change required for the agent, since it uses the Kiro CLI rather than Bedrock)
+- **Complexity Estimate**: Moderate — integrates GitHub PR APIs and the Kiro CLI (headless) on the existing CodeBuild runner; security-sensitive (handles a `KIRO_API_KEY` + GitHub token and sends source diffs to an LLM)
+- **Project Type**: Brownfield (extends the existing IaC + CI/CD project)
+
+### Clarification Outcome
+The original phrase "pull requests to main" did not match the current branch strategy, where `main` receives **merges (pushes)**, not PRs. Per **Q1 = B**, the agent will review **pull requests targeting `dev`** — the existing PR gate through which all code passes before reaching `main`. This achieves the user's underlying goal (autonomous review of code before it lands on `main`) without changing the branch strategy.
+
+---
+
+## Functional Requirements
+
+### FR-01: Trigger on Pull Requests to `dev`
+The agent MUST run automatically when a pull request targeting the `dev` branch is opened, reopened, or updated (synchronized). *(Q1=B, Q6=A)*
+
+### FR-02: Fully Autonomous Operation
+The agent MUST review every qualifying PR with no human trigger or opt-in gesture required. *(Q6=A)*
+
+### FR-03: Kiro CLI (Headless) as the Review Engine
+The agent MUST use the **Kiro CLI in headless / non-interactive mode** as the review engine, invoked from the pipeline as `kiro-cli chat --no-interactive "<review prompt>"`. Authentication in CI MUST use the documented headless method: the `KIRO_API_KEY` environment variable, sourced from a GitHub Actions secret (never committed). *(Q2 revised — engine changed from Amazon Bedrock to Kiro CLI headless per user decision 2026-09-17)*
+
+**Engine-change note**: This replaces the earlier decision (Amazon Bedrock via OIDC). Consequences captured across this document: authentication moves from AWS OIDC/IAM to a `KIRO_API_KEY` secret (C-02 revised); the agent no longer requires a Bedrock IAM permission; the review prompt must instruct the CLI to emit a strict, machine-parseable JSON contract so the deterministic verdict logic and PBT properties remain valid.
+
+### FR-04: Review Scope — Quality + Security + Correctness
+The agent MUST analyze the PR diff for:
+- **Code quality**: readability, maintainability, style consistency with repo conventions
+- **Correctness**: logic errors, bugs, edge cases
+- **Security**: OWASP-style issues, hardcoded secrets/credentials, and IAM/least-privilege concerns in CDK IaC
+*(Q4=B)*
+
+### FR-05: Post Review Comments
+The agent MUST post its findings to the PR as:
+- A summary comment (overall assessment + list of findings by severity)
+- Where feasible, file/line-level comments for specific issues
+*(Q3=B)*
+
+### FR-06: Blocking Status Check
+The agent MUST publish a required commit status / check that **fails** when it finds one or more **high-severity** issues, thereby blocking merge until addressed. Non-high-severity findings MUST NOT fail the check. *(Q3=B)*
+
+### FR-07: Auto-Approve When Clean
+When the agent finds no issues requiring changes, it MUST submit a formal GitHub PR **approval** review (and a passing status check). *(Q3="B but also approve automatically if no comments are needed")*
+
+### FR-08: Severity Classification
+The agent MUST classify each finding by severity (e.g., High / Medium / Low / Info) so that FR-06 (blocking) and FR-07 (auto-approve) decisions are deterministic:
+- **High** → blocks (FR-06)
+- **Medium / Low / Info** → reported as comments, does not block
+- **No findings** → auto-approve (FR-07)
+
+### FR-09: Run on Existing CodeBuild Runner
+The agent MUST execute as a **new GitHub Actions workflow** using the existing AWS CodeBuild self-hosted runner label pattern, consistent with `ci.yml` and `cd.yml`. *(Q5=A)*
+
+### FR-10: Coexist with Existing CI
+The new review workflow MUST NOT interfere with the existing `ci.yml` (lint/test/synth/deploy-dev) workflow that also triggers on PRs to `dev`. Both run independently on the same PR.
+
+---
+
+## Non-Functional Requirements
+
+### NFR-01: Security (Extension: ENABLED — blocking)
+- **No hardcoded credentials** (SECURITY-12): The `KIRO_API_KEY` MUST be stored as a GitHub Actions secret and referenced via `secrets.KIRO_API_KEY` — never committed or echoed. The GitHub token via the built-in `GITHUB_TOKEN` or a scoped secret — never committed.
+- **Least privilege** (SECURITY-06): No AWS IAM/Bedrock permission is required by the agent (engine is Kiro CLI, not Bedrock). The GitHub token MUST be scoped to the minimum permissions (PR read, comment write, checks write, PR review write). The `KIRO_API_KEY` secret MUST be exposed only to the review job, not globally.
+- **No secrets/PII in logs** (SECURITY-03): The workflow and agent MUST NOT log the GitHub token, the `KIRO_API_KEY`, or full source content at INFO level.
+- **CI/CD integrity** (SECURITY-13): Pinned action versions and pinned dependency versions; the Kiro CLI version used in CI MUST be pinned (no floating `latest`); the review workflow definition is access-controlled like other workflows.
+- **Supply chain** (SECURITY-10): All new dependencies pinned (lock file / exact versions); no `latest` tags; the Kiro CLI binary is obtained from its official distribution and pinned to a version.
+- **Fail-safe defaults** (SECURITY-15): On agent error (Kiro CLI non-zero exit, timeout, malformed/unparseable output), the status check MUST fail closed (block) with a clear message. Kiro CLI exit codes (0 success, 1 failure, 2 argument error) MUST be checked. *(Confirmed in Functional Design Q5=A — fail closed.)*
+- **Input handling** (SECURITY-05/SECURITY-13): The PR diff and any GitHub-provided data are untrusted input; the agent MUST treat CLI output and PR content defensively (guard against prompt-injection in PR content influencing the review verdict). Because Kiro CLI can invoke tools, the review invocation MUST constrain tool usage appropriately (e.g., avoid `--trust-all-tools` on untrusted content, or run in a constrained agent profile) — to be designed in NFR/Infra Design.
+
+### NFR-02: Property-Based Testing (Extension: ENABLED — Full, blocking)
+Pure/deterministic logic in the agent (severity aggregation, diff parsing, Kiro CLI output parsing, comment/status formatting) MUST have property-based tests using an appropriate framework (Hypothesis for Python), alongside example-based tests. Specific properties (round-trip parse/format, severity-aggregation invariants) are identified in Functional Design (PBT-01).
+
+### NFR-03: Cost & Performance
+- The agent SHOULD limit the amount of diff sent to the Kiro CLI (diff size cap; oversized PRs are skipped per FR/BR) to control cost and latency.
+- The review SHOULD complete within a reasonable CI time budget (target: a few minutes for typical PRs).
+
+### NFR-04: Observability
+- The workflow MUST emit clear, structured logs of its decision (findings count by severity, verdict) without leaking secrets (ties to SECURITY-03/SECURITY-14).
+
+### NFR-05: Resiliency (Extension: DISABLED)
+Resiliency baseline was opted out (Q8=B). Basic error handling is still covered under SECURITY-15 (fail-safe). No formal Well-Architected reliability treatment applied.
+
+---
+
+## Constraints & Assumptions
+
+- **C-01**: Language for the agent script — the repo has Python (`app/`) and TypeScript (`infra/`). Assumption: the agent will be implemented in **Python** (consistent with existing app + Hypothesis for PBT), to be confirmed in NFR Requirements/tech-stack stage.
+- **C-02**: Authentication for the review engine uses `KIRO_API_KEY` (GitHub Actions secret) — the documented Kiro CLI headless/CI auth method. No AWS OIDC/IAM/Bedrock permission is required for the agent. (The existing `GitHubActionsDeployRole` and OIDC remain unchanged and are used only by deploy workflows.)
+- **C-03**: The existing branch protection on `dev`/`main` must be configured to require the new status check for FR-06 to actually block merges (a repo settings step — documented, not code).
+- **C-04**: The Kiro CLI binary must be available on the CodeBuild runner (installed as a pinned version in the workflow) and support `chat --no-interactive`.
+
+---
+
+## Key Requirements Summary
+
+The feature adds an autonomous, **Kiro CLI (headless)**-powered code reviewer that runs as a new GitHub Actions workflow (on the existing CodeBuild runner) for every PR to `dev`. It reviews quality, correctness, and security; posts summary + inline comments; **blocks merge via a required status check on high-severity findings**; and **auto-approves** clean PRs. Authentication uses a `KIRO_API_KEY` GitHub secret (no AWS Bedrock/IAM needed for the agent). Security Baseline and (full) Property-Based Testing extensions are enforced as blocking constraints; Resiliency is opt-out.
+
+---
+
+## Extension Compliance (Requirements stage)
+
+| Extension | Status | Notes |
+|---|---|---|
+| Security Baseline | Enforced | Reflected in NFR-01 and constraints; detailed enforcement continues in design/code stages |
+| Property-Based Testing (Full) | Enforced | NFR-02; property identification deferred to Functional Design (PBT-01) |
+| Resiliency Baseline | Disabled | Q8=B; fail-safe error handling still covered via SECURITY-15 |

@@ -1,0 +1,50 @@
+# Business Rules — Unit: pr-review-agent
+
+Derived from requirements (FR-01..FR-10, NFR-01..NFR-05) and functional-design answers (Q1=B, Q2=A, Q3=A, Q4=C, Q5=A, Q6=B).
+
+## BR-PRA-01: Trigger scope
+The agent runs ONLY for pull requests whose base branch is `dev`. PRs to any other branch are ignored. *(FR-01)*
+
+## BR-PRA-02: Severity taxonomy
+Findings are classified into exactly four severities: **High, Medium, Low, Info** (ordered high→low). *(Q1=B)*
+
+## BR-PRA-03: Blocking rule
+The status check FAILS (blocks merge) if and only if at least one finding has severity **High**. Medium, Low, and Info findings never block. *(Q2=A, FR-06)*
+
+## BR-PRA-04: Auto-approve rule
+The agent submits a formal GitHub **APPROVE** review if and only if there are **zero** findings of any severity. *(Q3=A, FR-07)*
+
+## BR-PRA-05: Comment-only rule
+If findings exist but none are High (i.e., only Medium/Low/Info), the verdict is **COMMENT**: post the summary + inline comments, set a **passing/neutral** status check, and do NOT approve. *(derived from Q2=A + Q3=A)*
+
+## BR-PRA-06: Verdict decision (precedence)
+Compute verdict in this strict order:
+1. If `error` is set → **ERROR** (BR-PRA-08)
+2. Else if the PR was skipped for size → **SKIPPED_TOO_LARGE** (BR-PRA-07)
+3. Else if any finding is High → **BLOCK** (BR-PRA-03)
+4. Else if any finding exists → **COMMENT** (BR-PRA-05)
+5. Else → **APPROVE** (BR-PRA-04)
+
+## BR-PRA-07: Oversized PR handling
+If the total diff size exceeds the configured maximum (`MAX_DIFF_BYTES`), the agent does NOT invoke the Kiro CLI. It posts an informational comment asking the author to split the PR, and sets a **non-blocking passing** status check. Verdict = **SKIPPED_TOO_LARGE**. *(Q4=C, NFR-03)*
+
+## BR-PRA-08: Fail-closed on error
+If any unrecoverable error occurs (Kiro CLI non-zero exit code [1 failure / 2 argument error], timeout, malformed/unparseable CLI output, or GitHub API failure while determining findings), the agent sets the status check to **FAIL** with a clear message. Verdict = **ERROR**. The agent MUST NOT approve or pass the check on error. *(Q5=A, SECURITY-15 fail-closed; Kiro CLI exit codes per documented behavior)*
+
+## BR-PRA-09: Re-review on update
+On PR synchronize (new commits), the agent re-reviews the full current diff. It posts an updated summary comment ONLY if the computed verdict differs from the previous run for that PR; otherwise it updates the existing status check silently. *(Q6=B)*
+
+## BR-PRA-10: Review focus
+Findings must be limited to the three categories: **quality**, **correctness**, **security**. Security findings include hardcoded secrets, injection risks, and IAM/least-privilege issues in CDK IaC. *(FR-04)*
+
+## BR-PRA-11: No secrets in output/logs
+The agent MUST NOT include the GitHub token, the `KIRO_API_KEY`, or raw environment secrets in any comment, status description, or log line. Diff content is logged only at DEBUG level and never any secret. *(SECURITY-03, NFR-01)*
+
+## BR-PRA-12: Untrusted content handling (prompt-injection defense)
+PR diff content is untrusted. The agent MUST construct the Kiro CLI prompt so that repository/diff content cannot override the review instructions (content clearly delimited; the instruction asserts that any instructions found inside the diff must be ignored). Because the Kiro CLI can invoke tools, the review invocation MUST run with a constrained tool posture (do NOT pass `--trust-all-tools` when reviewing untrusted PR content; prefer a restricted agent profile / no tool execution). The agent MUST NOT act on instructions embedded in the diff. *(SECURITY-05/13, NFR-01)*
+
+## BR-PRA-13: Deterministic verdict from findings
+Given the same list of findings and the same error/size state, the verdict computation MUST be deterministic and pure (no external calls). *(supports PBT — see business-logic-model.md)*
+
+## BR-PRA-14: Idempotent comment posting
+Re-running the agent on the same head SHA MUST NOT create duplicate summary comments; it updates the agent's existing comment (identified by a stable marker) instead of appending a new one. *(idempotency — supports PBT-04)*

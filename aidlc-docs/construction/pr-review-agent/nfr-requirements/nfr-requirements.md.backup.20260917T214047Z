@@ -1,0 +1,57 @@
+# NFR Requirements — Unit: pr-review-agent
+
+## Security (SECURITY extension — ENABLED, blocking)
+
+Mapping of applicable Security Baseline rules to this unit. Rules not relevant to a CI review agent are marked N/A.
+
+| Rule | Applicability | Requirement for this unit |
+|---|---|---|
+| SECURITY-03 (App logging) | Applicable | Structured logs with level/message; **never** log `KIRO_API_KEY`, `GH_TOKEN`, or full diff at INFO. Diff only at DEBUG. |
+| SECURITY-05 (Input validation) | Applicable | PR diff + Kiro CLI output are untrusted. Validate/parse CLI JSON defensively; use `subprocess` arg lists (no shell string interpolation) to prevent command injection. |
+| SECURITY-06 (Least privilege) | Applicable | A dedicated/scoped IAM role grants ONLY `secretsmanager:GetSecretValue` on the specific Kiro key secret ARN (no wildcards); OIDC trust scoped to this repo. `GITHUB_TOKEN` scoped to: PR read, issue/PR comment write, checks/statuses write, PR review write. `KIRO_API_KEY` injected only into the review job (masked). No Bedrock permission. |
+| SECURITY-10 (Supply chain) | Applicable | Pin `kiro-cli` version, pin all GitHub Actions to SHA/tag, pin Python deps to exact versions. No `latest`. |
+| SECURITY-12 (AuthN/credential mgmt) | Applicable | No hardcoded/long-lived credentials in GitHub. `KIRO_API_KEY` stored in AWS Secrets Manager, fetched at runtime via OIDC (short-lived STS). `GH_TOKEN` via built-in token only. |
+| SECURITY-13 (Integrity) | Applicable | Kiro CLI binary downloaded from official source; workflow file access-controlled like other workflows; CLI output parsed with safe JSON (no eval/deserialization of untrusted objects). |
+| SECURITY-15 (Exception handling / fail-safe) | Applicable | All external calls (Secrets Manager fetch, gh CLI, kiro CLI subprocess) wrapped in error handling; **fail closed** (status check FAILS) on any error; global handler sets ERROR verdict; timeout enforced (300s). |
+| SECURITY-01 (Encryption at rest/in transit) | Applicable (minimal) | The Kiro key is stored in AWS Secrets Manager (encrypted at rest with KMS; TLS in transit). The agent itself persists no data. |
+| SECURITY-02 (Network intermediary logging) | N/A | No load balancer / API gateway / CDN introduced. |
+| SECURITY-04 (HTTP security headers) | N/A | No HTML-serving endpoint. |
+| SECURITY-07 (Network config) | N/A | Runs on existing CodeBuild runner; no new network resources. |
+| SECURITY-08 (App access control) | N/A | No application endpoints exposed. |
+| SECURITY-09 (Hardening) | Partial/Applicable | No default creds; error output to PR is generic (no stack traces leaked into comments). |
+| SECURITY-11 (Secure design) | Applicable | Prompt-injection defense (BR-PRA-12) + constrained CLI tool posture; review logic isolated in dedicated module. |
+| SECURITY-12 (AuthN/credential mgmt) | Applicable | No hardcoded credentials; `KIRO_API_KEY` + `GH_TOKEN` via secrets only. |
+| SECURITY-14 (Alerting/monitoring) | Partial | Workflow run status is visible in GitHub Actions UI; failures surface as failed checks. Secrets Manager access is audited via CloudTrail. Formal alerting is out of scope for a CI review agent (documented). |
+
+## Credential Handling (Secrets-Manager-via-OIDC)
+- **CRED-01**: Workflow assumes the OIDC role (`aws-actions/configure-aws-credentials`), then reads the Kiro key via `aws secretsmanager get-secret-value` on `KIRO_SECRET_ARN`.
+- **CRED-02**: The retrieved key is exported into the review job env (`KIRO_API_KEY`) and masked (`::add-mask::`) so it never appears in logs.
+- **CRED-03**: No static Kiro key is stored in GitHub. Only OIDC trust + a repo variable holding the secret ARN.
+- **CRED-04**: A rotation runbook MUST be documented (rotate the Secrets Manager secret; no workflow change needed since it is read at runtime).
+
+## Performance & Cost
+- **PERF-01**: Oversized-PR guard skips review when diff > `MAX_DIFF_BYTES` (default ~200 KB, Q3=B), bounding CLI cost/latency.
+- **PERF-02**: A single review invocation is bounded by `REVIEW_TIMEOUT_SECONDS` (default 300s / 5 min, Q4=A); exceeding it is a fail-closed error.
+- **PERF-03**: Target end-to-end review time for typical PRs: a few minutes.
+
+## Reliability / Error Handling
+- **REL-01**: Fail-closed on any unrecoverable error (BR-PRA-08); the status check never passes silently on failure.
+- **REL-02**: Idempotent comment posting (BR-PRA-14) — re-runs update the agent's existing comment, no duplicates.
+- **REL-03**: Kiro CLI exit codes checked (0 ok; 1 failure; 2 arg error) → non-zero maps to ERROR verdict.
+
+## Observability
+- **OBS-01**: Log a structured decision summary: findings count by severity + final verdict (no secrets, SECURITY-03).
+- **OBS-02**: The GitHub status check description communicates the verdict succinctly (e.g., "3 findings (1 High) — changes requested").
+
+## Maintainability / Testability
+- **MNT-01**: Pure logic (`compute_verdict`, `classify_findings`, `parse_cli_response`, `render_summary`) isolated from I/O for unit + property testing.
+- **MNT-02**: PBT (Hypothesis) for identified properties (PBT-01 set) + example-based pytest for critical scenarios (PBT-10).
+- **MNT-03**: Configuration via env vars (table in tech-stack-decisions.md) — no hardcoded thresholds.
+
+## Resiliency (extension DISABLED)
+Marked N/A per Q8=B. Fail-safe behavior still covered by SECURITY-15 / REL-01.
+
+---
+
+## PBT Compliance (this stage — PBT-09)
+- **Framework selected**: Hypothesis (Python) — documented in tech-stack-decisions.md and will be added to `requirements.txt`. Supports custom generators, shrinking, seed reproducibility. **Compliant.**

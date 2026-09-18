@@ -1,0 +1,94 @@
+# Business Logic Model — Unit: pr-review-agent
+
+## Overview
+The agent is a Python module executed by a GitHub Actions workflow on the CodeBuild runner. It reviews the PR diff using the **Kiro CLI in headless mode** (`kiro-cli chat --no-interactive`, authenticated via `KIRO_API_KEY`) and reports results back to GitHub.
+
+## End-to-End Flow
+
+```
+GitHub Actions (PR to dev: opened / reopened / synchronize)
+      |
+      v
+[1] Load context (repo, PR number, head SHA, base ref) from GitHub event
+      |
+      v
+[2] Guard: base ref == dev ?  --no--> exit (BR-PRA-01)
+      |
+      yes
+      v
+[3] Fetch PR diff via GitHub API  -> list[DiffFile]
+      |
+      v
+[4] Size guard: total_diff_bytes > MAX_DIFF_BYTES ?
+      |                                 |
+      | yes                             | no
+      v                                 v
+ [4a] SKIPPED_TOO_LARGE           [5] Build size-bounded ReviewInput
+      post split-PR comment            |
+      set non-blocking check           v
+      (BR-PRA-07)                 [6] Build prompt (delimited, injection-safe — BR-PRA-12)
+      exit                             |
+                                       v
+                                  [7] Invoke Kiro CLI headless
+                                      (kiro-cli chat --no-interactive, constrained tools)
+                                       |
+                                 error | ok (exit 0)
+                                       |
+                             +---------+----------+
+                             | error              | ok
+                             | (exit 1/2, timeout)|
+                             v                    v
+                       [7a] ERROR verdict   [8] Parse CLI JSON output -> list[Finding]
+                            fail-closed           |   (parse error -> ERROR, BR-PRA-08)
+                            (BR-PRA-08)           v
+                            exit             [9] compute_verdict(findings) (pure — BR-PRA-06/13)
+                                                  |
+                                                  v
+                                            [10] Render summary_markdown
+                                                  |
+                                                  v
+                                            [11] Post/refresh results to GitHub:
+                                                  - upsert summary comment (idempotent — BR-PRA-14)
+                                                  - inline comments for located findings
+                                                  - set commit status on head SHA
+                                                  - APPROVE review iff verdict == APPROVE
+                                                  (re-review comment only if verdict changed — BR-PRA-09)
+```
+
+## Functions (logical, technology-agnostic)
+
+### Pure functions (no I/O — primary PBT targets)
+- `classify_findings(raw_findings) -> list[Finding]`: normalize/validate CLI output into typed Findings; drop malformed entries.
+- `compute_verdict(findings, error, oversized) -> Verdict`: implements BR-PRA-06 precedence. Pure and deterministic.
+- `render_summary(review_result) -> markdown string`: deterministic formatting of findings grouped by severity.
+- `parse_cli_response(text) -> list[raw_finding]`: parse the Kiro CLI's JSON payload from stdout; raise a typed error if unparseable.
+- `detect_language(path) -> string`: map file extension to language.
+
+### I/O functions (side effects — mocked in tests)
+- `fetch_diff(context) -> list[DiffFile]`: GitHub API.
+- `invoke_kiro_cli(prompt) -> text`: run `kiro-cli chat --no-interactive` as a subprocess (constrained tool posture, BR-PRA-12); check exit code (0 ok; 1/2 → error).
+- `upsert_summary_comment(context, body)`: GitHub API (idempotent via marker).
+- `post_inline_comments(context, findings)`: GitHub API.
+- `set_status(context, verdict)`: GitHub commit status API.
+- `submit_approval(context)`: GitHub PR review API.
+
+## Testable Properties (PBT-01 — Property-Based Testing extension ENABLED/Full)
+
+| Component | Property Category | Property |
+|---|---|---|
+| `compute_verdict` | Invariant | If any finding is High → verdict is always BLOCK, regardless of other findings' order/count (BR-PRA-03). |
+| `compute_verdict` | Invariant | If findings list is empty and no error/oversize → verdict is always APPROVE (BR-PRA-04). |
+| `compute_verdict` | Invariant | If `error` is set → verdict is always ERROR, regardless of findings (fail-closed, BR-PRA-08). |
+| `compute_verdict` | Commutativity | Verdict is independent of the ORDER of findings in the list (only their severities matter). |
+| `compute_verdict` | Idempotence | `compute_verdict(f) == compute_verdict(f)` for repeated calls (deterministic, BR-PRA-13). |
+| `parse_cli_response` / `render_summary` | Round-trip | For a valid ReviewResult, `parse(render_findings_json(findings))` yields findings equal to the originals (structured serialize→deserialize). |
+| `classify_findings` | Invariant | Every output Finding has a valid Severity and category; malformed inputs are dropped, never crash. |
+| `classify_findings` | Idempotence | `classify(classify(x)) == classify(x)` (normalization is idempotent, BR-PRA-14 support). |
+| `render_summary` | Invariant | Output never contains the token/credentials placeholder values (SECURITY-03 guard). |
+
+Components with **no PBT properties**: I/O functions (`fetch_diff`, `invoke_kiro_cli`, GitHub posting) — these are integration-tested with mocks, not property-tested (they are thin subprocess/API adapters). Marked as "No PBT properties identified — thin I/O adapters."
+
+## Data Flow Summary
+- **Inputs**: GitHub PR event (untrusted), PR diff (untrusted), config (MAX_DIFF_BYTES, kiro CLI version/agent profile), `KIRO_API_KEY` secret.
+- **Transformations**: diff → bounded ReviewInput → prompt → Kiro CLI stdout (JSON) → findings → verdict → markdown.
+- **Outputs**: GitHub comments, commit status, optional approval review, structured logs (no secrets).

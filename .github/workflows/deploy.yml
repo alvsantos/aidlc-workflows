@@ -54,14 +54,16 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      # actions/setup-python is unsupported on Amazon Linux runners
+      # (actions/setup-python#750); use the image's preinstalled Python 3.11.
+      - name: Verify preinstalled Python 3.11
+        run: |
+          python3.11 --version
+          echo "PYTHON=$(command -v python3.11)" >> "$GITHUB_ENV"
 
       - name: Install app dev dependencies
         # Install app requirements so CDK asset bundling can verify them
-        run: pip install -r app/requirements-dev.txt
+        run: python3.11 -m pip install -r app/requirements-dev.txt
 
       - name: Install infra dependencies
         # Use npm ci (not npm install) — uses package-lock.json exactly (BR-PIPE-05, SECURITY-10)

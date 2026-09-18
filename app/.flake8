@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 100
+
+# Excludes. Note: setting --exclude on the CLI REPLACES flake8's built-in
+# defaults, which is why passing it there let flake8 recurse into .venv and
+# lint third-party code. Defining excludes here keeps them in one place and
+# preserves the intended set for both CI and local runs.
+extend-exclude =
+    .venv,
+    venv,
+    __pycache__,
+    .git,
+    build,
+    dist,
+    *.egg-info,
+    tests
+
+# Only lint application source; virtualenvs and generated dirs are excluded above.
