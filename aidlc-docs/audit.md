@@ -479,3 +479,11 @@ VERIFICATION: helper example-based tests 18/18 pass; infra jest tests 3/3 pass w
 **Context**: CONSTRUCTION (Iteration 2) — CI/CD pipeline bug fix within unit pr-test-quality-gate before Build and Test. Files: .github/workflows/ci.yml, .github/workflows/deploy.yml.
 
 ---
+
+## Bug Fix — flake8 scanning .venv (E501 false failures)
+**Timestamp**: 2026-09-17T22:24:38Z
+**User Input**: "the flake command is verifying the .venv folders, and breaking because very long lines"
+**AI Response**: "Root cause: ci.yml ran `flake8 app/ --max-line-length=100 --exclude=app/tests`. Passing --exclude on the CLI REPLACES flake8's built-in default excludes (.venv, .git, __pycache__, etc.), so flake8 recursed into app/.venv and flagged long lines in third-party packages. Fix: created app/.flake8 (max-line-length=100; extend-exclude includes .venv, venv, __pycache__, .git, build, dist, *.egg-info, tests) as single source of truth; simplified ci.yml lint step to `python3.11 -m flake8 .` with working-directory: app; updated app/README.md example. Verified in throwaway venv w/ flake8 6.1.0: `flake8 .` clean (exit 0) even with a planted 206-char line inside .venv, while pointing flake8 directly at that file flags E501 — proving .venv is excluded. ci.yml YAML re-validated OK. (.venv/__pycache__ already in .gitignore.)"
+**Context**: CONSTRUCTION (Iteration 2) — CI lint bug fix within unit pr-test-quality-gate before Build and Test. Files: app/.flake8 (new), .github/workflows/ci.yml, app/README.md.
+
+---

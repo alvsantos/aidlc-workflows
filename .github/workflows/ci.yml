@@ -54,7 +54,9 @@ jobs:
         run: python3.11 -m pip install -r app/requirements-dev.txt
 
       - name: Lint — flake8
-        run: flake8 app/ --max-line-length=100 --exclude=app/tests
+        # Config (max-line-length + excludes, incl. .venv) lives in app/.flake8
+        working-directory: app
+        run: python3.11 -m flake8 .
 
       - name: Unit tests — pytest
         run: pytest app/tests/ -v --tb=short

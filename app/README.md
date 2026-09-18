@@ -49,7 +49,7 @@ pytest tests/ -v --cov=. --cov-report=term-missing
 ### Run Linter
 
 ```bash
-flake8 . --max-line-length=100
+flake8 .  # uses app/.flake8 (max-line-length=100; excludes .venv, tests, __pycache__)
 ```
 
 ### Test Locally (without Lambda)
