@@ -36,10 +36,14 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      # NOTE: actions/setup-python does NOT support Amazon Linux runners
+      # (see actions/setup-python#750). The CodeBuild AMAZON_LINUX_2_5 image
+      # ships Python 3.11 preinstalled, so we use that directly instead of
+      # downloading (which fails: "version '3.11' ... not found for this OS").
+      - name: Verify preinstalled Python 3.11
+        run: |
+          python3.11 --version
+          echo "PYTHON=$(command -v python3.11)" >> "$GITHUB_ENV"
 
       - name: Set up Node.js 18
         uses: actions/setup-node@v4
@@ -47,7 +51,7 @@ jobs:
           node-version: "18"
 
       - name: Install app dependencies
-        run: pip install -r app/requirements-dev.txt
+        run: python3.11 -m pip install -r app/requirements-dev.txt
 
       - name: Lint — flake8
         run: flake8 app/ --max-line-length=100 --exclude=app/tests
@@ -96,10 +100,12 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      # actions/setup-python is unsupported on Amazon Linux runners
+      # (actions/setup-python#750); use the image's preinstalled Python 3.11.
+      - name: Verify preinstalled Python 3.11
+        run: |
+          python3.11 --version
+          echo "PYTHON=$(command -v python3.11)" >> "$GITHUB_ENV"
 
       - name: Set up Node.js 18
         uses: actions/setup-node@v4
@@ -107,14 +113,15 @@ jobs:
           node-version: "18"
 
       - name: Install app dev dependencies
-        run: pip install -r app/requirements-dev.txt
+        run: python3.11 -m pip install -r app/requirements-dev.txt
 
       - name: Install infra dependencies
         working-directory: infra
         run: npm ci  # exact versions (SECURITY-10)
 
       - name: Ensure jq is available
-        run: command -v jq >/dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y jq)
+        # AMAZON_LINUX_2_5 uses dnf (not apt-get); jq is usually preinstalled.
+        run: command -v jq >/dev/null 2>&1 || sudo dnf install -y jq
 
       - name: Install Kiro CLI (pinned)
         # Pinned version (SECURITY-10). Install method per official distribution.

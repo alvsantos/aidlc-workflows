@@ -99,5 +99,6 @@ already-generated tests for each component in its own toolchain (`app/` = pytest
 - **Lifecycle Phase**: CONSTRUCTION (Iteration 2)
 - **Current Stage**: Code Generation COMPLETE (awaiting approval)
 - **Next Stage**: Build and Test
-- **Status**: ⏸️ PAUSED (parked 2026-09-17T22:12:58Z by user "aidlc park")
+- **Status**: ▶️ ACTIVE (resumed 2026-09-17T22:20:22Z)
+- **Recent fix (2026-09-17T22:20Z)**: Pipeline Python 3.11 setup failure resolved — removed actions/setup-python (unsupported on Amazon Linux, issue #750) from ci.yml (test + quality-gate) and deploy.yml; now uses AL2023 preinstalled python3.11. Also switched jq install from apt-get→dnf. YAML validated.
 - **Resume pointer**: Approve Code Generation for unit `pr-test-quality-gate`, then run Build and Test. Generated code verified (helper tests 18/18, infra tests 3/3, tsc clean, cdk synth renders GetSecretValue). Open follow-up: Kiro CLI install step in ci.yml is a pinned placeholder (set KIRO_CLI_VERSION + installer URL). Uncommitted changes present; infra/coverage/ is generated output (consider gitignore).

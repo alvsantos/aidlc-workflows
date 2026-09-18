@@ -463,3 +463,19 @@ VERIFICATION: helper example-based tests 18/18 pass; infra jest tests 3/3 pass w
 **Context**: Session pause. Resume via session-continuity (read aidlc-state.md).
 
 ---
+
+## Session Resume
+**Timestamp**: 2026-09-17T22:16:25Z
+**User Input**: "aidlc --resume"
+**AI Response**: "Loaded aidlc-state.md + session-continuity rules. Detected paused state (parked 2026-09-17T22:12:58Z). Loaded in-progress unit artifacts (code-generation-plan, code-summary) for unit pr-test-quality-gate. Presented welcome-back prompt."
+**Context**: Iteration 2, CONSTRUCTION phase — Code Generation COMPLETE for unit pr-test-quality-gate (awaiting approval); next stage Build and Test.
+
+---
+
+## Bug Fix — Pipeline Python 3.11 setup failure
+**Timestamp**: 2026-09-17T22:20:22Z
+**User Input**: "first fix a problem with python version in the pipeline:   Error: The version '3.11' with architecture 'x64' was not found for this operating system." / "yes"
+**AI Response**: "Root cause: actions/setup-python@v5 does not support Amazon Linux runners (actions/setup-python#750); the CodeBuild runner uses LinuxBuildImage.AMAZON_LINUX_2_5 (pipeline-stack.ts:199). Fix: removed setup-python from all three workflow blocks (ci.yml test + quality-gate jobs, deploy.yml) and used the image's preinstalled Python 3.11 (python3.11 --version; python3.11 -m pip install ...). Also fixed same-root-cause bug: 'Ensure jq is available' used apt-get (not on Amazon Linux) -> switched to dnf. Verified: YAML parses OK for ci.yml and deploy.yml; grep confirms no active setup-python/pip/apt-get steps remain."
+**Context**: CONSTRUCTION (Iteration 2) — CI/CD pipeline bug fix within unit pr-test-quality-gate before Build and Test. Files: .github/workflows/ci.yml, .github/workflows/deploy.yml.
+
+---
