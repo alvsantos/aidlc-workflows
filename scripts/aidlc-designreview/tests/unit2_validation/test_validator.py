@@ -114,7 +114,7 @@ class TestCheckTypePresence:
         validator, _ = make_validator(tmp_path)
         artifacts = [
             make_artifact("components.md", ArtifactType.APPLICATION_DESIGN),
-            make_artifact("business-logic.md", ArtifactType.FUNCTIONAL_DESIGN),
+            make_artifact("business-logic.md", ArtifactType.NFR),
             make_artifact(
                 "technical-environment.md", ArtifactType.TECHNICAL_ENVIRONMENT
             ),
@@ -125,7 +125,7 @@ class TestCheckTypePresence:
     def test_missing_application_design_returns_warning(self, tmp_path):
         validator, _ = make_validator(tmp_path)
         artifacts = [
-            make_artifact("business-logic.md", ArtifactType.FUNCTIONAL_DESIGN),
+            make_artifact("business-logic.md", ArtifactType.NFR),
             make_artifact(
                 "technical-environment.md", ArtifactType.TECHNICAL_ENVIRONMENT
             ),
@@ -133,19 +133,19 @@ class TestCheckTypePresence:
         warnings = validator._check_type_presence(artifacts)
         assert any("application-design" in w.lower() for w in warnings)
 
-    def test_missing_functional_design_returns_warning(self, tmp_path):
+    def test_missing_nfr_returns_warning(self, tmp_path):
         validator, _ = make_validator(tmp_path)
         artifacts = [
             make_artifact("components.md", ArtifactType.APPLICATION_DESIGN),
         ]
         warnings = validator._check_type_presence(artifacts)
-        assert any("functional-design" in w.lower() for w in warnings)
+        assert any("nfr" in w.lower() for w in warnings)
 
     def test_missing_technical_environment_returns_warning(self, tmp_path):
         validator, _ = make_validator(tmp_path)
         artifacts = [
             make_artifact("components.md", ArtifactType.APPLICATION_DESIGN),
-            make_artifact("business-logic.md", ArtifactType.FUNCTIONAL_DESIGN),
+            make_artifact("business-logic.md", ArtifactType.NFR),
         ]
         warnings = validator._check_type_presence(artifacts)
         assert any("technical-environment" in w.lower() for w in warnings)
@@ -156,7 +156,7 @@ class TestValidateStructure:
         (tmp_path / "aidlc-state.md").write_text("sentinel")
         artifacts = [
             make_artifact("components.md", ArtifactType.APPLICATION_DESIGN),
-            make_artifact("business-logic.md", ArtifactType.FUNCTIONAL_DESIGN),
+            make_artifact("business-logic.md", ArtifactType.NFR),
             make_artifact(
                 "technical-environment.md", ArtifactType.TECHNICAL_ENVIRONMENT
             ),
@@ -215,10 +215,10 @@ class TestValidateStructure:
         artifacts = [
             make_artifact("c1.md", ArtifactType.APPLICATION_DESIGN),
             make_artifact("c2.md", ArtifactType.APPLICATION_DESIGN),
-            make_artifact("f1.md", ArtifactType.FUNCTIONAL_DESIGN),
+            make_artifact("f1.md", ArtifactType.NFR),
         ]
         validator, _ = make_validator(tmp_path, artifacts=artifacts)
         result = validator.validate_structure()
 
         assert result.artifact_counts["APPLICATION_DESIGN"] == 2
-        assert result.artifact_counts["FUNCTIONAL_DESIGN"] == 1
+        assert result.artifact_counts["NFR"] == 1

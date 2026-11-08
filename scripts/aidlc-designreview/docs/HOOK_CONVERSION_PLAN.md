@@ -94,20 +94,18 @@ get_active_unit()             # Returns: current unit being worked on
 **Implementation Details**:
 
 ```bash
-# Example: Check if Functional Design complete for current unit
+# Example: Check if NFR complete (system-wide, before per-unit loop)
 is_design_complete() {
     local state_file="aidlc-docs/aidlc-state.md"
 
     # Check if file exists
     [[ ! -f "$state_file" ]] && return 1
 
-    # Count completed design stages for current unit
-    local functional=$(grep -c "\[x\] Functional Design - COMPLETE" "$state_file")
-    local nfr_req=$(grep -c "\[x\] NFR Requirements - COMPLETE" "$state_file")
-    local nfr_design=$(grep -c "\[x\] NFR Design - COMPLETE" "$state_file")
+    # Count completed system-wide NFR stage
+    local nfr=$(grep -c "\[x\] NFR - COMPLETE" "$state_file")
 
-    # All three must be complete
-    [[ $functional -gt 0 && $nfr_req -gt 0 && $nfr_design -gt 0 ]] && return 0
+    # NFR must be complete
+    [[ $nfr -gt 0 ]] && return 0
     return 1
 }
 ```text
@@ -227,14 +225,11 @@ aggregate_design_content() {
 
     # Aggregate in logical order
     {
-        echo "# Functional Design"
-        find "$base_dir/functional-design" -name "*.md" -exec cat {} \;
+        echo "# NFR (system-wide)"
+        find "aidlc-docs/construction/nfr" -name "*.md" -exec cat {} \;
 
-        echo "# NFR Requirements"
-        find "$base_dir/nfr-requirements" -name "*.md" -exec cat {} \;
-
-        echo "# NFR Design"
-        find "$base_dir/nfr-design" -name "*.md" -exec cat {} \;
+        echo "# Infrastructure Design"
+        find "$base_dir/infrastructure-design" -name "*.md" -exec cat {} \;
 
         echo "# Application Design (from inception)"
         cat aidlc-docs/inception/application-design/*.md 2>/dev/null
@@ -245,7 +240,7 @@ aggregate_design_content() {
 
 - Max 100KB total content (prevent token overflow)
 - Truncate with warning if exceeded
-- Prioritize: Functional Design > NFR Design > NFR Requirements
+- Prioritize: Application Design > NFR > Infrastructure Design
 
 ---
 
@@ -294,7 +289,7 @@ You are a design review agent for AIDLC projects. Your role is to identify issue
 ## Review Criteria
 
 ### 1. Completeness (CRITICAL)
-- [ ] All required design artifacts present (functional design, NFR requirements, NFR design)
+- [ ] All required design artifacts present (application design, NFR, infrastructure design)
 - [ ] Business rules clearly defined
 - [ ] Data models fully specified
 - [ ] Component interfaces documented
@@ -303,7 +298,7 @@ You are a design review agent for AIDLC projects. Your role is to identify issue
 ### 2. Consistency (HIGH)
 - [ ] Naming conventions consistent across artifacts
 - [ ] Component boundaries align between documents
-- [ ] Functional design and NFR design don't conflict
+- [ ] Application design and NFR design don't conflict
 - [ ] Technology choices match NFR requirements
 
 ### 3. Clarity (HIGH)
@@ -332,7 +327,7 @@ For each finding:
 **Finding #N**
 - **Severity**: CRITICAL | HIGH | MEDIUM | LOW
 - **Category**: Completeness | Consistency | Clarity | Architecture | Testability
-- **Location**: `aidlc-docs/construction/unit1-foundation/functional-design/business-logic-model.md:45`
+- **Location**: `aidlc-docs/construction/unit1-foundation/infrastructure-design/infrastructure-design.md:45`
 - **Issue**: [What is wrong]
 - **Impact**: [Why it matters for code generation]
 - **Recommendation**: [How to fix]
@@ -769,9 +764,7 @@ update_state_with_review_status() {
 
 ```markdown
 #### Unit 1: Foundation & Configuration
-- [x] Functional Design - COMPLETE
-- [x] NFR Requirements - COMPLETE
-- [x] NFR Design - COMPLETE
+- [x] Infrastructure Design - COMPLETE
 - [x] Design Review - PASSED (Score: 12, Quality: Good)
 - [x] Code Generation - COMPLETE
 ```text
@@ -800,9 +793,7 @@ update_state_with_review_status() {
 
     # Setup test state file
     cat > /tmp/test-state.md <<EOF
-- [x] Functional Design - COMPLETE
-- [x] NFR Requirements - COMPLETE
-- [x] NFR Design - COMPLETE
+- [x] Infrastructure Design - COMPLETE
 EOF
 
     # Run function
@@ -1185,7 +1176,7 @@ scripts/
 | -------------------------------------------- | -------------------------------------- | -------------------------------------------------------------------------- |
 | **Subagent produces unparseable output**   | Hook can't extract severity counts   | Regex patterns handle variations; fallback to "allow" on parse failure   |
 | **yq not installed**                       | Config parsing fails                 | Fallback to hardcoded defaults with warning                              |
-| **Token limit exceeded**                   | Subagent review fails                | Truncate aggregated content to 100KB; prioritize functional design       |
+| **Token limit exceeded**                   | Subagent review fails                | Truncate aggregated content to 100KB; prioritize application design       |
 | **False positives**                        | Hook blocks unnecessarily            | User can delete marker file to override; config thresholds adjustable    |
 | **Performance impact**                     | Hook slows down workflow             | Cache design content; skip aggregation on second attempt                 |
 
@@ -1295,7 +1286,7 @@ Subagent: **Verdict**: BLOCK - 2 CRITICAL findings, 3 HIGH findings
 **Step 8: User Reviews Findings, Fixes Design**
 
 ```text
-User: Updates aidlc-docs/construction/unit1-foundation/functional-design/business-logic-model.md
+User: Updates aidlc-docs/construction/unit1-foundation/infrastructure-design/infrastructure-design.md
 User: "Okay, I've fixed the issues. Generate the code now."
 ```text
 **Step 9: Second Attempt**

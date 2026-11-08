@@ -4,7 +4,7 @@
       "title": "Missing Error Handling in Data Pipeline",
       "severity": "high",
       "description": "The data processing pipeline lacks comprehensive error handling for malformed input records.",
-      "location": "functional-design/business-logic-model.md Section 3.2",
+      "location": "infrastructure-design/infrastructure-design.md Section 3.2",
       "recommendation": "Add input validation at pipeline entry point with fallback to dead-letter queue."
     },
     {

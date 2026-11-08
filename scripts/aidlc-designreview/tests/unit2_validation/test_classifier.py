@@ -42,7 +42,7 @@ def make_mock_logger() -> MagicMock:
     return logger
 
 
-def make_mock_bedrock_client(response_text: str = "FUNCTIONAL_DESIGN") -> MagicMock:
+def make_mock_bedrock_client(response_text: str = "NFR") -> MagicMock:
     """Return a mock boto3 bedrock-runtime client that returns a fixed response."""
     body_bytes = json.dumps({"content": [{"text": response_text}]}).encode("utf-8")
     mock_response = {"body": BytesIO(body_bytes)}
@@ -52,7 +52,7 @@ def make_mock_bedrock_client(response_text: str = "FUNCTIONAL_DESIGN") -> MagicM
 
 
 def make_classifier(
-    client=None, response_text="FUNCTIONAL_DESIGN"
+    client=None, response_text="NFR"
 ) -> ArtifactClassifier:
     if client is None:
         client = make_mock_bedrock_client(response_text)
@@ -70,10 +70,8 @@ class TestBuildPrompt:
         prompt = classifier._build_prompt("# Some content")
         for artifact_type in [
             "APPLICATION_DESIGN",
-            "FUNCTIONAL_DESIGN",
             "TECHNICAL_ENVIRONMENT",
-            "NFR_DESIGN",
-            "NFR_REQUIREMENTS",
+            "NFR",
             "UNKNOWN",
         ]:
             assert artifact_type in prompt
@@ -94,14 +92,12 @@ class TestParseResponse:
     @pytest.mark.parametrize(
         "response,expected",
         [
-            ("FUNCTIONAL_DESIGN", ArtifactType.FUNCTIONAL_DESIGN),
             ("APPLICATION_DESIGN", ArtifactType.APPLICATION_DESIGN),
             ("TECHNICAL_ENVIRONMENT", ArtifactType.TECHNICAL_ENVIRONMENT),
-            ("NFR_DESIGN", ArtifactType.NFR_DESIGN),
-            ("NFR_REQUIREMENTS", ArtifactType.NFR_REQUIREMENTS),
+            ("NFR", ArtifactType.NFR),
             ("UNKNOWN", ArtifactType.UNKNOWN),
-            ("functional_design", ArtifactType.FUNCTIONAL_DESIGN),  # lowercase
-            ("  FUNCTIONAL_DESIGN  ", ArtifactType.FUNCTIONAL_DESIGN),  # whitespace
+            ("nfr", ArtifactType.NFR),  # lowercase
+            ("  NFR  ", ArtifactType.NFR),  # whitespace
         ],
     )
     def test_valid_responses_parsed_correctly(self, response, expected):
@@ -120,7 +116,7 @@ class TestExtractUnitName:
     def test_extracts_unit_name_from_construction_path(self):
         classifier = make_classifier()
         path = Path(
-            "/aidlc-docs/construction/unit1-foundation-config/functional-design/business-logic-model.md"
+            "/aidlc-docs/construction/unit1-foundation-config/nfr/nfr-requirements.md"
         )
         assert classifier._extract_unit_name(path) == "unit1-foundation-config"
 
@@ -136,7 +132,7 @@ class TestExtractUnitName:
 
     def test_extracts_any_unit_name_format(self):
         classifier = make_classifier()
-        path = Path("/aidlc-docs/construction/catalog-service/nfr-design/patterns.md")
+        path = Path("/aidlc-docs/construction/catalog-service/infrastructure-design/patterns.md")
         assert classifier._extract_unit_name(path) == "catalog-service"
 
 
@@ -169,7 +165,7 @@ class TestClassifyOne:
         )
         success_response = {
             "body": BytesIO(
-                json.dumps({"content": [{"text": "FUNCTIONAL_DESIGN"}]}).encode()
+                json.dumps({"content": [{"text": "NFR"}]}).encode()
             )
         }
         mock_client.invoke_model.side_effect = [error, success_response]
@@ -182,11 +178,11 @@ class TestClassifyOne:
         with patch("design_reviewer.validation.classifier.time.sleep"):
             result = classifier._classify_one(
                 make_mock_path(
-                    "/aidlc-docs/construction/unit1/functional-design/file.md"
+                    "/aidlc-docs/construction/nfr/file.md"
                 ),
                 "content",
             )
-        assert result.artifact_type == ArtifactType.FUNCTIONAL_DESIGN
+        assert result.artifact_type == ArtifactType.NFR
         assert mock_client.invoke_model.call_count == 2
 
     def test_raises_structure_validation_error_after_two_failures(self):
@@ -239,10 +235,10 @@ class TestClassifyAll:
         assert result == []
 
     def test_returns_artifact_info_list(self):
-        classifier = make_classifier(response_text="FUNCTIONAL_DESIGN")
+        classifier = make_classifier(response_text="NFR")
         candidates = [
             (
-                make_mock_path("/aidlc-docs/construction/u1/functional-design/file.md"),
+                make_mock_path("/aidlc-docs/construction/nfr/file.md"),
                 "# FD\n",
             ),
         ]
@@ -253,4 +249,4 @@ class TestClassifyAll:
             results = classifier.classify_all(candidates)
 
         assert len(results) == 1
-        assert results[0].artifact_type == ArtifactType.FUNCTIONAL_DESIGN
+        assert results[0].artifact_type == ArtifactType.NFR

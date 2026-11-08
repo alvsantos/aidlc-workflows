@@ -53,7 +53,6 @@ _LAZY_IMPORTS = [
     "design_reviewer.validation.validator.StructureValidator",
     "design_reviewer.validation.loader.ArtifactLoader",
     "design_reviewer.parsing.app_design.ApplicationDesignParser",
-    "design_reviewer.parsing.func_design.FunctionalDesignParser",
     "design_reviewer.parsing.tech_env.TechnicalEnvironmentParser",
     "design_reviewer.foundation.pattern_library.PatternLibrary",
     "design_reviewer.foundation.prompt_manager.PromptManager",

@@ -39,18 +39,16 @@ class TestArtifactType:
         values = {t.value for t in ArtifactType}
         assert values == {
             "APPLICATION_DESIGN",
-            "FUNCTIONAL_DESIGN",
             "TECHNICAL_ENVIRONMENT",
-            "NFR_DESIGN",
-            "NFR_REQUIREMENTS",
+            "NFR",
             "UNKNOWN",
         }
 
     def test_is_string_enum(self):
-        assert ArtifactType.FUNCTIONAL_DESIGN == "FUNCTIONAL_DESIGN"
+        assert ArtifactType.NFR == "NFR"
 
     def test_from_string(self):
-        assert ArtifactType("NFR_DESIGN") == ArtifactType.NFR_DESIGN
+        assert ArtifactType("NFR") == ArtifactType.NFR
 
 
 class TestArtifactInfoCreate:
@@ -64,7 +62,7 @@ class TestArtifactInfoCreate:
 
     def test_create_populates_file_name(self):
         mock_path = self._mock_path("domain-entities.md")
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
         assert artifact.file_name == "domain-entities.md"
 
     def test_create_populates_size_bytes(self):
@@ -75,20 +73,20 @@ class TestArtifactInfoCreate:
     def test_create_populates_discovered_at_utc(self):
         mock_path = self._mock_path()
         before = datetime.now(timezone.utc)
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
         after = datetime.now(timezone.utc)
         assert before <= artifact.discovered_at <= after
 
     def test_create_content_is_none(self):
         mock_path = self._mock_path()
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
         assert artifact.content is None
 
     def test_create_with_unit_name(self):
         mock_path = self._mock_path()
         artifact = ArtifactInfo.create(
             mock_path,
-            ArtifactType.FUNCTIONAL_DESIGN,
+            ArtifactType.NFR,
             unit_name="unit1-foundation-config",
         )
         assert artifact.unit_name == "unit1-foundation-config"
@@ -104,7 +102,7 @@ class TestArtifactInfoWithContent:
         mock_path = MagicMock(spec=Path)
         mock_path.name = "business-rules.md"
         mock_path.stat.return_value = MagicMock(st_size=512)
-        return ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        return ArtifactInfo.create(mock_path, ArtifactType.NFR)
 
     def test_with_content_returns_new_instance(self):
         original = self._make_artifact()
@@ -151,7 +149,7 @@ class TestValidationResult:
 
         return [
             ArtifactInfo.create(mock_path, ArtifactType.APPLICATION_DESIGN),
-            ArtifactInfo.create(mock_path2, ArtifactType.FUNCTIONAL_DESIGN),
+            ArtifactInfo.create(mock_path2, ArtifactType.NFR),
         ]
 
     def test_empty_result(self):
@@ -164,7 +162,7 @@ class TestValidationResult:
         artifacts = self._make_artifacts()
         result = ValidationResult(artifacts=artifacts)
         assert result.artifact_counts["APPLICATION_DESIGN"] == 1
-        assert result.artifact_counts["FUNCTIONAL_DESIGN"] == 1
+        assert result.artifact_counts["NFR"] == 1
         assert result.artifact_counts["UNKNOWN"] == 0
 
     def test_warnings_stored(self):

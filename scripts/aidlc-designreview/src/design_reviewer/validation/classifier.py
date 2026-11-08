@@ -55,17 +55,12 @@ ARTIFACT TYPES:
 - APPLICATION_DESIGN: Contains component definitions, component methods, service descriptions, \
 component dependencies. Found in inception/application-design/. \
 Examples: components.md, component-methods.md, services.md, unit-of-work.md.
-- FUNCTIONAL_DESIGN: Contains business logic models, domain entities, business rules. \
-Found in construction/{{unit}}/functional-design/. \
-Examples: business-logic-model.md, domain-entities.md, business-rules.md.
 - TECHNICAL_ENVIRONMENT: Describes the technical stack, dependencies, and environment \
 constraints. Filename typically contains "technical-environment".
-- NFR_REQUIREMENTS: Contains non-functional requirements (performance, security, scalability) \
-and technology stack decisions. Found in construction/{{unit}}/nfr-requirements/. \
-Examples: nfr-requirements.md, tech-stack-decisions.md.
-- NFR_DESIGN: Contains NFR design patterns and logical component definitions. \
-Found in construction/{{unit}}/nfr-design/. \
-Examples: nfr-design-patterns.md, logical-components.md.
+- NFR: Contains system-wide non-functional requirements (performance, security, scalability), \
+technology stack decisions, NFR design patterns, and logical component definitions. \
+Found in construction/nfr/. \
+Examples: nfr-requirements.md, tech-stack-decisions.md, nfr-design-patterns.md, logical-components.md.
 - UNKNOWN: Does not match any of the above types.
 
 DOCUMENT EXCERPT:
@@ -73,7 +68,7 @@ DOCUMENT EXCERPT:
 {excerpt}
 ---
 
-Respond with ONLY the artifact type name (e.g., FUNCTIONAL_DESIGN). No explanation."""
+Respond with ONLY the artifact type name (e.g., NFR). No explanation."""
 
 
 class ArtifactClassifier:

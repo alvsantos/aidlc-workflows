@@ -49,22 +49,6 @@ class ApplicationDesignModel(BaseModel):
     source_count: int
 
 
-class FunctionalDesignModel(BaseModel):
-    """
-    Aggregated content of all functional-design artifacts across all units.
-
-    raw_content includes unit-name headers so AI agents know which unit
-    each design artifact belongs to.
-    """
-
-    model_config = ConfigDict(frozen=True)
-
-    raw_content: str
-    file_paths: List[Path]
-    unit_names: List[str]
-    source_count: int
-
-
 class TechnicalEnvironmentModel(BaseModel):
     """
     Raw content of technical-environment.md, passed through unchanged.
@@ -87,6 +71,5 @@ class DesignData(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     app_design: Optional[ApplicationDesignModel] = None
-    functional_designs: Optional[FunctionalDesignModel] = None
     tech_env: Optional[TechnicalEnvironmentModel] = None
     raw_content: Dict[Path, str]

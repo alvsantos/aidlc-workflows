@@ -40,10 +40,8 @@ class ArtifactType(str, Enum):
     """Classifies a discovered AIDLC design artifact by content type."""
 
     APPLICATION_DESIGN = "APPLICATION_DESIGN"
-    FUNCTIONAL_DESIGN = "FUNCTIONAL_DESIGN"
     TECHNICAL_ENVIRONMENT = "TECHNICAL_ENVIRONMENT"
-    NFR_DESIGN = "NFR_DESIGN"
-    NFR_REQUIREMENTS = "NFR_REQUIREMENTS"
+    NFR = "NFR"
     UNKNOWN = "UNKNOWN"
 
 

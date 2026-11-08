@@ -112,12 +112,12 @@ class TestApplyExclusions:
         result = scanner._apply_exclusions([f])
         assert result == []
 
-    def test_keeps_functional_design_artifact(self):
+    def test_keeps_nfr_artifact(self):
         root = Path("/root/aidlc-docs")
         scanner = self._scanner(root)
         f = self._make_file(
             root,
-            "construction/unit1-foundation-config/functional-design/business-logic-model.md",
+            "construction/nfr/nfr-requirements.md",
         )
         result = scanner._apply_exclusions([f])
         assert result == [f]

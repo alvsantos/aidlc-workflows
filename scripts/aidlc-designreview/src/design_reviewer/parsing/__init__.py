@@ -28,11 +28,9 @@ AI agent consumption in Unit 4.
 
 from design_reviewer.parsing.app_design import ApplicationDesignParser
 from design_reviewer.parsing.base import BaseParser
-from design_reviewer.parsing.func_design import FunctionalDesignParser
 from design_reviewer.parsing.models import (
     ApplicationDesignModel,
     DesignData,
-    FunctionalDesignModel,
     TechnicalEnvironmentModel,
 )
 from design_reviewer.parsing.tech_env import TechnicalEnvironmentParser
@@ -40,10 +38,8 @@ from design_reviewer.parsing.tech_env import TechnicalEnvironmentParser
 __all__ = [
     "BaseParser",
     "ApplicationDesignParser",
-    "FunctionalDesignParser",
     "TechnicalEnvironmentParser",
     "ApplicationDesignModel",
-    "FunctionalDesignModel",
     "TechnicalEnvironmentModel",
     "DesignData",
 ]

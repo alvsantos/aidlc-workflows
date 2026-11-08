@@ -28,7 +28,6 @@ import pytest
 from design_reviewer.parsing.models import (
     ApplicationDesignModel,
     DesignData,
-    FunctionalDesignModel,
     TechnicalEnvironmentModel,
 )
 
@@ -53,25 +52,6 @@ class TestApplicationDesignModel:
         assert m.raw_content == ""
 
 
-class TestFunctionalDesignModel:
-    def test_construction(self):
-        m = FunctionalDesignModel(
-            raw_content="# Unit: u1\n...",
-            file_paths=[Path("/a/b.md")],
-            unit_names=["unit1"],
-            source_count=1,
-        )
-        assert m.unit_names == ["unit1"]
-        assert m.source_count == 1
-
-    def test_frozen_rejects_assignment(self):
-        m = FunctionalDesignModel(
-            raw_content="", file_paths=[], unit_names=[], source_count=0
-        )
-        with pytest.raises(Exception):
-            m.unit_names = ["new"]
-
-
 class TestTechnicalEnvironmentModel:
     def test_construction_with_path(self):
         m = TechnicalEnvironmentModel(
@@ -94,7 +74,6 @@ class TestDesignData:
     def test_all_parsed_fields_optional(self):
         d = DesignData(raw_content={Path("/a"): "content"})
         assert d.app_design is None
-        assert d.functional_designs is None
         assert d.tech_env is None
 
     def test_raw_content_required(self):
@@ -103,18 +82,13 @@ class TestDesignData:
 
     def test_with_all_fields(self):
         app = ApplicationDesignModel(raw_content="app", file_paths=[], source_count=0)
-        func = FunctionalDesignModel(
-            raw_content="func", file_paths=[], unit_names=[], source_count=0
-        )
         tech = TechnicalEnvironmentModel(raw_content="tech")
         d = DesignData(
             app_design=app,
-            functional_designs=func,
             tech_env=tech,
             raw_content={},
         )
         assert d.app_design is app
-        assert d.functional_designs is func
         assert d.tech_env is tech
 
     def test_frozen_rejects_assignment(self):

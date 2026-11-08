@@ -103,14 +103,14 @@ class TestLogDiscoverySummary:
         artifacts = [
             make_artifact_info("components.md", ArtifactType.APPLICATION_DESIGN),
             make_artifact_info(
-                "business-logic-model.md", ArtifactType.FUNCTIONAL_DESIGN
+                "business-logic-model.md", ArtifactType.NFR
             ),
         ]
         discoverer._log_discovery_summary(artifacts)
 
         all_calls = " ".join(str(c) for c in mock_logger.info.call_args_list)
         assert "APPLICATION_DESIGN" in all_calls
-        assert "FUNCTIONAL_DESIGN" in all_calls
+        assert "NFR" in all_calls
         assert "components.md" in all_calls
 
     def test_logs_count_summary(self):
@@ -118,8 +118,8 @@ class TestLogDiscoverySummary:
         discoverer = ArtifactDiscoverer(MagicMock(), MagicMock(), mock_logger)
         artifacts = [
             make_artifact_info("components.md", ArtifactType.APPLICATION_DESIGN),
-            make_artifact_info("business-logic.md", ArtifactType.FUNCTIONAL_DESIGN),
-            make_artifact_info("domain-entities.md", ArtifactType.FUNCTIONAL_DESIGN),
+            make_artifact_info("business-logic.md", ArtifactType.NFR),
+            make_artifact_info("domain-entities.md", ArtifactType.NFR),
         ]
         discoverer._log_discovery_summary(artifacts)
 
@@ -128,7 +128,7 @@ class TestLogDiscoverySummary:
         ]
         assert len(summary_calls) == 1
         assert "application-design" in summary_calls[0]
-        assert "functional-design" in summary_calls[0]
+        assert "nfr" in summary_calls[0]
 
     def test_logs_total_count(self):
         mock_logger = make_mock_logger()

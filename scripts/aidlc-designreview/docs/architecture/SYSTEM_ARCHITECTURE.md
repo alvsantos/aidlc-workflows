@@ -212,7 +212,6 @@ The system follows a 5-layer architecture pattern:
 **Components**:
 
 - `ApplicationDesignParser`: Parse application-design artifacts
-- `FunctionalDesignParser`: Parse functional-design artifacts
 - `TechnicalEnvironmentParser`: Parse technical environment
 
 **Key Responsibilities**:
@@ -317,7 +316,7 @@ The system follows a 5-layer architecture pattern:
 ┌─────────────────────────────────────────────────────────────┐
 │ 3. PARSING                                                   │
 │  • Parse application-design artifacts                        │
-│  • Parse functional-design artifacts                         │
+│  • Parse NFR artifacts                                       │
 │  • Parse technical environment                               │
 │  • Build DesignData model                                    │
 └────┬────────────────────────────────────────────────────────┘

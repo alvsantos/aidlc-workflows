@@ -40,20 +40,19 @@ def make_mock_logger() -> MagicMock:
 
 
 def make_artifact(
-    name: str, artifact_type: ArtifactType = ArtifactType.FUNCTIONAL_DESIGN
+    name: str, artifact_type: ArtifactType = ArtifactType.NFR
 ) -> ArtifactInfo:
     mock_path = MagicMock(spec=Path)
     mock_path.name = name
     mock_path.parts = (
         "/aidlc-docs",
         "construction",
-        "unit1",
-        "functional-design",
+        "nfr",
         name,
     )
     mock_path.stat.return_value = MagicMock(st_size=100)
     mock_path.__str__ = lambda self: (
-        f"/aidlc-docs/construction/unit1/functional-design/{name}"
+        f"/aidlc-docs/construction/nfr/{name}"
     )
     return ArtifactInfo.create(mock_path, artifact_type)
 
@@ -74,7 +73,7 @@ class TestLoadMultipleArtifacts:
         mock_path.read_text.return_value = "# Business Logic\nContent here"
         mock_path.__str__ = lambda self: str(f)
 
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
 
         with (
             patch(
@@ -100,7 +99,7 @@ class TestLoadMultipleArtifacts:
         mock_path.stat.return_value = MagicMock(st_size=50)
         mock_path.read_text.return_value = "api_key=SECRET123"
 
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
 
         with (
             patch(
@@ -125,7 +124,7 @@ class TestLoadMultipleArtifacts:
         raw_content = "api_key=SECRET123"
         mock_path.read_text.return_value = raw_content
 
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
 
         with (
             patch(
@@ -175,7 +174,7 @@ class TestLoadMultipleArtifacts:
         mock_path.stat.return_value = MagicMock(st_size=10)
         mock_path.read_text.side_effect = OSError("Disk error")
 
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
 
         with (
             patch(
@@ -235,7 +234,7 @@ class TestLoadMultipleArtifacts:
         mock_path.read_text.return_value = "content"
 
         artifacts = [
-            ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+            ArtifactInfo.create(mock_path, ArtifactType.NFR)
             for _ in range(3)
         ]
 
@@ -261,7 +260,7 @@ class TestLoadMultipleArtifacts:
         mock_path.stat.return_value = MagicMock(st_size=50)
         mock_path.read_text.return_value = "content"
 
-        artifact = ArtifactInfo.create(mock_path, ArtifactType.FUNCTIONAL_DESIGN)
+        artifact = ArtifactInfo.create(mock_path, ArtifactType.NFR)
 
         with (
             patch(

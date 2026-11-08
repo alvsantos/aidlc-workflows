@@ -71,13 +71,6 @@ def mock_app_design_parser():
 
 
 @pytest.fixture
-def mock_func_design_parser():
-    mock = MagicMock()
-    mock.parse.return_value = MagicMock()
-    return mock
-
-
-@pytest.fixture
 def mock_tech_env_parser():
     mock = MagicMock()
     mock.parse.return_value = MagicMock()

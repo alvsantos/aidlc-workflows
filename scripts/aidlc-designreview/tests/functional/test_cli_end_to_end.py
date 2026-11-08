@@ -167,7 +167,6 @@ class TestApplicationErrorHandling:
     @patch("design_reviewer.validation.validator.StructureValidator")
     @patch("design_reviewer.validation.loader.ArtifactLoader")
     @patch("design_reviewer.parsing.app_design.ApplicationDesignParser")
-    @patch("design_reviewer.parsing.func_design.FunctionalDesignParser")
     @patch("design_reviewer.parsing.tech_env.TechnicalEnvironmentParser")
     @patch("design_reviewer.foundation.pattern_library.PatternLibrary")
     @patch("design_reviewer.foundation.prompt_manager.PromptManager")

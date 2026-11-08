@@ -47,8 +47,8 @@ _SENTINEL_FILE = "aidlc-state.md"
 # Artifact types that produce advisory warnings when absent (not fatal)
 _ADVISORY_TYPES = [
     ArtifactType.APPLICATION_DESIGN,
-    ArtifactType.FUNCTIONAL_DESIGN,
     ArtifactType.TECHNICAL_ENVIRONMENT,
+    ArtifactType.NFR,
 ]
 
 
@@ -157,13 +157,13 @@ class StructureValidator:
                 "No application-design artifacts found. "
                 "Review quality may be limited (missing component definitions)."
             ),
-            ArtifactType.FUNCTIONAL_DESIGN: (
-                "No functional-design artifacts found. "
-                "Review quality may be limited (missing business logic models)."
-            ),
             ArtifactType.TECHNICAL_ENVIRONMENT: (
                 "technical-environment.md not found. "
                 "Technical context will be unavailable to AI review agents."
+            ),
+            ArtifactType.NFR: (
+                "No NFR artifacts found. "
+                "Review quality may be limited (missing non-functional requirements)."
             ),
         }
 

@@ -32,7 +32,6 @@ import pytest
 from src.design_reviewer.parsing.models import (
     ApplicationDesignModel,
     DesignData,
-    FunctionalDesignModel,
     TechnicalEnvironmentModel,
 )
 
@@ -101,12 +100,6 @@ def sample_design_data():
         app_design=ApplicationDesignModel(
             raw_content="# Application Design\n\nSample application design content.",
             file_paths=[Path("app-design.md")],
-            source_count=1,
-        ),
-        functional_designs=FunctionalDesignModel(
-            raw_content="# Functional Design\n\nSample functional design content.",
-            file_paths=[Path("func-design.md")],
-            unit_names=["unit1"],
             source_count=1,
         ),
         tech_env=TechnicalEnvironmentModel(

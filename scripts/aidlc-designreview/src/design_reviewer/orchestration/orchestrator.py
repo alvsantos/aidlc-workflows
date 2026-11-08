@@ -59,7 +59,6 @@ class ReviewOrchestrator:
         artifact_discoverer,
         artifact_loader,
         app_design_parser,
-        func_design_parser,
         tech_env_parser,
         agent_orchestrator,
         report_builder: ReportBuilder,
@@ -71,7 +70,6 @@ class ReviewOrchestrator:
         self._artifact_discoverer = artifact_discoverer
         self._artifact_loader = artifact_loader
         self._app_design_parser = app_design_parser
-        self._func_design_parser = func_design_parser
         self._tech_env_parser = tech_env_parser
         self._agent_orchestrator = agent_orchestrator
         self._report_builder = report_builder
@@ -203,14 +201,10 @@ class ReviewOrchestrator:
             return infos, cmap
 
         app_infos, app_content = _filter(ArtifactType.APPLICATION_DESIGN)
-        func_infos, func_content = _filter(ArtifactType.FUNCTIONAL_DESIGN)
         tech_infos, tech_content = _filter(ArtifactType.TECHNICAL_ENVIRONMENT)
 
         # ApplicationDesignParser.parse(content_map, artifact_infos)
         app_design = self._app_design_parser.parse(app_content, app_infos)
-
-        # FunctionalDesignParser.parse(content_map, artifact_infos)
-        func_design = self._func_design_parser.parse(func_content, func_infos)
 
         # TechnicalEnvironmentParser.parse(content, file_path) — single file
         tech_content_str = (
@@ -221,7 +215,6 @@ class ReviewOrchestrator:
 
         return DesignData(
             app_design=app_design,
-            functional_designs=func_design,
             tech_env=tech_env,
             raw_content=content_map,
         )

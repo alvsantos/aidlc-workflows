@@ -68,13 +68,6 @@ class GapAnalysisAgent(BaseAgent):
             parts.append(
                 f"## Application Design\n\n{design_data.app_design.raw_content}"
             )
-        if (
-            design_data.functional_designs
-            and design_data.functional_designs.raw_content
-        ):
-            parts.append(
-                f"## Functional Design\n\n{design_data.functional_designs.raw_content}"
-            )
         if design_data.tech_env and design_data.tech_env.raw_content:
             parts.append(
                 f"## Technical Environment\n\n{design_data.tech_env.raw_content}"

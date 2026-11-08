@@ -199,7 +199,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Content-based artifact parsing
 - Application design parser
-- Functional design parser
 - Technical environment parser
 - ~71 unit tests
 
@@ -225,7 +224,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - AIDLC methodology followed throughout
 - Inception phase: Requirements, user stories, workflow planning, application design, units generation
-- Construction phase: Per-unit functional design, NFR requirements, NFR design, code generation
+- Construction phase: System-wide NFR (requirements and design), per-unit infrastructure design, code generation
 - Operations phase: Security audit, production hardening, Holmes scan remediation
 
 ---

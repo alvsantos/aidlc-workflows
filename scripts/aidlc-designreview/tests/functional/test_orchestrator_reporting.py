@@ -60,7 +60,6 @@ def mock_upstream():
         "artifact_discoverer": MagicMock(),
         "artifact_loader": loader,
         "app_design_parser": MagicMock(),
-        "func_design_parser": MagicMock(),
         "tech_env_parser": MagicMock(),
     }
 
@@ -93,7 +92,6 @@ def real_orchestrator(mock_upstream, mock_agent_orchestrator):
         artifact_discoverer=mock_upstream["artifact_discoverer"],
         artifact_loader=mock_upstream["artifact_loader"],
         app_design_parser=mock_upstream["app_design_parser"],
-        func_design_parser=mock_upstream["func_design_parser"],
         tech_env_parser=mock_upstream["tech_env_parser"],
         agent_orchestrator=mock_agent_orchestrator,
         report_builder=ReportBuilder(),

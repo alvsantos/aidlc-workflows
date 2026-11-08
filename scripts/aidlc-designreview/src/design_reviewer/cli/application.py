@@ -120,12 +120,10 @@ class Application:
             # Create Unit 3 components (parsing)
             from design_reviewer.parsing import (
                 ApplicationDesignParser,
-                FunctionalDesignParser,
                 TechnicalEnvironmentParser,
             )
 
             app_design_parser = ApplicationDesignParser(app_logger)
-            func_design_parser = FunctionalDesignParser(app_logger)
             tech_env_parser = TechnicalEnvironmentParser(app_logger)
 
             # Create Unit 4 components (AI review)
@@ -171,7 +169,6 @@ class Application:
                 artifact_discoverer=discoverer,
                 artifact_loader=artifact_loader,
                 app_design_parser=app_design_parser,
-                func_design_parser=func_design_parser,
                 tech_env_parser=tech_env_parser,
                 agent_orchestrator=agent_orchestrator,
                 report_builder=report_builder,

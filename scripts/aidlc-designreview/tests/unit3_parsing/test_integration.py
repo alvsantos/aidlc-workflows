@@ -32,7 +32,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from design_reviewer.parsing.app_design import ApplicationDesignParser
-from design_reviewer.parsing.func_design import FunctionalDesignParser
 from design_reviewer.parsing.models import DesignData
 from design_reviewer.parsing.tech_env import TechnicalEnvironmentParser
 from design_reviewer.parsing.base import BaseParser
@@ -115,44 +114,6 @@ class TestApplicationDesignParserOnFixtures:
         assert result.source_count > 0
 
 
-class TestFunctionalDesignParserOnFixtures:
-    def test_all_stages_multi_unit_functional_design(self, all_stages_docs):
-        construction_dir = all_stages_docs / "construction"
-        if not construction_dir.exists():
-            pytest.skip("No construction dir in all-stages fixture")
-
-        content_map = {}
-        artifacts = []
-        for unit_dir in construction_dir.iterdir():
-            if not unit_dir.is_dir():
-                continue
-            fd_dir = unit_dir / "functional-design"
-            if not fd_dir.exists():
-                continue
-            for f in fd_dir.glob("*.md"):
-                content = f.read_text(encoding="utf-8")
-                mock_path = MagicMock(spec=Path)
-                mock_path.name = f.name
-                mock_path.parts = f.parts
-                mock_path.stat.return_value = f.stat()
-                artifact = ArtifactInfo.create(
-                    mock_path, ArtifactType.FUNCTIONAL_DESIGN, unit_name=unit_dir.name
-                )
-                content_map[artifact.path] = content
-                artifacts.append(artifact)
-
-        if not content_map:
-            pytest.skip("No functional-design files found in all-stages fixture")
-
-        parser = FunctionalDesignParser(make_mock_logger())
-        result = parser.parse(content_map, artifacts)
-
-        assert result.source_count > 0
-        # Verify unit headers present for each unit
-        for unit_name in result.unit_names:
-            assert f"# Unit: {unit_name}" in result.raw_content
-
-
 class TestTechnicalEnvironmentParserOnFixtures:
     def test_sci_calc_tech_env(self, sci_calc_docs):
         # sci-calc has tech-env.md at root (not golden-aidlc-docs, but check anyway)
@@ -212,5 +173,4 @@ class TestDesignDataConstruction:
 
         assert design_data.app_design is not None
         assert design_data.tech_env is not None
-        assert design_data.functional_designs is None
         assert len(design_data.raw_content) == len(files)
