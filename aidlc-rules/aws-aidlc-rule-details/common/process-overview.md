@@ -124,6 +124,7 @@ flowchart TD
 **Key Principles:**
 - Phases execute only when they add value
 - Each phase independently evaluated
+- Avoid redundancy of questions and artifacts (ask each thing once; do not produce overlapping documents)
 - INCEPTION focuses on "what" and "why"
 - CONSTRUCTION focuses on "how" plus "build and test"
 - OPERATIONS is placeholder for future expansion
