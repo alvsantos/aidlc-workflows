@@ -45,11 +45,12 @@ Execute these stages in order. Load each rule file BEFORE executing its stage.
    - Read the vision file, analyze requirements
    - Create clarifying questions → handoff to simulator for answers
    - After receiving answers, generate requirements.md
+   - Also produce user stories, personas, and stories.html as part of this stage
    - Handoff to simulator for approval
    - After approval, CONTINUE to next stage
 
-4. **User Stories** (CONDITIONAL) — load_rule('inception/user-stories.md')
-   - Generate user stories and personas if project complexity warrants it
+4. **UI Mockups** (CONDITIONAL: user-facing UI only) — load_rule('inception/ui-mockups.md')
+   - Generate UI mockups right after Requirements Analysis when the project has a user-facing UI
    - Handoff to simulator for approval
 
 5. **Workflow Planning** (ALWAYS) — load_rule('inception/workflow-planning.md')
@@ -60,33 +61,31 @@ Execute these stages in order. Load each rule file BEFORE executing its stage.
    - Design components, services, and dependencies
    - Handoff to simulator for approval
 
-7. **Units Generation** (CONDITIONAL) — load_rule('inception/units-generation.md')
-   - Break system into units of work
+7. **Units Generation** (ALWAYS) — load_rule('inception/units-generation.md')
+   - Break system into units of work (always produce at least one unit)
 
 ### CONSTRUCTION PHASE — "How to build it"
 
-For each unit of work (or the whole project if no units were defined):
+8. **NFR** (CONDITIONAL, SYSTEM-WIDE) — load_rule('construction/nfr.md')
+   - Run once, before the per-unit loop
+   - Establish non-functional requirements, technology decisions, and NFR design patterns
+   - Create artifacts in aidlc-docs/construction/nfr/
 
-8. **Functional Design** (CONDITIONAL) — load_rule('construction/functional-design.md')
-   - Design business logic, domain models, entity definitions
+For each unit of work:
 
-9. **NFR Requirements** (CONDITIONAL) — load_rule('construction/nfr-requirements.md')
-   - Establish non-functional requirements and technology decisions
-
-10. **NFR Design** (CONDITIONAL) — load_rule('construction/nfr-design.md')
-    - Integrate NFR requirements into architecture
-
-11. **Infrastructure Design** (CONDITIONAL) — load_rule('construction/infrastructure-design.md')
+9. **Infrastructure Design** (CONDITIONAL, per-unit) \
+— load_rule('construction/infrastructure-design.md')
     - Map logical components to deployment infrastructure
 
-12. **Code Generation** (ALWAYS) — load_rule('construction/code-generation.md')
+10. **Code Generation** (ALWAYS, per-unit) — load_rule('construction/code-generation.md')
+    - Also produce the detailed business-logic design for the unit
     - Part 1: Create detailed code generation plan with exact file paths
     - Handoff to simulator for plan approval
     - Part 2: Generate ALL application code in workspace/
     - Write every source file, test file, and configuration file
     - Handoff to simulator for code review
 
-13. **Build and Test** (ALWAYS) — load_rule('construction/build-and-test.md')
+11. **Build and Test** (ALWAYS) — load_rule('construction/build-and-test.md')
     - Document build instructions and test procedures
     - Use run_command to install dependencies, build the project, and run tests
     - If tests fail, read the error output, fix the code, and re-run until tests pass

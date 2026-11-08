@@ -274,10 +274,10 @@ Deliver two independently deployable services (Catalog Service and Lending Servi
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| Business rules have edge cases not covered in vision (e.g., what happens when a held book is decommissioned?) | Medium | Medium | Define edge cases during Requirements Analysis and Functional Design. Use clarifying questions. |
+| Business rules have edge cases not covered in vision (e.g., what happens when a held book is decommissioned?) | Medium | Medium | Define edge cases during Requirements Analysis and the business-logic design captured in Code Generation. Use clarifying questions. |
 | DynamoDB access patterns don't fit relational lending queries (e.g., "all overdue checkouts sorted by days overdue") | Medium | High | Design DynamoDB table and GSI structure carefully during Infrastructure Design. Consider single-table design. |
 | JWT auth adds complexity for a solo developer | Low | Medium | Use well-tested library (python-jose or PyJWT). Keep auth simple: no refresh tokens, no OAuth flows. |
-| Late fee calculation edge cases (timezone, partial days, fee cap) | Medium | Medium | Define precise rules in Functional Design. Use UTC for all timestamps. |
+| Late fee calculation edge cases (timezone, partial days, fee cap) | Medium | Medium | Define precise rules as part of the business-logic design in Code Generation. Use UTC for all timestamps. |
 
 ### External Dependencies
 

@@ -18,21 +18,21 @@
 
 ## INCEPTION - Requirements Analysis — Questions & Answers
 **Timestamp**: 2025-01-15T10:01:00Z
-**AI Response**: Created 11 clarifying questions. Received answers: Q1:B, Q2:A, Q3:C, Q4:A, Q5:C, Q6:C, Q7:C, Q8:A, Q9:C, Q10:D, Q11:A. Generated requirements.md.
+**AI Response**: Created 11 clarifying questions. Received answers: Q1:B, Q2:A, Q3:C, Q4:A, Q5:C, Q6:C, Q7:C, Q8:A, Q9:C, Q10:D, Q11:A. Generated requirements.md. Also generated 27 user stories across 7 epics with 3 personas and stories.html as part of this stage.
 **Context**: Requirements Analysis complete, approved.
 
 ---
 
-## INCEPTION - User Stories
+## INCEPTION - UI Mockups
 **Timestamp**: 2025-01-15T10:03:00Z
-**AI Response**: Generated 27 user stories across 7 epics with 3 personas. Approved.
-**Context**: User Stories complete.
+**AI Response**: Skipped — both services are headless REST APIs with no user-facing UI.
+**Context**: UI Mockups skipped.
 
 ---
 
 ## INCEPTION - Workflow Planning
 **Timestamp**: 2025-01-15T10:04:00Z
-**AI Response**: Created execution plan. 8 stages to execute, 2 skipped (NFR Design, Infrastructure Design). Approved.
+**AI Response**: Created execution plan. Stages to execute: Application Design, Units Generation, NFR (system-wide), Code Generation, Build and Test. Skipped: UI Mockups, Infrastructure Design. Approved.
 **Context**: Workflow Planning complete.
 
 ---
@@ -51,23 +51,16 @@
 
 ---
 
-## CONSTRUCTION - Functional Design
-**Timestamp**: 2025-01-15T10:07:00Z
-**AI Response**: Created domain entities and business rules for both services. Catalog: 1 entity, 6 rules. Lending: 6 entities, 19 rules, 8 constants. Approved.
-**Context**: Functional Design complete.
-
----
-
-## CONSTRUCTION - NFR Requirements
+## CONSTRUCTION - NFR (System-wide)
 **Timestamp**: 2025-01-15T10:08:00Z
-**AI Response**: Decided in-memory repositories, JWT+bcrypt auth, structured JSON logging. Tech stack confirmed. Approved.
-**Context**: NFR Requirements complete.
+**AI Response**: Ran once before the per-unit loop. Decided in-memory repositories, JWT+bcrypt auth, structured JSON logging, and NFR design patterns. Tech stack confirmed. Produced construction/nfr/ artifacts. Approved.
+**Context**: NFR complete.
 
 ---
 
 ## CONSTRUCTION - Code Generation
 **Timestamp**: 2025-01-15T10:09:00Z
-**AI Response**: Generated all code for both services. 27-step plan executed. Fixed passlib/bcrypt compatibility issue by switching to direct bcrypt library. Approved.
+**AI Response**: Per-unit. Captured detailed business-logic design as part of code generation — Catalog: 1 entity, 6 rules; Lending: 6 entities, 19 rules, 8 constants. Generated all code for both services. 27-step plan executed. Fixed passlib/bcrypt compatibility issue by switching to direct bcrypt library. Approved.
 **Context**: Code Generation complete.
 
 ---

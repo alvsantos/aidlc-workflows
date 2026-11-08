@@ -1,4 +1,4 @@
-# Functional Design — Catalog Service — Business Rules
+# Business Logic Design (Code Generation) — Catalog Service — Business Rules
 
 ## BR-CAT-001: Book Creation
 - Title, author, category are required

@@ -20,21 +20,19 @@ The agents repeat this handoff loop through all Inception and Construction phase
 | Workspace Detection   | Always                 |
 | Reverse Engineering   | Brownfield only        |
 | Requirements Analysis | Always                 |
-| User Stories          | If complexity warrants |
+| UI Mockups            | User-facing UI         |
 | Workflow Planning     | Always                 |
 | Application Design    | Conditional            |
-| Units Generation      | Conditional            |
+| Units Generation      | Always                 |
 
-**Construction Phase** — how to build it (runs per unit of work):
+**Construction Phase** — how to build it:
 
-| Stage                 | Condition   |
-| --------------------- | ----------- |
-| Functional Design     | Conditional |
-| NFR Requirements      | Conditional |
-| NFR Design            | Conditional |
-| Infrastructure Design | Conditional |
-| Code Generation       | Always      |
-| Build and Test        | Always      |
+| Stage                 | Condition                |
+| --------------------- | ------------------------ |
+| NFR                   | Conditional, system-wide |
+| Infrastructure Design | Conditional, per-unit    |
+| Code Generation       | Always, per-unit         |
+| Build and Test        | Always                   |
 
 ## Prerequisites
 
@@ -179,7 +177,7 @@ runs/
     │   └── aws-aidlc-rule-details/
     ├── aidlc-docs/                # Documentation artifacts from the workflow
     │   ├── inception/             # Requirements, user stories, designs, etc.
-    │   ├── construction/          # Functional design, code plans, reviews
+    │   ├── construction/          # System-wide NFR, per-unit code plans, reviews
     │   ├── aidlc-state.md         # Current workflow state tracker
     │   └── audit.md               # Timestamped audit log of all stages
     └── workspace/                 # Generated application code

@@ -4,7 +4,7 @@
 
 Force the adaptive AI-DLC workflow to execute **every conditional stage** rather
 than skipping any.  The sci-calc test case is deliberately simple (single unit,
-no user stories, no NFR design, no infrastructure design).  This test case is
+no NFR, no infrastructure design).  This test case is
 designed so the AI model cannot reasonably skip anything.
 
 ## Stages Triggered
@@ -13,16 +13,14 @@ designed so the AI model cannot reasonably skip anything.
 |---|---|
 | Workspace Detection | Always executes |
 | Reverse Engineering | **Not triggered** -- requires brownfield (see note below) |
-| Requirements Analysis | Always executes |
-| User Stories | 3 distinct user personas with different workflows |
+| Requirements Analysis | Always executes (also produces user stories + personas) |
+| UI Mockups | **Not triggered** -- headless REST APIs, no user-facing UI |
 | Workflow Planning | Always executes |
 | Application Design | New components, services, and business rules |
-| Units Generation | 2 modules requiring decomposition |
-| Functional Design (per unit) | Complex business rules (lending limits, fees, holds) |
-| NFR Requirements (per unit) | Explicit performance SLAs, security, scalability |
-| NFR Design (per unit) | Resilience, caching, rate limiting patterns required |
+| Units Generation | Always executes (2 modules requiring decomposition) |
+| NFR (system-wide) | Explicit performance SLAs, security, scalability, design patterns |
 | Infrastructure Design (per unit) | AWS services specified (Lambda, DynamoDB, Cognito, SQS) |
-| Code Generation (per unit) | Always executes |
+| Code Generation (per unit) | Always executes (also captures detailed business-logic design) |
 | Build and Test | Always executes |
 
 ## Files
@@ -194,11 +192,11 @@ the business rules, but includes enough structural complexity to force all
 conditional stages:
 
 - **Multiple user personas** (Librarian, Member, Admin) with distinct workflows
-  force User Stories
+  force detailed user stories within Requirements Analysis
 - **Two logical modules** (Catalog, Lending) force Application Design and Units
   Generation
-- **Business rules** (checkout limits, late fees, hold queues, renewals) force
-  Functional Design
+- **Business rules** (checkout limits, late fees, hold queues, renewals) are
+  captured as detailed business-logic design during Code Generation
 - **Explicit performance targets, security requirements, and scalability
-  constraints** force NFR Requirements and NFR Design
+  constraints** force the system-wide NFR stage
 - **AWS cloud deployment requirements** force Infrastructure Design

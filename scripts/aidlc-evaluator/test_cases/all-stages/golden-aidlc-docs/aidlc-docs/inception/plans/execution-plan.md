@@ -20,19 +20,18 @@
 Phase 1: INCEPTION
   - Stage 1: Workspace Detection (COMPLETED)
   - Stage 2: Reverse Engineering (SKIPPED - greenfield)
-  - Stage 3: Requirements Analysis (COMPLETED)
-  - Stage 4: User Stories (COMPLETED)
+  - Stage 3: Requirements Analysis (COMPLETED - includes user stories & personas)
+  - Stage 4: UI Mockups (SKIPPED - no user-facing UI)
   - Stage 5: Workflow Planning (IN PROGRESS)
   - Stage 6: Application Design (EXECUTE)
   - Stage 7: Units Generation (EXECUTE)
 
 Phase 2: CONSTRUCTION
-  - Stage 8: Functional Design (EXECUTE)
-  - Stage 9: NFR Requirements (EXECUTE)
-  - Stage 10: NFR Design (SKIP)
-  - Stage 11: Infrastructure Design (SKIP)
-  - Stage 12: Code Generation (EXECUTE)
-  - Stage 13: Build and Test (EXECUTE)
+  - Stage 8: NFR (EXECUTE - system-wide, once before per-unit loop)
+  Per-unit loop:
+  - Stage 9: Infrastructure Design (SKIP)
+  - Stage 10: Code Generation (EXECUTE - includes detailed business-logic design)
+  - Stage 11: Build and Test (EXECUTE)
 
 Phase 3: OPERATIONS
   - Operations (PLACEHOLDER)
@@ -43,25 +42,22 @@ Phase 3: OPERATIONS
 ### INCEPTION PHASE
 - [x] Workspace Detection (COMPLETED)
 - [x] Reverse Engineering (SKIPPED — greenfield project)
-- [x] Requirements Analysis (COMPLETED)
-- [x] User Stories (COMPLETED)
+- [x] Requirements Analysis (COMPLETED — includes user stories and personas)
 - [x] Workflow Planning (IN PROGRESS)
+- [ ] UI Mockups — SKIP
+  - **Rationale**: Both services are headless REST APIs with no user-facing UI. No mockups needed.
 - [ ] Application Design — EXECUTE
   - **Rationale**: Two services need component identification, service boundaries, and dependency mapping. Critical for defining how Catalog and Lending services interact.
-- [ ] Units Generation — EXECUTE
+- [ ] Units Generation — EXECUTE (ALWAYS)
   - **Rationale**: System decomposes into two services (Catalog + Lending). Units define the build order and dependency sequence.
 
 ### CONSTRUCTION PHASE
-- [ ] Functional Design — EXECUTE
-  - **Rationale**: Complex business rules (checkout limits, hold queues, fee calculation, renewal rules) need detailed entity and domain model specification before code generation.
-- [ ] NFR Requirements — EXECUTE
-  - **Rationale**: Database choice (DynamoDB vs PostgreSQL), authentication approach (PyJWT + bcrypt), and performance patterns need to be decided. Tech-env lists options but defers decisions.
-- [ ] NFR Design — SKIP
-  - **Rationale**: NFR patterns will be captured sufficiently in NFR Requirements. Given app-code-only scope (no CDK), a separate NFR Design stage would add minimal value.
-- [ ] Infrastructure Design — SKIP
+- [ ] NFR — EXECUTE (system-wide, once before the per-unit loop)
+  - **Rationale**: Database choice (DynamoDB vs PostgreSQL), authentication approach (PyJWT + bcrypt), performance patterns, and NFR design patterns need to be decided once across both services. Produces `construction/nfr/`.
+- [ ] Infrastructure Design — SKIP (per-unit)
   - **Rationale**: CDK infrastructure deferred per stakeholder decision. Application code focuses on in-memory/SQLite for local dev with database abstraction layer. No cloud infrastructure to design.
-- [ ] Code Generation — EXECUTE (ALWAYS)
-  - **Rationale**: Generate complete application code for both services.
+- [ ] Code Generation — EXECUTE (ALWAYS, per-unit)
+  - **Rationale**: Generate complete application code for both services. Detailed business-logic design (domain entities, business rules) is captured during this stage.
 - [ ] Build and Test — EXECUTE (ALWAYS)
   - **Rationale**: Install dependencies, run tests, verify coverage.
 

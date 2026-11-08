@@ -18,15 +18,13 @@
 ### INCEPTION PHASE ✅ COMPLETE
 - [x] Workspace Detection — COMPLETED (Greenfield)
 - [x] Requirements Analysis — COMPLETED (10 FR groups, 5 NFR groups)
-- [x] User Stories — SKIPPED (single-purpose API)
-- [x] Workflow Planning — COMPLETED (3 stages planned)
+- [x] UI Mockups — SKIPPED (no user-facing UI)
+- [x] Workflow Planning — COMPLETED (4 stages planned)
 - [x] Application Design — COMPLETED (4 artifacts generated)
-- [x] Units Generation — SKIPPED (single unit)
+- [x] Units Generation — COMPLETED (single unit of work)
 
 ### CONSTRUCTION PHASE ✅ COMPLETE
-- [x] Functional Design — SKIPPED (math logic fully specified)
-- [x] NFR Requirements — SKIPPED (fully specified in tech-env)
-- [x] NFR Design — SKIPPED
+- [x] NFR — SKIPPED (fully specified in tech-env; no system-wide NFR design needed)
 - [x] Infrastructure Design — SKIPPED (no cloud infra)
 - [x] Code Generation — COMPLETED (20+ source files, 7 test files)
 - [x] Build and Test — ✅ COMPLETED (192/192 tests PASS, 0 failures)

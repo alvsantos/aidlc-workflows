@@ -82,7 +82,7 @@ performance, scalability, and cost requirements.
 |----------|----------|
 | Compute | Serverless preferred (Lambda) but containers (ECS Fargate) acceptable if cold-start latency or execution duration is a concern. Decision should be justified during Infrastructure Design. |
 | API Layer | API Gateway (HTTP API preferred over REST API for cost and simplicity) |
-| Data Storage | Choose based on access patterns determined during Functional Design. Options: DynamoDB (key-value/document), RDS PostgreSQL (relational queries). Each service must own its data. |
+| Data Storage | Choose based on access patterns determined during the business-logic design in Code Generation. Options: DynamoDB (key-value/document), RDS PostgreSQL (relational queries). Each service must own its data. |
 | Messaging | Asynchronous inter-service communication required. Evaluate SQS, SNS, or EventBridge during Infrastructure Design based on messaging patterns. |
 | Authentication | AWS Cognito or application-level JWT — decide during NFR Requirements |
 | Monitoring | CloudWatch for logs, metrics, and alarms |

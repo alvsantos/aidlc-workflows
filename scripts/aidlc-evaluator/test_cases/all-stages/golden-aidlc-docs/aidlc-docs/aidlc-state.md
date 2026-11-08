@@ -17,14 +17,14 @@
 
 ## Stage Progress
 - [x] INCEPTION - Workspace Detection (Greenfield detected)
-- [x] INCEPTION - Requirements Analysis (Approved)
-- [x] INCEPTION - User Stories (27 stories, 3 personas)
+- [x] INCEPTION - Requirements Analysis (Approved; 27 stories, 3 personas)
+- [x] INCEPTION - UI Mockups (SKIPPED — headless REST APIs)
 - [x] INCEPTION - Workflow Planning (Approved)
 - [x] INCEPTION - Application Design (2 services, 13 components)
 - [x] INCEPTION - Units Generation (Catalog Service + Lending Service)
-- [x] CONSTRUCTION - Functional Design (Domain entities + business rules)
-- [x] CONSTRUCTION - NFR Requirements (In-memory repos, JWT+bcrypt, structured logging)
-- [x] CONSTRUCTION - Code Generation (All code generated for both services)
+- [x] CONSTRUCTION - NFR (System-wide: in-memory repos, JWT+bcrypt, structured logging, design patterns)
+- [x] CONSTRUCTION - Infrastructure Design (SKIPPED — no cloud infra)
+- [x] CONSTRUCTION - Code Generation (All code generated for both services; domain entities + business rules designed here)
 - [x] CONSTRUCTION - Build and Test (101 tests pass, 93%/87% coverage)
 
 ## Current Status

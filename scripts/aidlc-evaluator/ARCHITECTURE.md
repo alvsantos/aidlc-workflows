@@ -176,16 +176,14 @@ The Executor drives this sequence (some stages are conditional based on project 
 | 1   | Workspace Detection   | Inception    | Always          |
 | 2   | Reverse Engineering   | Inception    | Brownfield only |
 | 3   | Requirements Analysis | Inception    | Always          |
-| 4   | User Stories          | Inception    | If complex      |
+| 4   | UI Mockups            | Inception    | User-facing UI  |
 | 5   | Workflow Planning     | Inception    | Always          |
 | 6   | Application Design    | Inception    | If needed       |
-| 7   | Units Generation      | Inception    | If needed       |
-| 8   | Functional Design     | Construction | If needed       |
-| 9   | NFR Requirements      | Construction | If needed       |
-| 10  | NFR Design            | Construction | If needed       |
-| 11  | Infrastructure Design | Construction | If needed       |
-| 12  | Code Generation       | Construction | Always          |
-| 13  | Build and Test        | Construction | Always          |
+| 7   | Units Generation      | Inception    | Always          |
+| 8   | NFR                   | Construction | System-wide     |
+| 9   | Infrastructure Design | Construction | Per-unit        |
+| 10  | Code Generation       | Construction | Always          |
+| 11  | Build and Test        | Construction | Always          |
 
 Each stage loads its corresponding rule file (e.g., `inception/requirements-analysis.md`) before execution. The Executor writes all documentation artifacts to `aidlc-docs/` and all generated code to `workspace/`.
 
@@ -207,7 +205,7 @@ runs/<YYYYMMDDTHHMMSS>-<rules_slug>/
   │   └── aws-aidlc-rule-details/    # Per-stage rule files
   ├── aidlc-docs/                    # Generated AIDLC documents
   │   ├── inception/                 # Requirements, user stories, design docs
-  │   ├── construction/              # Functional design, code-gen docs
+  │   ├── construction/              # System-wide NFR, per-unit code-gen docs
   │   ├── aidlc-state.md             # Workflow state tracker
   │   └── audit.md                   # Timestamped audit log
   ├── workspace/                     # Generated application code

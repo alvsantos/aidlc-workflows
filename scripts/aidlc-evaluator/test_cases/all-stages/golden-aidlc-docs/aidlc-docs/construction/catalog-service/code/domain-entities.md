@@ -1,4 +1,4 @@
-# Functional Design — Catalog Service — Domain Entities
+# Business Logic Design (Code Generation) — Catalog Service — Domain Entities
 
 ## Entity: Book
 

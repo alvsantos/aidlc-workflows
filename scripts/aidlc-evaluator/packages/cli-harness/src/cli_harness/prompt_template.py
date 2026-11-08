@@ -40,10 +40,12 @@ Execute these stages in order. Load each rule file BEFORE executing its stage.
    - Read the vision file, analyze requirements
    - Generate `aidlc-docs/inception/requirements/requirements.md`
    - Generate `aidlc-docs/inception/requirements/requirement-verification-questions.md`
+   - Also produce user stories, personas, and `stories.html` as part of this stage
    - Self-approve and CONTINUE to next stage
 
-4. **User Stories** (CONDITIONAL) — read `aidlc-rules/inception/user-stories.md`
-   - Generate user stories if project complexity warrants it
+4. **UI Mockups** (CONDITIONAL: user-facing UI only) — read `aidlc-rules/inception/ui-mockups.md`
+   - Generate UI mockups right after Requirements Analysis when the project has a user-facing UI
+   - Skip for projects with no user-facing UI
 
 5. **Workflow Planning** (ALWAYS) — read `aidlc-rules/inception/workflow-planning.md`
    - Create `aidlc-docs/inception/plans/execution-plan.md`
@@ -55,29 +57,32 @@ Execute these stages in order. Load each rule file BEFORE executing its stage.
    - Create `aidlc-docs/inception/application-design/component-dependency.md`
    - Create `aidlc-docs/inception/application-design/services.md`
 
-7. **Units Generation** (CONDITIONAL) — read `aidlc-rules/inception/units-generation.md`
-   - Break system into units of work
+7. **Units Generation** (ALWAYS) — read `aidlc-rules/inception/units-generation.md`
+   - Break system into units of work (always produce at least one unit)
 
 ### CONSTRUCTION PHASE — "How to build it"
 
-For each unit of work (or the whole project if no units were defined):
+8. **NFR** (CONDITIONAL, SYSTEM-WIDE) — read `aidlc-rules/construction/nfr.md`
+   - Run once, before the per-unit loop
+   - Establish non-functional requirements, technology decisions, and NFR design patterns
+   - Create artifacts in `aidlc-docs/construction/nfr/` (nfr-requirements.md, \
+tech-stack-decisions.md, nfr-design-patterns.md, logical-components.md)
 
-8. **Functional Design** (CONDITIONAL) — read `aidlc-rules/construction/functional-design.md`
+For each unit of work:
 
-9. **NFR Requirements** (CONDITIONAL) — read `aidlc-rules/construction/nfr-requirements.md`
+9. **Infrastructure Design** (CONDITIONAL, per-unit) \
+— read `aidlc-rules/construction/infrastructure-design.md`
+    - Map logical components to deployment infrastructure for the unit
 
-10. **NFR Design** (CONDITIONAL) — read `aidlc-rules/construction/nfr-design.md`
-
-11. **Infrastructure Design** (CONDITIONAL) — read `aidlc-rules/construction/infrastructure-design.md`
-
-12. **Code Generation** (ALWAYS) — read `aidlc-rules/construction/code-generation.md`
+10. **Code Generation** (ALWAYS, per-unit) — read `aidlc-rules/construction/code-generation.md`
+    - Also produce the detailed business-logic design for the unit
     - Create a detailed code generation plan in `aidlc-docs/construction/plans/`
     - Generate ALL application code with proper package structure \
 (src/, tests/, pyproject.toml, etc.)
     - Write every source file, test file, and configuration file
     - Write COMPLETE, WORKING files — not stubs or placeholders
 
-13. **Build and Test** (ALWAYS) — read `aidlc-rules/construction/build-and-test.md`
+11. **Build and Test** (ALWAYS) — read `aidlc-rules/construction/build-and-test.md`
     - Create `aidlc-docs/construction/build-and-test/build-instructions.md`
     - Create `aidlc-docs/construction/build-and-test/unit-test-instructions.md`
     - Create `aidlc-docs/construction/build-and-test/integration-test-instructions.md`

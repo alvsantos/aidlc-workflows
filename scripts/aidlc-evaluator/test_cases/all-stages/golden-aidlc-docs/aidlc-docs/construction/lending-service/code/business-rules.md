@@ -1,4 +1,4 @@
-# Functional Design — Lending Service — Business Rules
+# Business Logic Design (Code Generation) — Lending Service — Business Rules
 
 ## Authentication Rules
 

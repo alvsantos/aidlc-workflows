@@ -108,7 +108,7 @@ class TestScanArtifacts:
 
         (inc / "requirements.md").write_text("# Req\n")
         (inc / "user-stories.md").write_text("# Stories\n")
-        (con / "functional-design.md").write_text("# Design\n")
+        (con / "nfr.md").write_text("# NFR\n")
         (tmp_path / "aidlc-docs" / "audit.md").write_text("# Audit\n")
 
         result = _scan_artifacts(tmp_path)

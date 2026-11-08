@@ -1,4 +1,4 @@
-# Functional Design — Lending Service — Domain Entities
+# Business Logic Design (Code Generation) — Lending Service — Domain Entities
 
 ## Entity: Member
 
