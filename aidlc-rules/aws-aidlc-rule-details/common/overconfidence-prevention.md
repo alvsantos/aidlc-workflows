@@ -11,7 +11,7 @@ The overconfidence issue was caused by directives in multiple stages that encour
 1. **Business logic design** (now during Code Generation): "Skip entire categories if not applicable"
 2. **User Story Questions** (within Requirements Analysis): "Use categories as inspiration, NOT as mandatory checklist"
 3. **Requirements Analysis**: Similar patterns encouraging minimal questioning
-4. **NFR Requirements**: "Only if" conditions that discouraged thorough analysis
+4. **NFR**: "Only if" conditions that discouraged thorough analysis
 
 These directives were telling the AI to avoid asking questions rather than encouraging comprehensive requirements gathering.
 
@@ -40,7 +40,7 @@ These directives were telling the AI to avoid asking questions rather than encou
 - Added more question categories (data flow, integration points, error handling)
 - Strengthened ambiguity detection and resolution requirements
 
-#### 4. NFR Requirements Stage
+#### 4. NFR Stage
 - Expanded question categories beyond basic NFRs
 - Added reliability, maintainability, and usability considerations
 - Enhanced answer analysis for technical ambiguities

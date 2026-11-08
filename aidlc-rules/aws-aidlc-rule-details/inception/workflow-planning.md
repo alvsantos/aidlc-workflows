@@ -133,16 +133,19 @@ Evaluate risk level:
 - Configuration updates
 - Straightforward implementations
 
-### 3.3 NFR Implementation - Execute IF:
+### 3.3 NFR (Requirements & Design) - Execute IF:
 - Performance requirements
 - Security considerations
 - Scalability concerns
 - Monitoring/observability needed
+- Tech stack selection or NFR patterns need definition
 
 **Skip IF**:
 - Existing NFR setup sufficient
 - No new NFR requirements
 - Simple changes with no NFR impact
+
+**Note**: This is a single system-wide stage (combined requirements + design) that runs once at the start of Construction, before the per-unit loop.
 
 ## Step 4: Note Adaptive Detail
 
@@ -256,8 +259,7 @@ flowchart TD
     end
     
     subgraph CONSTRUCTION["🟢 CONSTRUCTION PHASE"]
-        NFRA["NFR Requirements<br/><b>STATUS</b>"]
-        NFRD["NFR Design<br/><b>STATUS</b>"]
+        NFR["NFR (Requirements & Design)<br/><b>STATUS</b>"]
         ID["Infrastructure Design<br/><b>STATUS</b>"]
         CG["Code Generation<br/>(Planning + Generation)<br/><b>EXECUTE</b>"]
         BT["Build and Test<br/><b>EXECUTE</b>"]
@@ -294,9 +296,7 @@ flowchart TD
   - **Rationale**: [Why executing or skipping]
 
 ### 🟢 CONSTRUCTION PHASE
-- [ ] NFR Requirements - [EXECUTE/SKIP]
-  - **Rationale**: [Why executing or skipping]
-- [ ] NFR Design - [EXECUTE/SKIP]
+- [ ] NFR (Requirements & Design) - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
 - [ ] Infrastructure Design - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
@@ -355,8 +355,7 @@ Update `aidlc-docs/aidlc-state.md`:
 - [ ] Units Generation - [EXECUTE/SKIP]
 
 ### 🟢 CONSTRUCTION PHASE
-- [ ] NFR Requirements - [EXECUTE/SKIP]
-- [ ] NFR Design - [EXECUTE/SKIP]
+- [ ] NFR (Requirements & Design) - [EXECUTE/SKIP]
 - [ ] Infrastructure Design - [EXECUTE/SKIP]
 - [ ] Code Generation - EXECUTE
 - [ ] Build and Test - EXECUTE

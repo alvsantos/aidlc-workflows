@@ -2,7 +2,7 @@
 
 ## Prerequisites
 - Units Generation must be complete for the unit
-- NFR Design recommended (provides logical components to map)
+- NFR stage recommended (provides logical components to map)
 - Execution plan must indicate Infrastructure Design stage should execute
 
 ## Overview
@@ -12,7 +12,7 @@ Map logical software components to actual infrastructure choices for deployment 
 
 ### Step 1: Analyze Design Artifacts
 - Read the unit definition, its assigned stories, and the Application Design (component structure)
-- Read NFR design from `aidlc-docs/construction/{unit-name}/nfr-design/` (if exists)
+- Read the NFR artifacts from `aidlc-docs/construction/nfr/` (if the NFR stage executed)
 - Identify logical components needing infrastructure
 
 ### Step 2: Create Infrastructure Design Plan
@@ -21,11 +21,11 @@ Map logical software components to actual infrastructure choices for deployment 
 - Each step should have a checkbox []
 
 ### Step 3: Generate Context-Appropriate Questions
-**DIRECTIVE**: Thoroughly analyze the functional and NFR design to identify ALL areas where clarification would improve infrastructure decisions. Be proactive in asking questions to ensure comprehensive infrastructure coverage.
+**DIRECTIVE**: Thoroughly analyze the NFR design (`aidlc-docs/construction/nfr/`) to identify ALL areas where clarification would improve infrastructure decisions. Be proactive in asking questions to ensure comprehensive infrastructure coverage.
 
 **CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect infrastructure quality. It's better to ask too many questions than to make incorrect infrastructure assumptions.
 
-**MANDATORY**: Evaluate ALL of the following categories by asking targeted questions about each. For each category, determine applicability based on evidence from the functional and NFR design artifacts -- do not skip categories without explicit justification:
+**MANDATORY**: Evaluate ALL of the following categories by asking targeted questions about each. For each category, determine applicability based on evidence from the NFR design (`aidlc-docs/construction/nfr/`) artifacts -- do not skip categories without explicit justification:
 
 - EMBED questions using [Answer]: tag format
 - Focus on ANY ambiguities, missing information, or areas needing clarification

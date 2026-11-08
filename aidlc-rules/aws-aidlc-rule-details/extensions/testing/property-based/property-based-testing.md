@@ -253,7 +253,7 @@ These rules are cross-cutting constraints that apply to the following AI-DLC sta
 
 | Stage | Applicable Rules | Enforcement |
 |---|---|---|
-| NFR Requirements | PBT-09 | Framework selection must be included in tech stack decisions |
+| NFR | PBT-09 | Framework selection must be included in tech stack decisions |
 | Code Generation (Planning) | PBT-01 through PBT-10 | Code generation plan must include PBT test steps for identified properties |
 | Code Generation (Generation) | PBT-02 through PBT-08, PBT-10 | Generated tests must include PBT alongside example-based tests |
 | Build and Test | PBT-08 | Test execution instructions must include PBT with seed logging and CI integration |

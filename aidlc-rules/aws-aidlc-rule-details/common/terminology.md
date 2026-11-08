@@ -45,8 +45,7 @@
 **Location**: `construction/` directory
 
 **Stages**:
-- NFR Requirements (CONDITIONAL, per-unit)
-- NFR Design (CONDITIONAL, per-unit)
+- NFR (Requirements & Design) (CONDITIONAL, system-wide, before per-unit loop)
 - Infrastructure Design (CONDITIONAL, per-unit)
 - Code Generation (ALWAYS) — includes Part 1: Planning and Part 2: Generation
 - Build and Test (ALWAYS)
@@ -79,8 +78,7 @@
 - **Application Design**: Designing application components, methods, business rules, and services
 - **UI Mockups**: Interactive SPA mockups of the proposed interface (user-facing UI only)
 - **Units Generation**: Decomposing the system into units of work (includes internal planning and generation sub-steps, plus per-unit design)
-- **NFR Requirements**: Determining NFRs and selecting tech stack (per-unit)
-- **NFR Design**: Incorporating NFR patterns and logical components (per-unit)
+- **NFR (Requirements & Design)**: Determining NFRs, tech stack, patterns and logical components (system-wide, once before the per-unit loop)
 - **Infrastructure Design**: Mapping to actual infrastructure services (per-unit)
 
 ## Application Design Terms
@@ -151,7 +149,7 @@ Examples (these are internal sub-steps within a single stage, not separate stage
 - User story generation (within Requirements Analysis)
 - Units Planning → Units Generation (within Units Generation stage)
 - Unit Design Planning → Unit Design Generation (within per-unit design)
-- NFR Planning → NFR Generation (within NFR Requirements stage)
+- NFR Planning → NFR Generation (within the NFR stage)
 - Code Generation Part 1 (Planning) → Code Generation Part 2 (Generation)
 
 ### Depth Levels

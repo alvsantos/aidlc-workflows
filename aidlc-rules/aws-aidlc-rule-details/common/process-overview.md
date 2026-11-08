@@ -9,7 +9,7 @@
 
 ## The Three-Phase Lifecycle:
 • **INCEPTION PHASE**: Planning and architecture (Workspace Detection + conditional phases + Workflow Planning)
-• **CONSTRUCTION PHASE**: Implementation, build and test; application design is done in Inception (per-unit NFR/infrastructure design + Code Generation + Build & Test)
+• **CONSTRUCTION PHASE**: Implementation, build and test; application design is done in Inception (system-wide NFR + per-unit Infrastructure Design + Code Generation + Build & Test)
 • **OPERATIONS PHASE**: Placeholder for future deployment and monitoring workflows
 
 ## The Adaptive Workflow:
@@ -18,7 +18,7 @@
 ## How It Works:
 • **AI analyzes** your request, workspace, and complexity to determine which stages are needed
 • **These stages always execute**: Workspace Detection, Requirements Analysis (adaptive depth), Workflow Planning, Code Generation (per-unit), Build and Test
-• **All other stages are conditional**: Reverse Engineering, Application Design, UI Mockups, Units Generation, per-unit design stages (NFR Requirements, NFR Design, Infrastructure Design). User stories are produced within Requirements Analysis when the request is user-facing (not a separate stage).
+• **All other stages are conditional**: Reverse Engineering, Application Design, UI Mockups, Units Generation, NFR (system-wide), per-unit Infrastructure Design. User stories are produced within Requirements Analysis when the request is user-facing (not a separate stage).
 • **No fixed sequences**: Stages execute in the order that makes sense for your specific task
 
 ## Your Team's Role:
@@ -45,8 +45,7 @@ flowchart TD
     end
     
     subgraph CONSTRUCTION["🟢 CONSTRUCTION PHASE"]
-        NFRA["NFR Requirements<br/><b>CONDITIONAL</b>"]
-        NFRD["NFR Design<br/><b>CONDITIONAL</b>"]
+        NFR["NFR (Requirements & Design)<br/><b>CONDITIONAL</b>"]
         ID["Infrastructure Design<br/><b>CONDITIONAL</b>"]
         CG["Code Generation<br/><b>ALWAYS</b>"]
         BT["Build and Test<br/><b>ALWAYS</b>"]
@@ -68,15 +67,13 @@ flowchart TD
     WP -.-> AppDesign
     WP -.-> UnitsG
     AppDesign -.-> UnitsG
-    UnitsG --> NFRA
-    NFRA -.-> NFRD
-    NFRD -.-> ID
+    UnitsG -.-> NFR
+    NFR -.-> ID
+    NFR --> CG
     
     WP --> CG
-    NFRA --> CG
-    NFRD --> CG
     ID --> CG
-    CG -.->|Next Unit| NFRA
+    CG -.->|Next Unit| ID
     CG --> BT
     BT -.-> OPS
     BT --> End(["Complete"])
@@ -93,8 +90,7 @@ flowchart TD
     style AppDesign fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
 
     style UnitsG fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
-    style NFRA fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
-    style NFRD fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style NFR fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style ID fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style INCEPTION fill:#BBDEFB,stroke:#1565C0,stroke-width:3px, color:#000
     style CONSTRUCTION fill:#C8E6C9,stroke:#2E7D32,stroke-width:3px, color:#000
@@ -116,9 +112,8 @@ flowchart TD
 - Application Design: High-level component identification and service layer design (CONDITIONAL)
 - Units Generation: Decompose into units of work (CONDITIONAL)
 
-**🟢 CONSTRUCTION PHASE** - Implementation, Build and Test (with per-unit NFR/infrastructure design)
-- NFR Requirements: Determine NFRs and select tech stack (CONDITIONAL, per-unit)
-- NFR Design: Incorporate NFR patterns and logical components (CONDITIONAL, per-unit)
+**🟢 CONSTRUCTION PHASE** - Implementation, Build and Test (system-wide NFR, per-unit infrastructure design)
+- NFR (Requirements & Design): Determine NFRs, tech stack, patterns and logical components (CONDITIONAL, system-wide, once before the per-unit loop)
 - Infrastructure Design: Map to actual infrastructure services (CONDITIONAL, per-unit)
 - Code Generation: Generate code with Part 1 - Planning, Part 2 - Generation (ALWAYS, per-unit)
 - Build and Test: Build all units and execute comprehensive testing (ALWAYS)

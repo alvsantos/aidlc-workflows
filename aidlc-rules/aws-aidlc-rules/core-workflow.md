@@ -251,58 +251,42 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 **Focus**: Determine HOW to build it
 
 **Stages in CONSTRUCTION PHASE**:
+- NFR (CONDITIONAL - system-wide, runs once before the per-unit loop)
 - Per-Unit Loop (executes for each unit):
-  - NFR Requirements (CONDITIONAL, per-unit)
-  - NFR Design (CONDITIONAL, per-unit)
   - Infrastructure Design (CONDITIONAL, per-unit)
   - Code Generation (ALWAYS, per-unit)
 - Build and Test (ALWAYS - after all units complete)
 
-**Note**: Each unit is completed fully (design + code) before moving to the next unit.
+**Note**: NFRs are decided once up front; then each unit is completed fully (design + code) before moving to the next unit.
+
+---
+
+## NFR (CONDITIONAL - System-Wide, Before Per-Unit Loop)
+
+**Runs once at the start of Construction, before any unit is processed.** Combines NFR requirements and NFR design into one stage with a single approval gate.
+
+**Execute IF**:
+- Performance, security, scalability, or availability requirements exist
+- Tech stack selection required
+- NFR patterns/logical components need definition
+
+**Skip IF**:
+- No NFR requirements
+- Tech stack already determined and no NFR patterns needed
+
+**Execution**:
+1. **MANDATORY**: Log any user input during this stage in audit.md
+2. Load all steps from `construction/nfr.md`
+3. Execute the combined NFR requirements + design assessment once for the whole system
+4. **MANDATORY**: Present standardized 2-option completion message as defined in nfr.md - DO NOT use emergent behavior
+5. **Wait for Explicit Approval**: User must choose between "Request Changes" or "Continue to Next Stage" - DO NOT PROCEED until user confirms
+6. **MANDATORY**: Log user's response in audit.md with complete raw input
 
 ---
 
 ## Per-Unit Loop (Executes for Each Unit)
 
 **For each unit of work, execute the following stages in sequence:**
-
-### NFR Requirements (CONDITIONAL, per-unit)
-
-**Execute IF**:
-- Performance requirements exist
-- Security considerations needed
-- Scalability concerns present
-- Tech stack selection required
-
-**Skip IF**:
-- No NFR requirements
-- Tech stack already determined
-
-**Execution**:
-1. **MANDATORY**: Log any user input during this stage in audit.md
-2. Load all steps from `construction/nfr-requirements.md`
-3. Execute NFR assessment for this unit
-4. **MANDATORY**: Present standardized 2-option completion message as defined in nfr-requirements.md - DO NOT use emergent behavior
-5. **Wait for Explicit Approval**: User must choose between "Request Changes" or "Continue to Next Stage" - DO NOT PROCEED until user confirms
-6. **MANDATORY**: Log user's response in audit.md with complete raw input
-
-### NFR Design (CONDITIONAL, per-unit)
-
-**Execute IF**:
-- NFR Requirements was executed
-- NFR patterns need to be incorporated
-
-**Skip IF**:
-- No NFR requirements
-- NFR Requirements was skipped
-
-**Execution**:
-1. **MANDATORY**: Log any user input during this stage in audit.md
-2. Load all steps from `construction/nfr-design.md`
-3. Execute NFR design for this unit
-4. **MANDATORY**: Present standardized 2-option completion message as defined in nfr-design.md - DO NOT use emergent behavior
-5. **Wait for Explicit Approval**: User must choose between "Request Changes" or "Continue to Next Stage" - DO NOT PROCEED until user confirms
-6. **MANDATORY**: Log user's response in audit.md with complete raw input
 
 ### Infrastructure Design (CONDITIONAL, per-unit)
 
@@ -458,9 +442,8 @@ The Operations stage will eventually include:
 │   │   └── application-design/
 │   ├── construction/               # 🟢 CONSTRUCTION PHASE
 │   │   ├── plans/
+│   │   ├── nfr/                     # System-wide NFRs + NFR design (once, before per-unit loop)
 │   │   ├── {unit-name}/
-│   │   │   ├── nfr-requirements/
-│   │   │   ├── nfr-design/
 │   │   │   ├── infrastructure-design/
 │   │   │   └── code/               # Markdown summaries only
 │   │   └── build-and-test/

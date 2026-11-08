@@ -94,7 +94,7 @@ X) Other (please describe after [Answer]: tag below)
 [Answer]: 
 ```
 
-The user's selected RTO/RPO targets MUST be documented in the requirements output and propagated to all downstream stages (Application Design, NFR Requirements, NFR Design, Infrastructure Design).
+The user's selected RTO/RPO targets MUST be documented in the requirements output and propagated to all downstream stages (Application Design, NFR, Infrastructure Design).
 
 ---
 
@@ -140,7 +140,7 @@ X) Other (describe after [Answer]: tag below)
 - **Rollback**: The defined mechanism to return the running workload to its last known-good state after a failed deployment. This rule does NOT assume a specific mechanism — the user selects one below.
 - **Deployment style**: The strategy used to release a change (direct/in-place, rolling, blue/green, or canary).
 
-**Clarifying Questions (ask during Requirements or NFR Design; do not assume answers)**:
+**Clarifying Questions (ask during Requirements or NFR; do not assume answers)**:
 
 ```markdown
 ## Question: CI/CD and Deployment Tooling
@@ -389,7 +389,7 @@ X) Other (describe after [Answer]: tag below)
 
 **Rule**: Resiliency mechanisms MUST have a defined testing approach. Where the organization already has DR testing or chaos engineering practices, this rule directs the project to reference them rather than invent new ones.
 
-**Clarifying Question (ask during NFR Design; do not assume)**:
+**Clarifying Question (ask during NFR; do not assume)**:
 
 ```markdown
 ## Question: Resiliency Testing Approach
@@ -419,7 +419,7 @@ X) Other (describe after [Answer]: tag below)
 
 **Rule**: Every project MUST integrate with an incident response process. As with change management, the default expectation is that the organization already HAS an incident response process — this rule directs the project to reference and conform to it.
 
-**Clarifying Question (ask during Requirements or NFR Design; do not assume)**:
+**Clarifying Question (ask during Requirements or NFR; do not assume)**:
 
 ```markdown
 ## Question: Incident Response Process

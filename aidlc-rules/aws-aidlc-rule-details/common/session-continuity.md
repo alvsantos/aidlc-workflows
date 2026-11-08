@@ -30,9 +30,9 @@ B) Review a previous stage ([Show available stages])
    - **Requirements Analysis**: Read requirements.md, requirement-verification-questions.md, and (if produced) stories.md and personas.md
    - **Application Design**: Read application-design artifacts (components.md, component-methods.md, services.md)
    - **Design (Units)**: Read unit-of-work.md, unit-of-work-dependency.md, unit-of-work-story-map.md
+   - **NFR (system-wide)**: Read `aidlc-docs/construction/nfr/` artifacts (produced once before the per-unit loop)
    - **Per-Unit Design**: Per-unit artifacts live under `aidlc-docs/construction/{unit-name}/` in
-     `nfr-requirements/`, `nfr-design/`, and `infrastructure-design/`
-     subdirectories. On resume, determine the in-progress unit from `aidlc-state.md` and load that
+     `infrastructure-design/` subdirectories. On resume, determine the in-progress unit from `aidlc-state.md` and load that
      unit's design artifacts, plus the design artifacts of any units it depends on (per
      `unit-of-work-dependency.md`). The exact files in each subdirectory are enumerated by the
      corresponding construction stage rules.

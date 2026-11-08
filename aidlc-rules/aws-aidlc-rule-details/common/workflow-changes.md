@@ -33,10 +33,10 @@ Users may request changes to the execution plan or stage execution during the wo
 
 **Scenario**: User wants to skip a stage that was planned to execute
 
-**Example**: "Let's skip the NFR Design stage for now"
+**Example**: "Let's skip the NFR stage for now"
 
 **Handling**:
-1. **Confirm Request**: "You want to skip NFR Design. This means no NFR patterns or logical components will be incorporated. Confirm?"
+1. **Confirm Request**: "You want to skip NFR. This means no NFR requirements, tech stack decisions, patterns or logical components will be defined. Confirm?"
 2. **Warn About Impact**: Explain what will be missing and potential consequences
 3. **Get Explicit Confirmation**: User must explicitly confirm understanding of impact
 4. **Update Execution Plan**: Mark stage as "SKIPPED" with reason
