@@ -45,7 +45,6 @@
 **Location**: `construction/` directory
 
 **Stages**:
-- Functional Design (CONDITIONAL, per-unit)
 - NFR Requirements (CONDITIONAL, per-unit)
 - NFR Design (CONDITIONAL, per-unit)
 - Infrastructure Design (CONDITIONAL, per-unit)
@@ -80,7 +79,6 @@
 - **Application Design**: Designing application components, methods, business rules, and services
 - **UI Mockups**: Interactive SPA mockups of the proposed interface (user-facing UI only)
 - **Units Generation**: Decomposing the system into units of work (includes internal planning and generation sub-steps, plus per-unit design)
-- **Functional Design**: Technology-agnostic business logic design (per-unit)
 - **NFR Requirements**: Determining NFRs and selecting tech stack (per-unit)
 - **NFR Design**: Incorporating NFR patterns and logical components (per-unit)
 - **Infrastructure Design**: Mapping to actual infrastructure services (per-unit)

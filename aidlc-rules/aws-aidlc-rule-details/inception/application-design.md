@@ -9,7 +9,7 @@ Application Design focuses on:
 - Designing service layer for orchestration
 - Establishing component dependencies and communication patterns
 
-**Note**: Detailed business logic design happens later in Functional Design (per-unit, CONSTRUCTION phase)
+**Note**: Detailed business logic design happens later during Code Generation (per-unit, CONSTRUCTION phase)
 
 ## Prerequisites
 - Workspace Detection must be complete
@@ -32,7 +32,7 @@ Application Design focuses on:
 ### 3. Include Mandatory Design Artifacts in Plan
 - **ALWAYS** include these mandatory artifacts in the design plan:
   - [ ] Generate components.md with component definitions and high-level responsibilities
-  - [ ] Generate component-methods.md with method signatures (business rules detailed later in Functional Design)
+  - [ ] Generate component-methods.md with method signatures (business rules detailed later during Code Generation)
   - [ ] Generate services.md with service definitions and orchestration patterns
   - [ ] Generate component-dependency.md with dependency relationships and communication patterns
   - [ ] Validate design completeness and consistency
@@ -95,7 +95,7 @@ If the analysis in step 8 reveals ANY ambiguous answers, you MUST:
   - Method signatures for each component
   - High-level purpose of each method
   - Input/output types
-  - Note: Detailed business rules will be defined in Functional Design (per-unit, CONSTRUCTION phase)
+  - Note: Detailed business rules will be defined during Code Generation (per-unit, CONSTRUCTION phase)
 - Create `aidlc-docs/inception/application-design/services.md` with:
   - Service definitions
   - Service responsibilities

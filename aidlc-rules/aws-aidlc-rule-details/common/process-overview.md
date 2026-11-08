@@ -18,7 +18,7 @@
 ## How It Works:
 • **AI analyzes** your request, workspace, and complexity to determine which stages are needed
 • **These stages always execute**: Workspace Detection, Requirements Analysis (adaptive depth), Workflow Planning, Code Generation (per-unit), Build and Test
-• **All other stages are conditional**: Reverse Engineering, Application Design, UI Mockups, Units Generation, per-unit design stages (Functional Design, NFR Requirements, NFR Design, Infrastructure Design). User stories are produced within Requirements Analysis when the request is user-facing (not a separate stage).
+• **All other stages are conditional**: Reverse Engineering, Application Design, UI Mockups, Units Generation, per-unit design stages (NFR Requirements, NFR Design, Infrastructure Design). User stories are produced within Requirements Analysis when the request is user-facing (not a separate stage).
 • **No fixed sequences**: Stages execute in the order that makes sense for your specific task
 
 ## Your Team's Role:
@@ -45,7 +45,6 @@ flowchart TD
     end
     
     subgraph CONSTRUCTION["🟢 CONSTRUCTION PHASE"]
-        FD["Functional Design<br/><b>CONDITIONAL</b>"]
         NFRA["NFR Requirements<br/><b>CONDITIONAL</b>"]
         NFRD["NFR Design<br/><b>CONDITIONAL</b>"]
         ID["Infrastructure Design<br/><b>CONDITIONAL</b>"]
@@ -69,17 +68,15 @@ flowchart TD
     WP -.-> AppDesign
     WP -.-> UnitsG
     AppDesign -.-> UnitsG
-    UnitsG --> FD
-    FD -.-> NFRA
+    UnitsG --> NFRA
     NFRA -.-> NFRD
     NFRD -.-> ID
     
     WP --> CG
-    FD --> CG
     NFRA --> CG
     NFRD --> CG
     ID --> CG
-    CG -.->|Next Unit| FD
+    CG -.->|Next Unit| NFRA
     CG --> BT
     BT -.-> OPS
     BT --> End(["Complete"])
@@ -96,7 +93,6 @@ flowchart TD
     style AppDesign fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
 
     style UnitsG fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
-    style FD fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style NFRA fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style NFRD fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style ID fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
@@ -121,7 +117,6 @@ flowchart TD
 - Units Generation: Decompose into units of work (CONDITIONAL)
 
 **🟢 CONSTRUCTION PHASE** - Design, Implementation, Build and Test
-- Functional Design: Detailed business logic design per unit (CONDITIONAL, per-unit)
 - NFR Requirements: Determine NFRs and select tech stack (CONDITIONAL, per-unit)
 - NFR Design: Incorporate NFR patterns and logical components (CONDITIONAL, per-unit)
 - Infrastructure Design: Map to actual infrastructure services (CONDITIONAL, per-unit)

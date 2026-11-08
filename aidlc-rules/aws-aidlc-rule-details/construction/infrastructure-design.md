@@ -1,7 +1,7 @@
 # Infrastructure Design
 
 ## Prerequisites
-- Functional Design must be complete for the unit
+- Units Generation must be complete for the unit
 - NFR Design recommended (provides logical components to map)
 - Execution plan must indicate Infrastructure Design stage should execute
 
@@ -11,7 +11,7 @@ Map logical software components to actual infrastructure choices for deployment 
 ## Steps to Execute
 
 ### Step 1: Analyze Design Artifacts
-- Read functional design from `aidlc-docs/construction/{unit-name}/functional-design/`
+- Read the unit definition, its assigned stories, and the Application Design (component structure)
 - Read NFR design from `aidlc-docs/construction/{unit-name}/nfr-design/` (if exists)
 - Identify logical components needing infrastructure
 

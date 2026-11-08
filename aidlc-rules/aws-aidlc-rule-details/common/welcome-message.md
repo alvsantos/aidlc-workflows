@@ -43,7 +43,6 @@ AI-DLC is a structured yet flexible software development process that adapts to 
         |     Design, Implementation & Test     |
         +---------------------------------------+
         | * Per-Unit Loop (for each unit):      |
-        |   - Functional Design (COND)          |
         |   - NFR Requirements Assess (COND)    |
         |   - NFR Design (COND)                 |
         |   - Infrastructure Design (COND)      |

@@ -21,6 +21,7 @@ This stage generates code for each unit of work through two integrated parts:
 - [ ] Read unit design artifacts from Unit Design Generation
 - [ ] Read unit story map to understand assigned stories
 - [ ] Identify unit dependencies and interfaces
+- [ ] **Design the detailed business logic for this unit here**: there is no separate Functional Design stage. Derive the domain model, business rules, and algorithms from the unit's user stories (their acceptance criteria and behavior) and the Application Design (component methods and interfaces). Capture any non-trivial domain/rules reasoning in the code and the code documentation summary.
 - [ ] **If UI Mockups exist** (`aidlc-docs/inception/mockups/`): use them and `design-system.md` as the visual reference for frontend work, honoring the same design system
 - [ ] Validate unit is ready for code generation
 

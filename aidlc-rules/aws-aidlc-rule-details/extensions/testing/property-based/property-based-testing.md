@@ -34,7 +34,7 @@ Verification items in this document are plain bullet points describing complianc
 
 ## Rule PBT-01: Property Identification During Design
 
-**Rule**: Every unit containing business logic, data transformations, or algorithmic operations MUST be analyzed for testable properties during the Functional Design stage. The analysis MUST identify which of the following property categories apply:
+**Rule**: Every unit containing business logic, data transformations, or algorithmic operations MUST be analyzed for testable properties during Code Generation planning. The analysis MUST identify which of the following property categories apply:
 
 | Category | Description | Example |
 |---|---|---|
@@ -46,7 +46,7 @@ Verification items in this document are plain bullet points describing complianc
 | Induction | A property proven for smaller inputs extends to larger ones | recursive structures, divide-and-conquer |
 | Easy verification | The result is hard to compute but easy to check | maze solver output can be walked to verify |
 
-The identified properties MUST be documented in the functional design artifacts for the unit, and carried forward into code generation as PBT test requirements.
+The identified properties MUST be documented in the code generation plan for the unit, and carried forward into code generation as PBT test requirements.
 
 **Verification**:
 - Functional design artifacts include a "Testable Properties" section listing identified properties per component
@@ -90,7 +90,7 @@ The property-based test MUST generate random valid inputs using a domain-appropr
 **Verification**:
 - Each documented invariant has a corresponding property-based test
 - Invariant tests generate a wide range of inputs including boundary values
-- Business rule invariants identified in functional design are covered by PBT
+- Business rule invariants identified during code generation planning are covered by PBT
 - Invariant tests do not duplicate exact assertions from example-based tests — they test the general rule, not specific cases
 
 ---
@@ -149,7 +149,7 @@ Stateful PBT MUST:
 - Test sequences of varying lengths, including empty sequences
 
 **Verification**:
-- Stateful components identified in functional design have stateful PBT or document why it is not applicable
+- Stateful components identified during code generation planning have stateful PBT or document why it is not applicable
 - A simplified model is defined for comparison
 - Command generators produce valid operation sequences with realistic parameter distributions
 - Invariants are checked after each command in the sequence, not just at the end
@@ -253,7 +253,6 @@ These rules are cross-cutting constraints that apply to the following AI-DLC sta
 
 | Stage | Applicable Rules | Enforcement |
 |---|---|---|
-| Functional Design | PBT-01 | Property identification must appear in design artifacts |
 | NFR Requirements | PBT-09 | Framework selection must be included in tech stack decisions |
 | Code Generation (Planning) | PBT-01 through PBT-10 | Code generation plan must include PBT test steps for identified properties |
 | Code Generation (Generation) | PBT-02 through PBT-08, PBT-10 | Generated tests must include PBT alongside example-based tests |
@@ -269,7 +268,7 @@ At each applicable stage:
 
 ## Appendix: Property Category Quick Reference
 
-For developers and AI models identifying properties during Functional Design (PBT-01):
+For developers and AI models identifying properties during Code Generation planning (PBT-01):
 
 | Pattern Name | Formal Term | Test Shape | When to Use |
 |---|---|---|---|

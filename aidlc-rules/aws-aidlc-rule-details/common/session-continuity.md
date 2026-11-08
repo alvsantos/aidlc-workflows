@@ -31,7 +31,7 @@ B) Review a previous stage ([Show available stages])
    - **Application Design**: Read application-design artifacts (components.md, component-methods.md, services.md)
    - **Design (Units)**: Read unit-of-work.md, unit-of-work-dependency.md, unit-of-work-story-map.md
    - **Per-Unit Design**: Per-unit artifacts live under `aidlc-docs/construction/{unit-name}/` in
-     `functional-design/`, `nfr-requirements/`, `nfr-design/`, and `infrastructure-design/`
+     `nfr-requirements/`, `nfr-design/`, and `infrastructure-design/`
      subdirectories. On resume, determine the in-progress unit from `aidlc-state.md` and load that
      unit's design artifacts, plus the design artifacts of any units it depends on (per
      `unit-of-work-dependency.md`). The exact files in each subdirectory are enumerated by the

@@ -256,7 +256,6 @@ flowchart TD
     end
     
     subgraph CONSTRUCTION["🟢 CONSTRUCTION PHASE"]
-        FD["Functional Design<br/><b>STATUS</b>"]
         NFRA["NFR Requirements<br/><b>STATUS</b>"]
         NFRD["NFR Design<br/><b>STATUS</b>"]
         ID["Infrastructure Design<br/><b>STATUS</b>"]
@@ -295,8 +294,6 @@ flowchart TD
   - **Rationale**: [Why executing or skipping]
 
 ### 🟢 CONSTRUCTION PHASE
-- [ ] Functional Design - [EXECUTE/SKIP]
-  - **Rationale**: [Why executing or skipping]
 - [ ] NFR Requirements - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
 - [ ] NFR Design - [EXECUTE/SKIP]
@@ -358,7 +355,6 @@ Update `aidlc-docs/aidlc-state.md`:
 - [ ] Units Generation - [EXECUTE/SKIP]
 
 ### 🟢 CONSTRUCTION PHASE
-- [ ] Functional Design - [EXECUTE/SKIP]
 - [ ] NFR Requirements - [EXECUTE/SKIP]
 - [ ] NFR Design - [EXECUTE/SKIP]
 - [ ] Infrastructure Design - [EXECUTE/SKIP]

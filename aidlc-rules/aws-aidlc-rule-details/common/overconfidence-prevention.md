@@ -8,7 +8,7 @@ AI-DLC was exhibiting overconfidence by not asking enough clarifying questions, 
 
 The overconfidence issue was caused by directives in multiple stages that encouraged skipping questions:
 
-1. **Functional Design**: "Skip entire categories if not applicable"
+1. **Business logic design** (now during Code Generation): "Skip entire categories if not applicable"
 2. **User Story Questions** (within Requirements Analysis): "Use categories as inspiration, NOT as mandatory checklist"
 3. **Requirements Analysis**: Similar patterns encouraging minimal questioning
 4. **NFR Requirements**: "Only if" conditions that discouraged thorough analysis
@@ -35,7 +35,7 @@ These directives were telling the AI to avoid asking questions rather than encou
 - Enhanced answer analysis requirements
 - Strengthened follow-up question mandates
 
-#### 3. Functional Design Stage
+#### 3. Business Logic Design (during Code Generation)
 - Replaced "only if" conditions with comprehensive evaluation
 - Added more question categories (data flow, integration points, error handling)
 - Strengthened ambiguity detection and resolution requirements

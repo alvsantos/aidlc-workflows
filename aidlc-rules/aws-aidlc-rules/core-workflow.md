@@ -252,7 +252,6 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 
 **Stages in CONSTRUCTION PHASE**:
 - Per-Unit Loop (executes for each unit):
-  - Functional Design (CONDITIONAL, per-unit)
   - NFR Requirements (CONDITIONAL, per-unit)
   - NFR Design (CONDITIONAL, per-unit)
   - Infrastructure Design (CONDITIONAL, per-unit)
@@ -266,25 +265,6 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 ## Per-Unit Loop (Executes for Each Unit)
 
 **For each unit of work, execute the following stages in sequence:**
-
-### Functional Design (CONDITIONAL, per-unit)
-
-**Execute IF**:
-- New data models or schemas
-- Complex business logic
-- Business rules need detailed design
-
-**Skip IF**:
-- Simple logic changes
-- No new business logic
-
-**Execution**:
-1. **MANDATORY**: Log any user input during this stage in audit.md
-2. Load all steps from `construction/functional-design.md`
-3. Execute functional design for this unit
-4. **MANDATORY**: Present standardized 2-option completion message as defined in functional-design.md - DO NOT use emergent 3-option behavior
-5. **Wait for Explicit Approval**: User must choose between "Request Changes" or "Continue to Next Stage" - DO NOT PROCEED until user confirms
-6. **MANDATORY**: Log user's response in audit.md with complete raw input
 
 ### NFR Requirements (CONDITIONAL, per-unit)
 
@@ -479,7 +459,6 @@ The Operations stage will eventually include:
 │   ├── construction/               # 🟢 CONSTRUCTION PHASE
 │   │   ├── plans/
 │   │   ├── {unit-name}/
-│   │   │   ├── functional-design/
 │   │   │   ├── nfr-requirements/
 │   │   │   ├── nfr-design/
 │   │   │   ├── infrastructure-design/

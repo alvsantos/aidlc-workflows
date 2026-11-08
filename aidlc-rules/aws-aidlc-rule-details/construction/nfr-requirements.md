@@ -1,8 +1,8 @@
 # NFR Requirements
 
 ## Prerequisites
-- Functional Design must be complete for the unit
-- Unit functional design artifacts must be available
+- Units Generation must be complete for the unit
+- Unit definition, assigned stories, and Application Design artifacts must be available
 - Execution plan must indicate NFR Requirements stage should execute
 
 ## Overview
@@ -10,9 +10,9 @@ Determine non-functional requirements for the unit and make tech stack choices.
 
 ## Steps to Execute
 
-### Step 1: Analyze Functional Design
-- Read functional design artifacts from `aidlc-docs/construction/{unit-name}/functional-design/`
-- Understand business logic complexity and requirements
+### Step 1: Analyze Unit Context
+- Read the unit definition, its assigned user stories, and the Application Design (component methods/interfaces)
+- Understand business logic complexity and requirements from these inputs
 
 ### Step 2: Create NFR Requirements Plan
 - Generate plan with checkboxes [] for NFR assessment
@@ -20,7 +20,7 @@ Determine non-functional requirements for the unit and make tech stack choices.
 - Each step should have a checkbox []
 
 ### Step 3: Generate Context-Appropriate Questions
-**DIRECTIVE**: Thoroughly analyze the functional design to identify ALL areas where NFR clarification would improve system quality and architecture decisions. Be proactive in asking questions to ensure comprehensive NFR coverage.
+**DIRECTIVE**: Thoroughly analyze the unit context (definition, stories, application design) to identify ALL areas where NFR clarification would improve system quality and architecture decisions. Be proactive in asking questions to ensure comprehensive NFR coverage.
 
 **CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect system quality. It's better to ask too many questions than to make incorrect NFR assumptions.
 
