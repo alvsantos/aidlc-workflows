@@ -49,7 +49,7 @@ Verification items in this document are plain bullet points describing complianc
 The identified properties MUST be documented in the code generation plan for the unit, and carried forward into code generation as PBT test requirements.
 
 **Verification**:
-- Functional design artifacts include a "Testable Properties" section listing identified properties per component
+- The code generation plan includes a "Testable Properties" section listing identified properties per component
 - Each identified property references one of the categories above
 - Components with no identifiable properties are explicitly marked as "No PBT properties identified" with a brief rationale
 - The property list is referenced during code generation planning
