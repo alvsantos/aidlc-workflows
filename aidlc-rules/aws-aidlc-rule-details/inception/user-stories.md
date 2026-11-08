@@ -67,7 +67,9 @@ Run these steps during Requirements Analysis generation, after `requirements.md`
 ## C.2 Generate stories.md
 - Create `aidlc-docs/inception/user-stories/stories.md`
 - Write user stories following **INVEST** (Independent, Negotiable, Valuable, Estimable, Small, Testable)
+- **Stories own the detail**: `requirements.md` states high-level business needs only. The stories hold the **acceptance criteria and behavior** that operationalize those needs — this is where step-by-step behavior, rules, and edge cases live.
 - Include **acceptance criteria** for each story
+- Reference the high-level functional requirement(s) each story operationalizes (traceability), without copying requirement text
 - Map each persona to its relevant stories
 - Use the breakdown/organization approach indicated by the answers (journey, feature, persona, domain, or epic based)
 - Give each story a stable id/anchor (e.g., `US-001`) for traceability
@@ -198,6 +200,7 @@ Inject the data and the two raw markdown documents into this skeleton. Keep the 
 ---
 
 # CRITICAL RULES
+- **DIVISION OF RESPONSIBILITY**: `requirements.md` holds high-level business needs only; stories hold the acceptance criteria and detailed behavior. Never duplicate acceptance criteria or behavior into `requirements.md`.
 - **NO SEPARATE GATE**: Stories are reviewed and approved in the single Requirements Analysis gate. Do not add a user-stories planning or generation approval step.
 - **SINGLE QUESTION SET**: Story questions are folded into the Requirements Analysis question file, deduplicated. Never open a second question round for stories.
 - **INVEST + ACCEPTANCE CRITERIA**: Every story is Independent, Negotiable, Valuable, Estimable, Small, Testable, with explicit acceptance criteria.

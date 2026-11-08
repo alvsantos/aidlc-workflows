@@ -116,7 +116,7 @@ After receiving answers:
    - **ALWAYS** create `aidlc-docs/inception/requirements/requirement-verification-questions.md` unless requirements are exceptionally clear and complete
    - This is the **only** question round for this stage. It covers requirements AND (when Step 4.5 decided to generate stories) user stories, in one list.
    - **OPTIMIZE FOR ESSENTIALS — DO NOT CONCATENATE**: The goal is to reduce the user's burden, not to merge two questionnaires. Produce the **minimum set of questions** needed to generate both the requirements and the stories well:
-     - Ask each concept **once**. Requirements and story questions overlap heavily (a functional requirement and its acceptance criteria are usually the same decision) — collapse them into a single question that serves both.
+     - Ask each concept **once**. A functional requirement and its acceptance criteria are usually the same decision — ask it once; the answer feeds `requirements.md` at a high level and `stories.md` at the detailed/acceptance-criteria level (see the division of responsibility in Step 7).
      - Drop any question whose answer is already determined by the request, prior context, or another answer.
      - Never ask a story-framed version of a question you already ask in requirement terms (or vice versa).
      - Prefer one well-scoped question over several narrow ones covering the same decision.
@@ -142,14 +142,19 @@ Present the question file to the user and STOP.
      - Request type
      - Scope estimate
      - Complexity estimate
-   - Include both functional and non-functional requirements
+   - **Functional requirements — HIGH LEVEL ONLY**: Describe, in business terms, WHAT each user/persona needs to do in the system — the capabilities and outcomes, not the behavior. Keep them concise and outcome-focused. **Do NOT include acceptance criteria, step-by-step behavior, field-level rules, edge cases, or UI detail** — those belong in the user stories.
+   - **Non-functional requirements**: Include fully here (performance, security, scalability, usability, etc.) — these have no story equivalent.
    - Incorporate user's answers to clarifying questions
    - Provide brief summary of key requirements
    - **IF Step 4.5 decided to generate user stories**: generate the story artifacts now by following **Section C — Generation** of `inception/user-stories.md`:
      - `aidlc-docs/inception/user-stories/personas.md`
-     - `aidlc-docs/inception/user-stories/stories.md` (INVEST + acceptance criteria, story ids)
+     - `aidlc-docs/inception/user-stories/stories.md` (INVEST + acceptance criteria, story ids) — the stories carry the detailed behavior and acceptance criteria for the high-level functional requirements
      - `aidlc-docs/inception/user-stories/stories.html` (interactive, self-contained review view)
-   - Keep requirements and stories consistent — do not restate the same content in conflicting ways; stories operationalize the functional requirements.
+   - **Division of responsibility (avoid redundancy)**:
+     - `requirements.md` = high-level business needs (what the persona must accomplish) + NFRs.
+     - `stories.md` = acceptance criteria and detailed behavior that operationalize those needs.
+     - Each functional requirement maps to one or more stories; do NOT repeat acceptance criteria or behavior in `requirements.md`.
+   - **IF no user stories are generated** (backend-only/no UI): `requirements.md` carries the functional detail itself, since there is no story document to hold it.
 
 ### Step 8: Update State Tracking
 
