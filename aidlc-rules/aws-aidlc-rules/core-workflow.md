@@ -91,7 +91,7 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 - UI Mockups (CONDITIONAL - user-facing UI only)
 - Workflow Planning (ALWAYS)
 - Application Design (CONDITIONAL)
-- Units Generation (CONDITIONAL)
+- Units Generation (ALWAYS - at least one unit; adaptive depth)
 
 ---
 
@@ -222,23 +222,17 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 5. **Wait for Explicit Approval**: Present detailed completion message (see application-design.md for message format) - DO NOT PROCEED until user confirms
 6. **MANDATORY**: Log user's response in audit.md with complete raw input
 
-## Units Generation (CONDITIONAL)
+## Units Generation (ALWAYS EXECUTE)
 
-**Execute IF**:
-- System needs decomposition into multiple units of work
-- Multiple services or modules required
-- Complex system requiring structured breakdown
-
-**Skip IF**:
-- Single simple unit
-- No decomposition needed
-- Straightforward single-component implementation
+**Always executes** — every system has at least one unit of work. Depth adapts to complexity:
+- **Single unit**: When the system does not need decomposition (simple/single-component change), produce one unit of work that represents the whole system, with all stories mapped to it. Keep this lightweight.
+- **Multiple units**: When decomposition adds value (multiple services/modules, complex system, multiple packages, IaC updates), break the system into several units with dependencies and a story map.
 
 **Execution**:
 1. **MANDATORY**: Log any user input during this phase in audit.md
 2. Load all steps from `inception/units-generation.md`
 3. Load reverse engineering artifacts (if brownfield)
-4. Execute at appropriate depth (minimal/standard/comprehensive)
+4. Execute at appropriate depth (minimal for a single unit; standard/comprehensive when decomposing)
 5. **Wait for Explicit Approval**: Present detailed completion message (see units-generation.md for message format) - DO NOT PROCEED until user confirms
 6. **MANDATORY**: Log user's response in audit.md with complete raw input
 

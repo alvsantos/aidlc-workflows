@@ -5,6 +5,8 @@ This stage decomposes the system into manageable units of work through two integ
 - **Part 1 - Planning**: Create decomposition plan with questions, collect answers, analyze for ambiguities, get approval
 - **Part 2 - Generation**: Execute approved plan to generate unit artifacts
 
+**ALWAYS EXECUTES**: Every system has at least one unit of work. When no decomposition is needed (simple or single-component change), produce a single unit that represents the whole system, with all stories mapped to it, and keep the stage lightweight. When decomposition adds value, produce multiple units with dependencies and a story map.
+
 **DEFINITION**: A unit of work is a logical grouping of stories for development purposes. For microservices, each unit becomes an independently deployable service. For monoliths, the single unit represents the entire application with logical modules.
 
 **Terminology**: Use "Service" for independently deployable components, "Module" for logical groupings within a service, "Unit of Work" for planning context.
@@ -13,8 +15,7 @@ This stage decomposes the system into manageable units of work through two integ
 - Workspace Detection must be complete
 - Requirements Analysis recommended (provides functional scope)
 - User stories recommended (produced in Requirements Analysis; stories map to units)
-- Application Design stage REQUIRED (determines components, methods, and services)
-- Execution plan must indicate Design stage should execute
+- Application Design recommended (when executed, provides components, methods, and services to map to units; if skipped, derive units from requirements and stories)
 
 ---
 

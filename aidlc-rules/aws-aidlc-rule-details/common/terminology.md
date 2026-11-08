@@ -35,7 +35,7 @@
 - UI Mockups (CONDITIONAL - user-facing UI only)
 - Workflow Planning (ALWAYS)
 - Application Design (CONDITIONAL)
-- Units Generation (CONDITIONAL)
+- Units Generation (ALWAYS - at least one unit)
 
 **Outputs**: Requirements, user stories, architectural decisions, unit definitions
 
@@ -72,12 +72,12 @@
 - **Workflow Planning**: Creating execution plan for which phases to run
 - **Code Generation**: Single stage with two parts — Part 1 (Planning) creates detailed implementation plans, Part 2 (Generation) generates actual code based on plans and prior artifacts
 - **Build and Test**: Building all units and executing comprehensive testing
+- **Units Generation**: Decomposing the system into units of work — always runs, producing at least one unit (a single unit when no decomposition is needed)
 
 ### Conditional Stages
 - **Reverse Engineering**: Analyzing existing codebase (brownfield projects only)
 - **Application Design**: Designing application components, methods, business rules, and services
 - **UI Mockups**: Interactive SPA mockups of the proposed interface (user-facing UI only)
-- **Units Generation**: Decomposing the system into units of work (includes internal planning and generation sub-steps, plus per-unit design)
 - **NFR (Requirements & Design)**: Determining NFRs, tech stack, patterns and logical components (system-wide, once before the per-unit loop)
 - **Infrastructure Design**: Mapping to actual infrastructure services (per-unit)
 

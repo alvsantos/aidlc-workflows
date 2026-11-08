@@ -17,8 +17,8 @@
 
 ## How It Works:
 • **AI analyzes** your request, workspace, and complexity to determine which stages are needed
-• **These stages always execute**: Workspace Detection, Requirements Analysis (adaptive depth), Workflow Planning, Code Generation (per-unit), Build and Test
-• **All other stages are conditional**: Reverse Engineering, Application Design, UI Mockups, Units Generation, NFR (system-wide), per-unit Infrastructure Design. User stories are produced within Requirements Analysis when the request is user-facing (not a separate stage).
+• **These stages always execute**: Workspace Detection, Requirements Analysis (adaptive depth), Workflow Planning, Units Generation (at least one unit), Code Generation (per-unit), Build and Test
+• **All other stages are conditional**: Reverse Engineering, Application Design, UI Mockups, NFR (system-wide), per-unit Infrastructure Design. User stories are produced within Requirements Analysis when the request is user-facing (not a separate stage).
 • **No fixed sequences**: Stages execute in the order that makes sense for your specific task
 
 ## Your Team's Role:
@@ -41,7 +41,7 @@ flowchart TD
         UIM["UI Mockups<br/><b>CONDITIONAL</b>"]
         WP["Workflow Planning<br/><b>ALWAYS</b>"]
         AppDesign["Application Design<br/><b>CONDITIONAL</b>"]
-        UnitsG["Units Generation<br/><b>CONDITIONAL</b>"]
+        UnitsG["Units Generation<br/><b>ALWAYS</b>"]
     end
     
     subgraph CONSTRUCTION["🟢 CONSTRUCTION PHASE"]
@@ -65,7 +65,7 @@ flowchart TD
     UIM --> WP
     
     WP -.-> AppDesign
-    WP -.-> UnitsG
+    WP --> UnitsG
     AppDesign -.-> UnitsG
     UnitsG -.-> NFR
     NFR -.-> ID
@@ -89,7 +89,7 @@ flowchart TD
     style UIM fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style AppDesign fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
 
-    style UnitsG fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style UnitsG fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
     style NFR fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style ID fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
     style INCEPTION fill:#BBDEFB,stroke:#1565C0,stroke-width:3px, color:#000
@@ -110,7 +110,7 @@ flowchart TD
 - UI Mockups: Interactive SPA mockups of the proposed interface, right after Requirements Analysis (CONDITIONAL - user-facing UI only)
 - Workflow Planning: Create execution plan (ALWAYS)
 - Application Design: High-level component identification and service layer design (CONDITIONAL)
-- Units Generation: Decompose into units of work (CONDITIONAL)
+- Units Generation: Decompose into units of work (ALWAYS - at least one unit; adaptive depth)
 
 **🟢 CONSTRUCTION PHASE** - Implementation, Build and Test (system-wide NFR, per-unit infrastructure design)
 - NFR (Requirements & Design): Determine NFRs, tech stack, patterns and logical components (CONDITIONAL, system-wide, once before the per-unit loop)

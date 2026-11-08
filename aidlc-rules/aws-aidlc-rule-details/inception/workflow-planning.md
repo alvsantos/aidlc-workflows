@@ -119,19 +119,10 @@ Evaluate risk level:
 - No new components or methods
 - Pure implementation changes
 
-### 3.2 Units Generation - Execute IF:
-- New data models or schemas
-- API changes or new endpoints
-- Complex algorithms or business logic
-- State management changes
-- Multiple packages require changes
-- Infrastructure-as-code updates needed
-
-**Skip IF**:
-- Simple logic changes
-- UI-only changes
-- Configuration updates
-- Straightforward implementations
+### 3.2 Units Generation - ALWAYS EXECUTES
+Units Generation always runs — every system has at least one unit. Decide only the **granularity**, not whether to run:
+- **Multiple units** when: new data models/schemas, API changes, complex logic, state management, multiple packages, or IaC updates make decomposition valuable.
+- **Single unit** when: simple logic, UI-only, configuration, or straightforward single-component changes — produce one unit representing the whole system (lightweight).
 
 ### 3.3 NFR (Requirements & Design) - Execute IF:
 - Performance requirements
@@ -292,8 +283,8 @@ flowchart TD
 - [x] Execution Plan (IN PROGRESS)
 - [ ] Application Design - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
-- [ ] Units Generation - [EXECUTE/SKIP]
-  - **Rationale**: [Why executing or skipping]
+- [ ] Units Generation - EXECUTE (ALWAYS)
+  - **Granularity**: [Single unit / Multiple units — rationale]
 
 ### 🟢 CONSTRUCTION PHASE
 - [ ] NFR (Requirements & Design) - [EXECUTE/SKIP]
@@ -352,7 +343,7 @@ Update `aidlc-docs/aidlc-state.md`:
 - [x] UI Mockups (if applicable)
 - [x] Workflow Planning
 - [ ] Application Design - [EXECUTE/SKIP]
-- [ ] Units Generation - [EXECUTE/SKIP]
+- [ ] Units Generation - EXECUTE (ALWAYS; single or multiple units)
 
 ### 🟢 CONSTRUCTION PHASE
 - [ ] NFR (Requirements & Design) - [EXECUTE/SKIP]
