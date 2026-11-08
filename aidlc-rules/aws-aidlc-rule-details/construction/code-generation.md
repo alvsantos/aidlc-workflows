@@ -8,9 +8,9 @@ This stage generates code for each unit of work through two integrated parts:
 **Note**: For brownfield projects, "generate" means modify existing files when appropriate, not create duplicates.
 
 ## Prerequisites
-- Unit Design Generation must be complete for the unit
-- NFR Implementation (if executed) must be complete for the unit
-- All unit design artifacts must be available
+- Units Generation must be complete (unit definition and story map available for the unit)
+- NFR stage (if executed) must be complete
+- Infrastructure Design (if executed) must be complete for the unit
 - Unit is ready for code generation
 
 ---
@@ -18,7 +18,7 @@ This stage generates code for each unit of work through two integrated parts:
 # PART 1: PLANNING
 
 ## Step 1: Analyze Unit Context
-- [ ] Read unit design artifacts from Unit Design Generation
+- [ ] Read the unit definition and story map from Units Generation
 - [ ] Read unit story map to understand assigned stories
 - [ ] Identify unit dependencies and interfaces
 - [ ] **Design the detailed business logic for this unit here**: there is no separate Functional Design stage. Derive the domain model, business rules, and algorithms from the unit's user stories (their acceptance criteria and behavior) and the Application Design (component methods and interfaces). Capture any non-trivial domain/rules reasoning in the code and the code documentation summary.

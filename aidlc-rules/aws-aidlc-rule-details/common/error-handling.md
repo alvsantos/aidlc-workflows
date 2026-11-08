@@ -113,7 +113,7 @@
 - **Solution**: Return to Units Generation to clarify unit definition
 - **Workaround**: Generate partial design, mark gaps
 
-### NFR Implementation Errors
+### NFR Errors
 
 **Error**: Technology stack choices are incompatible
 - **Cause**: Conflicting requirements, platform limitations
@@ -125,7 +125,7 @@
 - **Solution**: Document constraints, ask user for workarounds
 - **Escalation**: May require human intervention for setup
 
-**Error**: NFR implementation step requires human action
+**Error**: NFR step requires human action
 - **Cause**: AI cannot perform certain tasks (network config, credentials)
 - **Solution**: Clearly mark as **HUMAN TASK**, provide instructions
 - **Wait**: For user confirmation before proceeding
@@ -134,7 +134,7 @@
 
 **Error**: Code generation plan is incomplete
 - **Cause**: Missing design artifacts, unclear requirements
-- **Solution**: Return to Design stage to complete artifacts
+- **Solution**: Return to the relevant design stage (NFR or Infrastructure Design) to complete artifacts
 - **Recovery**: Generate plan with available information, mark gaps
 
 **Error**: Unit dependencies not satisfied

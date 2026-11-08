@@ -15,7 +15,7 @@
 - Stages can be ALWAYS-EXECUTE or CONDITIONAL
 
 **Usage Examples**:
-- ✅ "The CONSTRUCTION phase contains 7 stages"
+- ✅ "The CONSTRUCTION phase contains 4 stages"
 - ✅ "The Code Generation stage is always executed"
 - ✅ "We're in the INCEPTION phase, executing the Requirements Assessment stage"
 - ❌ "The Requirements Assessment phase" (should be "stage")
@@ -148,7 +148,7 @@ A reusable building block within a service or module. Components are classes, fu
 Examples (these are internal sub-steps within a single stage, not separate stages):
 - User story generation (within Requirements Analysis)
 - Units Planning → Units Generation (within Units Generation stage)
-- Unit Design Planning → Unit Design Generation (within per-unit design)
+- Infrastructure Design Planning → Infrastructure Design Generation (per-unit)
 - NFR Planning → NFR Generation (within the NFR stage)
 - Code Generation Part 1 (Planning) → Code Generation Part 2 (Generation)
 
