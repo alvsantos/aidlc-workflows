@@ -6,6 +6,8 @@
 
 **See [depth-levels.md](../common/depth-levels.md) for adaptive depth explanation**
 
+**Scope**: This single stage covers both requirements AND user stories. When the request is user-facing, it also produces user stories, personas, and an interactive review view — using the same question round and the same approval gate as requirements, so the user is not asked overlapping questions twice or made to approve two near-identical documents. User stories are NOT a separate stage. The story value assessment, question dimensions, and generation steps live in `inception/user-stories.md` (a sub-procedure invoked from here).
+
 ## Prerequisites
 - Workspace Detection must be complete
 - Reverse Engineering must be complete (if brownfield)
@@ -76,6 +78,10 @@ Analyze whatever the user has provided:
    - Pasted content or file references
    - Convert any non-markdown documents to markdown format 
 
+### Step 4.5: Assess User Stories Value
+
+Decide whether this request warrants user stories, using **Section A — Value Assessment** of `inception/user-stories.md`. Record the decision (generate stories: yes/no) and the reason. This decision drives both the question set (Step 6) and generation (Step 7). When in doubt and any user-facing surface exists, generate stories.
+
 ### Step 5: Thorough Completeness Analysis
 
 **CRITICAL**: Use comprehensive analysis to evaluate requirements completeness. Default to asking questions when there is ANY ambiguity or missing detail.
@@ -106,10 +112,15 @@ After receiving answers:
 
 2. **Deferred Rule Loading**: For each extension the user opted IN, load the full rules file now. The rules file is derived by naming convention: strip `.opt-in.md` from the opt-in filename and append `.md` (e.g., `security-baseline.opt-in.md` → `security-baseline.md`). For extensions the user opted OUT, do NOT load the full rules file.
 
-### Step 6: Generate Clarifying Questions (PROACTIVE APPROACH)
+### Step 6: Generate Clarifying Questions (SINGLE OPTIMIZED SET)
    - **ALWAYS** create `aidlc-docs/inception/requirements/requirement-verification-questions.md` unless requirements are exceptionally clear and complete
-   - Ask questions about ANY missing, unclear, or ambiguous areas
-   - Focus on functional requirements, non-functional requirements, user scenarios, and business context
+   - This is the **only** question round for this stage. It covers requirements AND (when Step 4.5 decided to generate stories) user stories, in one list.
+   - **OPTIMIZE FOR ESSENTIALS — DO NOT CONCATENATE**: The goal is to reduce the user's burden, not to merge two questionnaires. Produce the **minimum set of questions** needed to generate both the requirements and the stories well:
+     - Ask each concept **once**. Requirements and story questions overlap heavily (a functional requirement and its acceptance criteria are usually the same decision) — collapse them into a single question that serves both.
+     - Drop any question whose answer is already determined by the request, prior context, or another answer.
+     - Never ask a story-framed version of a question you already ask in requirement terms (or vice versa).
+     - Prefer one well-scoped question over several narrow ones covering the same decision.
+   - **Coverage**: Ensure the final set covers the unclear areas across functional requirements, non-functional requirements, user scenarios, and business context. When stories will be generated, also ensure the story dimensions in **Section B — Question Inputs** of `inception/user-stories.md` are covered — folded in and deduplicated, not appended as a separate block.
    - Request user to fill in all [Answer]: tags directly in the questions document
    - If presenting multiple-choice options for answers:
      - Label the options as A, B, C, D etc.
@@ -123,7 +134,7 @@ After receiving answers:
 DO NOT proceed to Step 7 until all questions in requirement-verification-questions.md are answered and validated.
 Present the question file to the user and STOP.
 
-### Step 7: Generate Requirements Document
+### Step 7: Generate Requirements Document (and User Stories if warranted)
    - **PREREQUISITE**: Step 6 gate must be passed — all answers received and analyzed
    - Create `aidlc-docs/inception/requirements/requirements.md`
    - Include intent analysis summary at the top:
@@ -134,6 +145,11 @@ Present the question file to the user and STOP.
    - Include both functional and non-functional requirements
    - Incorporate user's answers to clarifying questions
    - Provide brief summary of key requirements
+   - **IF Step 4.5 decided to generate user stories**: generate the story artifacts now by following **Section C — Generation** of `inception/user-stories.md`:
+     - `aidlc-docs/inception/user-stories/personas.md`
+     - `aidlc-docs/inception/user-stories/stories.md` (INVEST + acceptance criteria, story ids)
+     - `aidlc-docs/inception/user-stories/stories.html` (interactive, self-contained review view)
+   - Keep requirements and stories consistent — do not restate the same content in conflicting ways; stories operationalize the functional requirements.
 
 ### Step 8: Update State Tracking
 
@@ -156,10 +172,11 @@ Update `aidlc-docs/aidlc-state.md`:
 # 🔍 Requirements Analysis Complete
 ```
 
-     2. **AI Summary** (optional): Provide structured bullet-point summary of requirements
+     2. **AI Summary** (optional): Provide structured bullet-point summary
         - Format: "Requirements analysis has identified [project type/complexity]:"
         - List key functional requirements (bullet points)
         - List key non-functional requirements (bullet points)
+        - **IF user stories were generated**: note the personas and story counts produced
         - Mention architectural considerations or technical decisions if relevant
         - DO NOT include workflow instructions ("please review", "let me know", "proceed to next phase", "before we proceed")
         - Keep factual and content-focused
@@ -168,6 +185,9 @@ Update `aidlc-docs/aidlc-state.md`:
 ```markdown
 > **📋 <u>**REVIEW REQUIRED:**</u>**  
 > Please examine the requirements document at: `aidlc-docs/inception/requirements/requirements.md`
+> [IF user stories were generated, add:]
+> User stories and personas: `aidlc-docs/inception/user-stories/stories.md` and `aidlc-docs/inception/user-stories/personas.md`
+> 💡 For easier review of the stories, open `aidlc-docs/inception/user-stories/stories.html` in your browser (double-click). Each persona shows the use cases it performs — click any box for the full story detail and acceptance criteria. The HTML is a convenience view; the markdown remains the source of truth.
 
 
 
@@ -175,15 +195,13 @@ Update `aidlc-docs/aidlc-state.md`:
 >
 > **You may:**
 >
-> 🔧 **Request Changes** -  Ask for modifications to the requirements if required based on your review 
-> [IF User Stories will be skipped, add this option:]
-> 📝 **Add User Stories** - Choose to Include **User Stories** stage (currently skipped based on project simplicity)  
-> ✅ **Approve & Continue** - Approve requirements and proceed to **[User Stories/Workflow Planning]**
+> 🔧 **Request Changes** -  Ask for modifications to the requirements or user stories based on your review  
+> ✅ **Approve & Continue** - Approve and proceed to **Workflow Planning**
 
 ---
 ```
 
-**Note**: Include the "Add User Stories" option only when User Stories stage will be skipped. Replace [User Stories/Workflow Planning] with the actual next stage name.
+**Note**: Requirements and user stories (when generated) are reviewed and approved together in this single gate. There is no separate user-stories approval.
 
    - Wait for explicit user approval before proceeding
    - Record approval response with timestamp

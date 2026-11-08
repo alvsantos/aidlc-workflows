@@ -31,8 +31,8 @@
 **Stages**:
 - Workspace Detection (ALWAYS)
 - Reverse Engineering (CONDITIONAL - Brownfield only)
-- Requirements Analysis (ALWAYS - Adaptive depth)
-- User Stories (CONDITIONAL)
+- Requirements Analysis (ALWAYS - Adaptive depth; also produces user stories when user-facing)
+- UI Mockups (CONDITIONAL - user-facing UI only)
 - Workflow Planning (ALWAYS)
 - Application Design (CONDITIONAL)
 - Units Generation (CONDITIONAL)
@@ -77,8 +77,8 @@
 
 ### Conditional Stages
 - **Reverse Engineering**: Analyzing existing codebase (brownfield projects only)
-- **User Stories**: Creating user stories and personas (includes Story Planning and Story Generation)
 - **Application Design**: Designing application components, methods, business rules, and services
+- **UI Mockups**: Interactive SPA mockups of the proposed interface (user-facing UI only)
 - **Units Generation**: Decomposing the system into units of work (includes internal planning and generation sub-steps, plus per-unit design)
 - **Functional Design**: Technology-agnostic business logic design (per-unit)
 - **NFR Requirements**: Determining NFRs and selecting tech stack (per-unit)
@@ -150,7 +150,7 @@ A reusable building block within a service or module. Components are classes, fu
 - **Generation**: Executing the plan to create artifacts
 
 Examples (these are internal sub-steps within a single stage, not separate stages):
-- Story Planning → Story Generation (within User Stories stage)
+- User story generation (within Requirements Analysis)
 - Units Planning → Units Generation (within Units Generation stage)
 - Unit Design Planning → Unit Design Generation (within per-unit design)
 - NFR Planning → NFR Generation (within NFR Requirements stage)
@@ -166,7 +166,7 @@ Examples (these are internal sub-steps within a single stage, not separate stage
 ### Plans
 Documents with checkboxes and questions that guide execution.
 - Located in `aidlc-docs/plans/`
-- Examples: `story-generation-plan.md`, `unit-of-work-plan.md`
+- Examples: `execution-plan.md`, `unit-of-work-plan.md`
 
 ### Artifacts
 Generated outputs from executing plans.

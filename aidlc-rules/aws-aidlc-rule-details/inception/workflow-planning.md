@@ -16,9 +16,14 @@
 - requirements.md (includes intent analysis)
 - requirement-verification-questions.md (with answers)
 
-### 1.3 Load User Stories (if executed)
+### 1.3 Load User Stories (if produced)
 - stories.md
 - personas.md
+
+**Note**: User stories and personas are produced within Requirements Analysis (not a separate stage). Load them here if they exist.
+
+### 1.4 Load UI Mockups (if produced)
+- mockups.html, design-system.md (produced right after Requirements Analysis, before this stage)
 
 ## Step 2: Detailed Scope and Impact Analysis
 
@@ -103,21 +108,7 @@ Evaluate risk level:
 
 ## Step 3: Phase Determination
 
-### 3.1 User Stories - Already Executed or Skip?
-**Already executed**: Move to next determination
-**Not executed - Execute IF**:
-- Multiple user personas
-- User experience impact
-- Acceptance criteria needed
-- Team collaboration required
-
-**Skip IF**:
-- Internal refactoring
-- Bug fix with clear reproduction
-- Technical debt reduction
-- Infrastructure changes
-
-### 3.2 Application Design - Execute IF:
+### 3.1 Application Design - Execute IF:
 - New components or services needed
 - Component methods and business rules need definition
 - Service layer design required
@@ -128,16 +119,7 @@ Evaluate risk level:
 - No new components or methods
 - Pure implementation changes
 
-### 3.3 UI Mockups - Execute IF:
-- The project has a user-facing interface (new or changed screens/views)
-- Multiple personas interact with different parts of the UI
-- The user wants to preview the interface before implementation
-
-**Skip IF**:
-- Backend-only, API-only, CLI, or library work with no UI
-- Pure refactoring, infrastructure, or configuration changes
-
-### 3.4 Units Generation - Execute IF:
+### 3.2 Units Generation - Execute IF:
 - New data models or schemas
 - API changes or new endpoints
 - Complex algorithms or business logic
@@ -151,7 +133,7 @@ Evaluate risk level:
 - Configuration updates
 - Straightforward implementations
 
-### 3.5 NFR Implementation - Execute IF:
+### 3.3 NFR Implementation - Execute IF:
 - Performance requirements
 - Security considerations
 - Scalability concerns
@@ -267,10 +249,9 @@ flowchart TD
         WD["Workspace Detection<br/><b>STATUS</b>"]
         RE["Reverse Engineering<br/><b>STATUS</b>"]
         RA["Requirements Analysis<br/><b>STATUS</b>"]
-        US["User Stories<br/><b>STATUS</b>"]
+        UIM["UI Mockups<br/><b>STATUS</b>"]
         WP["Workflow Planning<br/><b>STATUS</b>"]
         AD["Application Design<br/><b>STATUS</b>"]
-        UIM["UI Mockups<br/><b>STATUS</b>"]
         UG["Units Generation<br/>(Planning + Generation)<br/><b>STATUS</b>"]
     end
     
@@ -306,11 +287,9 @@ flowchart TD
 - [x] Workspace Detection (COMPLETED)
 - [x] Reverse Engineering (COMPLETED/SKIPPED)
 - [x] Requirements Analysis (COMPLETED)
-- [x] User Stories (COMPLETED/SKIPPED)
+- [x] UI Mockups (COMPLETED/SKIPPED)
 - [x] Execution Plan (IN PROGRESS)
 - [ ] Application Design - [EXECUTE/SKIP]
-  - **Rationale**: [Why executing or skipping]
-- [ ] UI Mockups - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
 - [ ] Units Generation - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
@@ -373,10 +352,9 @@ Update `aidlc-docs/aidlc-state.md`:
 - [x] Workspace Detection
 - [x] Reverse Engineering (if applicable)
 - [x] Requirements Analysis
-- [x] User Stories (if applicable)
+- [x] UI Mockups (if applicable)
 - [x] Workflow Planning
 - [ ] Application Design - [EXECUTE/SKIP]
-- [ ] UI Mockups - [EXECUTE/SKIP]
 - [ ] Units Generation - [EXECUTE/SKIP]
 
 ### 🟢 CONSTRUCTION PHASE
@@ -406,7 +384,7 @@ I've created a comprehensive execution plan based on:
 - Your request: [Summary]
 - Existing system: [Summary if brownfield]
 - Requirements: [Summary if executed]
-- User stories: [Summary if executed]
+- User stories: [Summary if produced in Requirements Analysis]
 
 **Detailed Analysis**:
 - Risk level: [Level]

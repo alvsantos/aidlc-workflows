@@ -12,7 +12,7 @@ This stage decomposes the system into manageable units of work through two integ
 ## Prerequisites
 - Workspace Detection must be complete
 - Requirements Analysis recommended (provides functional scope)
-- User Stories recommended (stories map to units)
+- User stories recommended (produced in Requirements Analysis; stories map to units)
 - Application Design stage REQUIRED (determines components, methods, and services)
 - Execution plan must indicate Design stage should execute
 

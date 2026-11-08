@@ -12,10 +12,10 @@ Users may request changes to the execution plan or stage execution during the wo
 
 **Scenario**: User wants to add a stage that was originally skipped
 
-**Example**: "Actually, I want to add user stories even though we skipped that stage"
+**Example**: "Actually, I want to add UI mockups even though we skipped that stage"
 
 **Handling**:
-1. **Confirm Request**: "You want to add User Stories stage. This will create user stories and personas. Confirm?"
+1. **Confirm Request**: "You want to add the UI Mockups stage. This will create interactive SPA mockups of the interface. Confirm?"
 2. **Check Dependencies**: Verify all prerequisite stages are complete
 3. **Update Execution Plan**: Add stage to `execution-plan.md` with rationale
 4. **Update State**: Mark stage as "PENDING" in `aidlc-state.md`

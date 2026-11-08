@@ -67,22 +67,22 @@
 - **Solution**: Highlight unanswered questions, provide examples
 - **Do Not Proceed**: Until all required questions are answered
 
-### User Stories Errors
+### User Story Errors (within Requirements Analysis)
 
 **Error**: Cannot map requirements to stories
 - **Cause**: Requirements too vague, missing functional details
-- **Solution**: Return to Requirements Analysis for clarification
+- **Solution**: Ask more clarifying questions in the same Requirements Analysis question round
 - **Workaround**: Create stories based on available information, mark as incomplete
 
-**Error**: User provides ambiguous story planning answers
+**Error**: User provides ambiguous answers affecting stories
 - **Cause**: Unclear options, complex decision
-- **Solution**: Add follow-up questions with specific examples
+- **Solution**: Add follow-up questions with specific examples (same single question set)
 - **Do Not Proceed**: Until ambiguities are resolved
 
-**Error**: Story generation plan has uncompleted steps
-- **Cause**: Execution interrupted, steps skipped
-- **Solution**: Resume from first uncompleted step
-- **Recovery**: Review completed steps, continue from checkpoint
+**Error**: Story artifacts inconsistent with requirements
+- **Cause**: Requirements and stories generated from different assumptions
+- **Solution**: Regenerate stories from the approved requirements; keep stories operationalizing the functional requirements
+- **Recovery**: Re-run the Requirements Analysis generation step
 
 ### Application Design Errors
 

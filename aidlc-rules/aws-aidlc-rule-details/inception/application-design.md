@@ -14,7 +14,7 @@ Application Design focuses on:
 ## Prerequisites
 - Workspace Detection must be complete
 - Requirements Analysis recommended (provides functional context)
-- User Stories recommended (user stories guide design decisions)
+- User stories recommended (produced in Requirements Analysis; they guide design decisions)
 - Execution plan must indicate Application Design stage should execute
 
 ## Step-by-Step Execution

@@ -87,11 +87,10 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 **Stages in INCEPTION PHASE**:
 - Workspace Detection (ALWAYS)
 - Reverse Engineering (CONDITIONAL - Brownfield only)
-- Requirements Analysis (ALWAYS - Adaptive depth)
-- User Stories (CONDITIONAL)
+- Requirements Analysis (ALWAYS - Adaptive depth; also produces user stories when user-facing)
+- UI Mockups (CONDITIONAL - user-facing UI only)
 - Workflow Planning (ALWAYS)
 - Application Design (CONDITIONAL)
-- UI Mockups (CONDITIONAL - user-facing UI only)
 - Units Generation (CONDITIONAL)
 
 ---
@@ -152,80 +151,36 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
    - Analyze user request (intent analysis)
    - Determine requirements depth needed
    - Assess current requirements
-   - Ask clarifying questions (if needed)
-   - Generate requirements document
+   - **Assess user stories value** (Step 4.5) — decide whether stories will be produced
+   - Ask a single, optimized, non-duplicated set of clarifying questions covering requirements and (when warranted) stories
+   - Generate requirements document, plus user stories/personas/`stories.html` when warranted
 4. Execute at appropriate depth (minimal/standard/comprehensive)
-5. **Wait for Explicit Approval**: Follow approval format from requirements-analysis.md detailed steps - DO NOT PROCEED until user confirms
+5. **Wait for Explicit Approval**: Follow approval format from requirements-analysis.md detailed steps - requirements and user stories are approved together in ONE gate. DO NOT PROCEED until user confirms
 6. **MANDATORY**: Log user's response in audit.md with complete raw input
 
-## User Stories (CONDITIONAL)
+**Note**: User stories are NOT a separate stage. When the request is user-facing, Requirements Analysis also produces user stories, personas, and the interactive `stories.html` review view — using the same question round and the same approval gate, to avoid redundant questions and duplicate reviews. See `inception/user-stories.md` for the story assessment, question inputs, and generation sub-procedure.
 
-**INTELLIGENT ASSESSMENT**: Use multi-factor analysis to determine if user stories add value:
+## UI Mockups (CONDITIONAL - User-Facing UI Only)
 
-**ALWAYS Execute IF** (High Priority Indicators):
-- New user-facing features or functionality
-- Changes affecting user workflows or interactions
-- Multiple user types or personas involved
-- Complex business requirements with acceptance criteria needs
-- Cross-functional team collaboration required
-- Customer-facing API or service changes
-- New product capabilities or enhancements
+**Runs immediately after Requirements Analysis** (before Workflow Planning), so the interface is reviewed together with the requirements and stories it is derived from.
 
-**LIKELY Execute IF** (Medium Priority - Assess Complexity):
-- Modifications to existing user-facing features
-- Backend changes that indirectly affect user experience
-- Integration work that impacts user workflows
-- Performance improvements with user-visible benefits
-- Security enhancements affecting user interactions
-- Data model changes affecting user data or reports
+**Execute IF**:
+- The project has a user-facing interface (new or changed screens, pages, or views) — typically whenever Requirements Analysis produced user stories
+- Multi-persona systems where navigation or layout differs by role
+- The user wants to review the proposed interface before implementation
 
-**COMPLEXITY-BASED ASSESSMENT**: For medium priority cases, execute user stories if:
-- Request involves multiple components or services
-- Changes span multiple user touchpoints
-- Business logic is complex or has multiple scenarios
-- Requirements have ambiguity that stories could clarify
-- Implementation affects multiple user journeys
-- Change has significant business impact or risk
-
-**SKIP ONLY IF** (Low Priority - Simple Cases):
-- Pure internal refactoring with zero user impact
-- Simple bug fixes with clear, isolated scope
-- Infrastructure changes with no user-facing effects
-- Technical debt cleanup with no functional changes
-- Developer tooling or build process improvements
-- Documentation-only updates
-
-**ASSESSMENT CRITERIA**: When in doubt, favor inclusion of user stories for:
-- Requests with business stakeholder involvement
-- Changes requiring user acceptance testing
-- Features with multiple implementation approaches
-- Work that benefits from shared team understanding
-- Projects where requirements clarity is valuable
-
-**ASSESSMENT PROCESS**: 
-1. Analyze request complexity and scope
-2. Identify user impact (direct or indirect)
-3. Evaluate business context and stakeholder needs
-4. Consider team collaboration benefits
-5. Default to inclusion for borderline cases
-
-**Note**: If Requirements Analysis executed, Stories can reference and build upon those requirements.
-
-**User Stories has two parts within one stage**:
-1. **Part 1 - Planning**: Create story plan with questions, collect answers, analyze for ambiguities, get approval
-2. **Part 2 - Generation**: Execute approved plan to generate stories and personas
+**Skip IF**:
+- Backend-only, API-only, CLI, or library work with no UI
+- Pure refactoring, infrastructure, or configuration changes
 
 **Execution**:
 1. **MANDATORY**: Log any user input during this phase in audit.md
-2. Load all steps from `inception/user-stories.md`
-3. **MANDATORY**: Perform intelligent assessment (Step 1 in user-stories.md) to validate user stories are needed
-4. Load reverse engineering artifacts (if brownfield)
-5. If Requirements exist, reference them when creating stories
-6. Execute at appropriate depth (minimal/standard/comprehensive)
-7. **PART 1 - Planning**: Create story plan with questions, wait for user answers, analyze for ambiguities, get approval
-8. **PART 2 - Generation**: Execute approved plan to generate stories and personas, plus the interactive `stories.html` review view
-9. **Wait for Explicit Approval**: Follow approval format from user-stories.md detailed steps - DO NOT PROCEED until user confirms
-10. **MANDATORY**: Log user's response in audit.md with complete raw input
+2. Load all steps from `inception/ui-mockups.md`
+3. Load `stories.md`/`personas.md` and the requirements (application design has not run yet at this point)
+4. **MANDATORY**: Detect any user-provided design system (see ui-mockups.md Step 2) and follow it; otherwise use a neutral default and state the assumption
+5. Generate a self-contained, navigable SPA mockup (`aidlc-docs/inception/mockups/mockups.html`) that opens from `file://`
+6. **Wait for Explicit Approval**: Present completion message (see ui-mockups.md for message format) - DO NOT PROCEED until user confirms
+7. **MANDATORY**: Log user's response in audit.md with complete raw input
 
 ## Workflow Planning (ALWAYS EXECUTE)
 
@@ -266,26 +221,6 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 4. Execute at appropriate depth (minimal/standard/comprehensive)
 5. **Wait for Explicit Approval**: Present detailed completion message (see application-design.md for message format) - DO NOT PROCEED until user confirms
 6. **MANDATORY**: Log user's response in audit.md with complete raw input
-
-## UI Mockups (CONDITIONAL - User-Facing UI Only)
-
-**Execute IF**:
-- The project has a user-facing interface (new or changed screens, pages, or views)
-- Multi-persona systems where navigation or layout differs by role
-- The user wants to review the proposed interface before implementation
-
-**Skip IF**:
-- Backend-only, API-only, CLI, or library work with no UI
-- Pure refactoring, infrastructure, or configuration changes
-
-**Execution**:
-1. **MANDATORY**: Log any user input during this phase in audit.md
-2. Load all steps from `inception/ui-mockups.md`
-3. Load `stories.md`/`personas.md` and application design artifacts (if available)
-4. **MANDATORY**: Detect any user-provided design system (see ui-mockups.md Step 2) and follow it; otherwise use a neutral default and state the assumption
-5. Generate a self-contained, navigable SPA mockup (`aidlc-docs/inception/mockups/mockups.html`) that opens from `file://`
-6. **Wait for Explicit Approval**: Present completion message (see ui-mockups.md for message format) - DO NOT PROCEED until user confirms
-7. **MANDATORY**: Log user's response in audit.md with complete raw input
 
 ## Units Generation (CONDITIONAL)
 

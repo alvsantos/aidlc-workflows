@@ -12,9 +12,9 @@ UI Mockups focus on:
 **Note**: Mockups are a review artifact in `aidlc-docs/`. They are NOT the application frontend. Construction (Code Generation) produces the real frontend and MAY use these mockups as a visual reference.
 
 ## Prerequisites
-- User Stories recommended (screens and flows are derived from stories and personas)
-- Application Design recommended (informs components and structure)
-- Workflow Planning must indicate the UI Mockups stage should execute
+- Requirements Analysis must be complete (screens and flows are derived from the requirements and the user stories it produces)
+- User stories recommended (produced in Requirements Analysis; screens and flows are derived from stories and personas)
+- Runs immediately after Requirements Analysis, before Workflow Planning and Application Design
 
 ## When To Execute
 
@@ -34,7 +34,7 @@ When in doubt and any user-facing surface exists, execute.
 # PART 1: PREPARATION
 
 ## Step 1: Confirm UI Scope
-- [ ] Load `stories.md` and `personas.md` (if available) and the application design artifacts (if available)
+- [ ] Load `stories.md` and `personas.md` (if available) and the requirements document
 - [ ] Identify the set of screens/views implied by the stories, grouped by persona and user journey
 - [ ] Identify the primary navigation between screens
 

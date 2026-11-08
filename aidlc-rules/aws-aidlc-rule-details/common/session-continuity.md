@@ -27,8 +27,7 @@ B) Review a previous stage ([Show available stages])
 2. **Parse current status** from the workflow file to populate the prompt
 3. **MANDATORY: Load Previous Stage Artifacts** - Before resuming any stage, automatically read all relevant artifacts from previous stages:
    - **Reverse Engineering**: Read architecture.md, code-structure.md, api-documentation.md
-   - **Requirements Analysis**: Read requirements.md, requirement-verification-questions.md
-   - **User Stories**: Read stories.md, personas.md, story-generation-plan.md
+   - **Requirements Analysis**: Read requirements.md, requirement-verification-questions.md, and (if produced) stories.md and personas.md
    - **Application Design**: Read application-design artifacts (components.md, component-methods.md, services.md)
    - **Design (Units)**: Read unit-of-work.md, unit-of-work-dependency.md, unit-of-work-story-map.md
    - **Per-Unit Design**: Per-unit artifacts live under `aidlc-docs/construction/{unit-name}/` in
