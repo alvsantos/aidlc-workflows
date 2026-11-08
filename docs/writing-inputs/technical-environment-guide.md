@@ -540,10 +540,10 @@ a summary of the current technical state.]
 | ----------------------------------- | -------------------------------------- | -------------------------------------------------- |
 | Project Technical Summary           | Workspace Detection                    | Context for project classification                 |
 | Programming Languages               | Code Generation                        | Language selection and version constraints         |
-| Frameworks and Libraries            | Code Generation, NFR Design            | Dependency selection and prohibited library checks |
+| Frameworks and Libraries            | Code Generation, NFR                   | Dependency selection and prohibited library checks |
 | Cloud Services Allow/Disallow Lists | Infrastructure Design                  | Service selection boundaries                       |
-| Preferred Patterns                  | Application Design, Functional Design  | Architecture and design pattern decisions          |
-| Security Requirements               | NFR Requirements, NFR Design           | Security pattern selection and compliance checks   |
+| Preferred Patterns                  | Application Design, Code Generation    | Architecture and design pattern decisions          |
+| Security Requirements               | NFR                                    | Security pattern selection and compliance checks   |
 | Testing Requirements                | Code Generation, Build and Test        | Test strategy, tooling, and coverage targets       |
 | Example Code                        | Code Generation                        | Pattern reference during code generation           |
 | Brownfield Inventory                | Reverse Engineering, Workflow Planning | Migration decisions and coexistence rules          |

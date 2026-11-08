@@ -128,18 +128,17 @@ AI-DLC runs through two main phases:
 **Inception** -- understand and plan
 
 1. Detects your workspace (new project or existing code)
-2. Analyzes requirements (asks clarifying questions if anything is unclear)
-3. Creates user stories (if the project warrants them)
+2. Analyzes requirements (asks clarifying questions if anything is unclear; also produces user stories and personas when the request is user-facing)
+3. Creates UI mockups (if the project has a user-facing UI)
 4. Builds an execution plan (which stages to run, which to skip)
-5. Designs components and units of work (if complexity warrants it)
+5. Designs components and units of work (always produces at least one unit — a single unit when no decomposition is needed, multiple units otherwise)
 
-**Construction** -- design and build (per unit of work)
+**Construction** -- design and build
 
-1. Functional design (business logic, domain models)
-2. NFR requirements and design (performance, security, scalability)
-3. Infrastructure design (maps to actual cloud services)
-4. Code generation (writes the code, tests, and deployment artifacts)
-5. Build and test (build instructions, test execution, verification)
+1. NFR requirements and design (performance, security, scalability — one system-wide stage, runs once before the per-unit loop)
+2. Infrastructure design (maps each unit to actual cloud services)
+3. Code generation (per unit: detailed business-logic design plus the code, tests, and deployment artifacts)
+4. Build and test (build instructions, test execution, verification)
 
 Every stage requires your approval before proceeding. You can request changes, add skipped stages, or redirect at any gate.
 

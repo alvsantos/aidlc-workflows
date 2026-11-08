@@ -246,7 +246,7 @@ I want to start a new project. Please read [path to vision document] and
 [path to technical environment document], then begin the AIDLC workflow.
 ```
 
-AIDLC will scan the workspace, determine greenfield vs. brownfield, and proceed into Requirements Analysis using your documents as the primary source — asking only for what they don't cover.
+AIDLC will scan the workspace, determine greenfield vs. brownfield, and proceed into Requirements Analysis using your documents as the primary source — asking only for what they don't cover. When the request is user-facing, Requirements Analysis also produces the user stories, personas, and an interactive `stories.html` (there is no separate User Stories stage). If the project has a user-facing UI, a UI Mockups stage then runs right after Requirements Analysis, producing an interactive `mockups.html` and a `design-system.md` before workflow planning continues.
 
 For a brownfield project, AIDLC will first run Reverse Engineering, analyzing your existing codebase and producing architecture, component, and API documentation. Review these artifacts carefully — they become the foundation for everything that follows.
 
@@ -356,18 +356,18 @@ Then confirm whether they are required for code generation.
 
 ## 3. Construction Phase
 
-The Construction phase is where designs become code. Each unit of work goes through a series of design stages (conditional) followed by Code Generation (always). After all units are complete, Build and Test closes out the work.
+The Construction phase is where designs become code. It opens with a system-wide NFR stage (conditional, runs once). Then each unit of work goes through its design stage (conditional) followed by Code Generation (always). After all units are complete, Build and Test closes out the work.
 
 ### The Design Review Process
 
-For each unit of work, AIDLC may execute some or all of these design stages before generating code:
+Construction begins with one system-wide stage, then loops per unit:
 
-- **Functional Design** — business logic, domain models, data schemas
-- **NFR Requirements** — performance, security, scalability, tech stack selection
-- **NFR Design** — applying NFR patterns to the design
-- **Infrastructure Design** — mapping the design to actual cloud services
+- **NFR (Requirements & Design)** — runs once at the start of Construction, before the per-unit loop: performance, security, scalability, tech stack selection, and the NFR design patterns applied to the system. This single stage merges what were previously separate NFR Requirements and NFR Design stages, with one approval gate.
+- **Infrastructure Design** (per unit) — mapping the design to actual cloud services
 
-Each stage produces a document in `aidlc-docs/construction/{unit-name}/`. Your job at each gate is to read the document and decide: request changes or approve.
+Then, for each unit of work, AIDLC generates code. Detailed business-logic design — domain models, business rules, algorithms — now happens inside Code Generation rather than in a separate stage.
+
+The system-wide NFR artifacts live in `aidlc-docs/construction/nfr/`, and per-unit artifacts live in `aidlc-docs/construction/{unit-name}/`. Your job at each gate is to read the document and decide: request changes or approve.
 
 **Read before you approve.** The design documents are the source of truth for code generation. Mistakes that slip through here are harder to fix later.
 
@@ -568,7 +568,7 @@ This flow takes a few extra minutes compared to directly editing a file. It keep
 One-line fixes that bypass the design still create drift. Note the fix in the relevant design document and let AIDLC apply it:
 
 ```text
-In [functional-design.md for unit X], update [method or rule] to [the fix].
+In [the code design for unit X], update [method or rule] to [the fix].
 Then regenerate [the affected file].
 ```
 

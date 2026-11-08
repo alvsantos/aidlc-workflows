@@ -444,7 +444,7 @@ logger.error(
 
 | Control               | CalcEngine Implementation                                                                                                                                                                                                           |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Threat modeling       | Threat model created during AIDLC NFR Requirements stage. Reviewed when new endpoints or integration points are added. Primary threats: expression injection, resource exhaustion, API key abuse.                                   |
+| Threat modeling       | Threat model created during AIDLC NFR stage. Reviewed when new endpoints or integration points are added. Primary threats: expression injection, resource exhaustion, API key abuse.                                                |
 | Defense in depth      | Validation at three layers: (1) API Gateway request validation, (2) Pydantic model validation in FastAPI, (3) domain validation in engine functions. Each layer rejects independently.                                              |
 | Business logic limits | Expression length capped at 4,096 characters. Parser recursion depth capped at 100 levels. Maximum array size for statistics endpoints: 10,000 elements. These limits prevent resource exhaustion without affecting legitimate use. |
 | Abuse case testing    | Test suite includes negative/abuse tests: oversized expressions, deeply nested parentheses, expressions designed to cause slow evaluation, rapid-fire requests exceeding rate limits, invalid/expired/revoked API keys.             |
@@ -1212,11 +1212,11 @@ class ExampleApiStack(Stack):
 | Project Technical Summary     | Workspace Detection                | Greenfield classification, team context                                  |
 | Programming Languages         | Code Generation                    | Python 3.12 enforced, no other languages without approval                |
 | uv Standards                  | Code Generation                    | All dependency operations use uv, pyproject.toml is single config source |
-| Frameworks and Libraries      | Code Generation, NFR Design        | FastAPI + Pydantic + Mangum stack, prohibited library enforcement        |
+| Frameworks and Libraries      | Code Generation, NFR               | FastAPI + Pydantic + Mangum stack, prohibited library enforcement        |
 | Cloud Services Allow/Disallow | Infrastructure Design              | Lambda + API Gateway + DynamoDB only for MVP                             |
 | Architecture Pattern          | Application Design                 | Modular monolith, module boundaries in engine/ vs api/ vs storage/       |
-| API Design Standards          | Functional Design, Code Generation | Endpoint conventions, error codes, response format                       |
-| Security Requirements         | NFR Requirements, NFR Design       | Input validation rules, no eval(), API key auth pattern                  |
+| API Design Standards          | Code Generation                    | Endpoint conventions, error codes, response format                       |
+| Security Requirements         | NFR                                | Input validation rules, no eval(), API key auth pattern                  |
 | Testing Requirements          | Code Generation, Build and Test    | pytest + hypothesis, 90% coverage, accuracy tests mandatory              |
 | Project Structure             | Code Generation                    | Exact directory layout and file placement rules                          |
 | Example Code                  | Code Generation                    | Canonical patterns for endpoints, engine functions, CDK stacks           |
