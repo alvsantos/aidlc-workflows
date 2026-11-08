@@ -150,6 +150,7 @@ For medium priority cases, execute user stories if ANY of these apply:
   - [ ] Ensure stories are Independent, Negotiable, Valuable, Estimable, Small, Testable
   - [ ] Include acceptance criteria for each story
   - [ ] Map personas to relevant user stories
+  - [ ] Generate stories.html — an interactive, self-contained use-case view of stories.md and personas.md (see Step 17.5)
 
 ## Step 5: Present Story Options
 - Include different approaches for story breakdown in the plan document:
@@ -243,6 +244,132 @@ If the analysis in step 9 reveals ANY ambiguous answers, you MUST:
 - [ ] Update `aidlc-docs/aidlc-state.md` current status
 - [ ] Save all generated artifacts
 
+## Step 17.5: Generate Interactive HTML View (MANDATORY)
+
+**Purpose**: Produce `aidlc-docs/inception/user-stories/stories.html` — a single, self-contained, interactive use-case view that lets the user review stories comfortably in a browser. It is a **convenience view only**; `stories.md` and `personas.md` remain the single source of truth.
+
+**PREREQUISITE**: `stories.md` and `personas.md` must already be fully generated. Run this step only once, after all other story artifacts are complete.
+
+### Generation Rules
+- **Source of truth**: Do NOT re-author or re-summarize the story detail. Copy the acceptance criteria and story bodies **verbatim** from `stories.md`. The HTML is a snapshot of the markdown at generation time.
+- **No duplication of authoring effort**: Embed the raw markdown content of `stories.md` and `personas.md` inside the HTML (in the `<script type="text/markdown">` blocks). The interactive detail is rendered from that embedded markdown — you do not write the detail a second time.
+- **Self-contained**: All HTML, CSS, and JS must be inline. No external requests, no CDN links, no `fetch()`. It must open correctly from a `file://` double-click in any modern browser.
+- **Diagram structure**: The top level shows each persona and, connected to it, boxes for the use cases / stories that persona performs (UML use-case style). Clicking a box reveals that story's full detail (description + acceptance criteria) rendered from the embedded markdown.
+- **Mapping**: Derive persona-to-story connections from the persona mapping already present in `stories.md`.
+- **IDs**: Each story box must carry a stable id matching the story's identifier/anchor in `stories.md` so its embedded section can be located on click.
+
+### Template Skeleton
+Inject the data and the two raw markdown documents into this skeleton. Keep the structure; adapt only the injected data.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User Stories — Interactive Review</title>
+<style>
+  :root { --bg:#f7f8fa; --ink:#1b1f24; --box:#fff; --accent:#2563eb; --line:#cbd5e1; }
+  body { margin:0; font:15px/1.5 system-ui,sans-serif; color:var(--ink); background:var(--bg); }
+  header { padding:1rem 1.5rem; background:var(--box); border-bottom:1px solid var(--line); }
+  header h1 { margin:0; font-size:1.1rem; }
+  header p { margin:.25rem 0 0; color:#64748b; font-size:.85rem; }
+  .board { display:flex; flex-wrap:wrap; gap:1.5rem; padding:1.5rem; }
+  .persona { background:var(--box); border:1px solid var(--line); border-radius:10px; padding:1rem; min-width:260px; flex:1 1 280px; }
+  .persona h2 { margin:0 0 .25rem; font-size:1rem; }
+  .persona .role { color:#64748b; font-size:.8rem; margin-bottom:.75rem; }
+  .usecase { display:block; width:100%; text-align:left; background:#eef2ff; border:1px solid #c7d2fe;
+             border-radius:8px; padding:.5rem .75rem; margin:.4rem 0; cursor:pointer; font:inherit; }
+  .usecase:hover { border-color:var(--accent); }
+  dialog { border:none; border-radius:12px; max-width:720px; width:90%; padding:0; }
+  dialog .head { display:flex; justify-content:space-between; align-items:center;
+                 padding:1rem 1.25rem; border-bottom:1px solid var(--line); }
+  dialog .head h3 { margin:0; font-size:1rem; }
+  dialog .body { padding:1.25rem; max-height:70vh; overflow:auto; }
+  dialog button.close { border:none; background:none; font-size:1.25rem; cursor:pointer; }
+  .md h1,.md h2,.md h3 { margin:.6rem 0 .3rem; }
+  .md code { background:#f1f5f9; padding:.1rem .3rem; border-radius:4px; }
+  .md ul { margin:.3rem 0 .3rem 1.2rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>User Stories — Interactive Review</h1>
+  <p>Convenience view. Source of truth: <code>stories.md</code> and <code>personas.md</code>.</p>
+</header>
+
+<!-- INJECT: one .persona block per persona; one .usecase button per story that persona performs.
+     data-story must match the story id/anchor used in the embedded markdown. -->
+<main class="board" id="board">
+  <!-- Example:
+  <section class="persona">
+    <h2>Shopper</h2>
+    <div class="role">Buys products from the catalog</div>
+    <button class="usecase" data-story="us-001">US-001 — Search the catalog</button>
+  </section>
+  -->
+</main>
+
+<dialog id="detail">
+  <div class="head"><h3 id="detail-title"></h3><button class="close" aria-label="Close">×</button></div>
+  <div class="body md" id="detail-body"></div>
+</dialog>
+
+<!-- INJECT: paste the raw, unmodified contents of the two markdown files below. -->
+<script type="text/markdown" id="stories-md"><!-- RAW stories.md HERE --></script>
+<script type="text/markdown" id="personas-md"><!-- RAW personas.md HERE --></script>
+
+<script>
+  // Minimal, dependency-free markdown renderer (headings, bold, inline code, lists).
+  function renderMarkdown(src){
+    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const lines = esc(src).split('\n'); let html=''; let inList=false;
+    for (let ln of lines){
+      const li = ln.match(/^\s*[-*]\s+(.*)/);
+      if (li){ if(!inList){html+='<ul>';inList=true;} html+='<li>'+inline(li[1])+'</li>'; continue; }
+      if (inList){ html+='</ul>'; inList=false; }
+      const h = ln.match(/^(#{1,6})\s+(.*)/);
+      if (h){ const n=h[1].length; html+='<h'+n+'>'+inline(h[2])+'</h'+n+'>'; continue; }
+      if (ln.trim()==='') { html+='<br>'; continue; }
+      html+='<p>'+inline(ln)+'</p>';
+    }
+    if (inList) html+='</ul>';
+    return html;
+    function inline(s){ return s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`(.+?)`/g,'<code>$1</code>'); }
+  }
+  // Extract one story's section from the embedded markdown by its id/anchor heading.
+  function sectionFor(storyId){
+    const md = document.getElementById('stories-md').textContent;
+    const lines = md.split('\n'); const out=[]; let capture=false; let level=0;
+    for (let ln of lines){
+      const h = ln.match(/^(#{1,6})\s+(.*)/);
+      if (h){
+        const headingId = h[2].toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+        if (capture && h[1].length<=level) break;              // next sibling/parent heading ends the section
+        if (!capture && headingId.includes(storyId.toLowerCase())){ capture=true; level=h[1].length; }
+      }
+      if (capture) out.push(ln);
+    }
+    return out.join('\n') || '_Story detail not found in stories.md._';
+  }
+  const dlg = document.getElementById('detail');
+  document.getElementById('board').addEventListener('click', e => {
+    const b = e.target.closest('.usecase'); if(!b) return;
+    document.getElementById('detail-title').textContent = b.textContent;
+    document.getElementById('detail-body').innerHTML = renderMarkdown(sectionFor(b.dataset.story));
+    dlg.showModal();
+  });
+  dlg.querySelector('.close').addEventListener('click', ()=>dlg.close());
+</script>
+</body>
+</html>
+```
+
+### After Generation
+- [ ] Verify the HTML opens from a `file://` double-click and that clicking a use-case box shows the matching story detail.
+- [ ] Confirm the embedded markdown is a verbatim copy of `stories.md` / `personas.md` (no edits, no summaries).
+- [ ] Mark the artifact complete in the story generation plan.
+
 ## Step 18: Continue or Complete Generation
 - [ ] If more steps remain, return to Step 15
 - [ ] If all steps complete, verify stories are ready for next stage
@@ -273,6 +400,8 @@ If the analysis in step 9 reveals ANY ambiguous answers, you MUST:
 ```markdown
 > **📋 <u>**REVIEW REQUIRED:**</u>**  
 > Please examine the user stories and personas at: `aidlc-docs/inception/user-stories/stories.md` and `aidlc-docs/inception/user-stories/personas.md`
+>
+> 💡 **For easier review**, open `aidlc-docs/inception/user-stories/stories.html` in your browser (just double-click it). It shows each persona and the use cases they perform — click any box to see that story's full detail and acceptance criteria. The HTML is a convenience view; `stories.md` remains the source of truth.
 
 
 
@@ -322,6 +451,6 @@ If the analysis in step 9 reveals ANY ambiguous answers, you MUST:
 - All planning questions answered and ambiguities resolved
 - Story plan explicitly approved by user
 - All steps in story generation plan marked [x]
-- All story artifacts generated according to plan (stories.md, personas.md)
+- All story artifacts generated according to plan (stories.md, personas.md, stories.html)
 - Generated stories explicitly approved by user
 - Stories verified and ready for next stage

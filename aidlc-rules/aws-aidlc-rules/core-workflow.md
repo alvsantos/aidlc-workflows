@@ -222,7 +222,7 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 5. If Requirements exist, reference them when creating stories
 6. Execute at appropriate depth (minimal/standard/comprehensive)
 7. **PART 1 - Planning**: Create story plan with questions, wait for user answers, analyze for ambiguities, get approval
-8. **PART 2 - Generation**: Execute approved plan to generate stories and personas
+8. **PART 2 - Generation**: Execute approved plan to generate stories and personas, plus the interactive `stories.html` review view
 9. **Wait for Explicit Approval**: Follow approval format from user-stories.md detailed steps - DO NOT PROCEED until user confirms
 10. **MANDATORY**: Log user's response in audit.md with complete raw input
 
