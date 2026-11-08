@@ -91,6 +91,7 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 - User Stories (CONDITIONAL)
 - Workflow Planning (ALWAYS)
 - Application Design (CONDITIONAL)
+- UI Mockups (CONDITIONAL - user-facing UI only)
 - Units Generation (CONDITIONAL)
 
 ---
@@ -265,6 +266,26 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 4. Execute at appropriate depth (minimal/standard/comprehensive)
 5. **Wait for Explicit Approval**: Present detailed completion message (see application-design.md for message format) - DO NOT PROCEED until user confirms
 6. **MANDATORY**: Log user's response in audit.md with complete raw input
+
+## UI Mockups (CONDITIONAL - User-Facing UI Only)
+
+**Execute IF**:
+- The project has a user-facing interface (new or changed screens, pages, or views)
+- Multi-persona systems where navigation or layout differs by role
+- The user wants to review the proposed interface before implementation
+
+**Skip IF**:
+- Backend-only, API-only, CLI, or library work with no UI
+- Pure refactoring, infrastructure, or configuration changes
+
+**Execution**:
+1. **MANDATORY**: Log any user input during this phase in audit.md
+2. Load all steps from `inception/ui-mockups.md`
+3. Load `stories.md`/`personas.md` and application design artifacts (if available)
+4. **MANDATORY**: Detect any user-provided design system (see ui-mockups.md Step 2) and follow it; otherwise use a neutral default and state the assumption
+5. Generate a self-contained, navigable SPA mockup (`aidlc-docs/inception/mockups/mockups.html`) that opens from `file://`
+6. **Wait for Explicit Approval**: Present completion message (see ui-mockups.md for message format) - DO NOT PROCEED until user confirms
+7. **MANDATORY**: Log user's response in audit.md with complete raw input
 
 ## Units Generation (CONDITIONAL)
 
@@ -518,6 +539,7 @@ The Operations stage will eventually include:
 │   │   ├── reverse-engineering/    # Brownfield only
 │   │   ├── requirements/
 │   │   ├── user-stories/
+│   │   ├── mockups/                # UI projects only (interactive SPA mockups)
 │   │   └── application-design/
 │   ├── construction/               # 🟢 CONSTRUCTION PHASE
 │   │   ├── plans/

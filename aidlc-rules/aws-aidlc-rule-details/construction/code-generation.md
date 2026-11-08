@@ -21,6 +21,7 @@ This stage generates code for each unit of work through two integrated parts:
 - [ ] Read unit design artifacts from Unit Design Generation
 - [ ] Read unit story map to understand assigned stories
 - [ ] Identify unit dependencies and interfaces
+- [ ] **If UI Mockups exist** (`aidlc-docs/inception/mockups/`): use them and `design-system.md` as the visual reference for frontend work, honoring the same design system
 - [ ] Validate unit is ready for code generation
 
 ## Step 2: Create Detailed Unit Code Generation Plan

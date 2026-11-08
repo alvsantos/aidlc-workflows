@@ -128,7 +128,16 @@ Evaluate risk level:
 - No new components or methods
 - Pure implementation changes
 
-### 3.3 Units Generation - Execute IF:
+### 3.3 UI Mockups - Execute IF:
+- The project has a user-facing interface (new or changed screens/views)
+- Multiple personas interact with different parts of the UI
+- The user wants to preview the interface before implementation
+
+**Skip IF**:
+- Backend-only, API-only, CLI, or library work with no UI
+- Pure refactoring, infrastructure, or configuration changes
+
+### 3.4 Units Generation - Execute IF:
 - New data models or schemas
 - API changes or new endpoints
 - Complex algorithms or business logic
@@ -142,7 +151,7 @@ Evaluate risk level:
 - Configuration updates
 - Straightforward implementations
 
-### 3.4 NFR Implementation - Execute IF:
+### 3.5 NFR Implementation - Execute IF:
 - Performance requirements
 - Security considerations
 - Scalability concerns
@@ -261,6 +270,7 @@ flowchart TD
         US["User Stories<br/><b>STATUS</b>"]
         WP["Workflow Planning<br/><b>STATUS</b>"]
         AD["Application Design<br/><b>STATUS</b>"]
+        UIM["UI Mockups<br/><b>STATUS</b>"]
         UG["Units Generation<br/>(Planning + Generation)<br/><b>STATUS</b>"]
     end
     
@@ -299,6 +309,8 @@ flowchart TD
 - [x] User Stories (COMPLETED/SKIPPED)
 - [x] Execution Plan (IN PROGRESS)
 - [ ] Application Design - [EXECUTE/SKIP]
+  - **Rationale**: [Why executing or skipping]
+- [ ] UI Mockups - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
 - [ ] Units Generation - [EXECUTE/SKIP]
   - **Rationale**: [Why executing or skipping]
@@ -364,6 +376,7 @@ Update `aidlc-docs/aidlc-state.md`:
 - [x] User Stories (if applicable)
 - [x] Workflow Planning
 - [ ] Application Design - [EXECUTE/SKIP]
+- [ ] UI Mockups - [EXECUTE/SKIP]
 - [ ] Units Generation - [EXECUTE/SKIP]
 
 ### 🟢 CONSTRUCTION PHASE
