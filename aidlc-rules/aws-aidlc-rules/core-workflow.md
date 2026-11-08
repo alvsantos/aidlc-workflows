@@ -246,7 +246,7 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 
 # 🟢 CONSTRUCTION PHASE
 
-**Purpose**: Detailed design, NFR implementation, and code generation
+**Purpose**: NFR and infrastructure design, and code generation
 
 **Focus**: Determine HOW to build it
 

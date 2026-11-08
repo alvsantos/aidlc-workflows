@@ -6,7 +6,7 @@
 
 **Phase**: One of the three high-level lifecycle phases in AI-DLC
 - 🔵 **INCEPTION PHASE** - Planning & Architecture (WHAT and WHY)
-- 🟢 **CONSTRUCTION PHASE** - Design, Implementation & Test (HOW)
+- 🟢 **CONSTRUCTION PHASE** - Implementation & Test (HOW)
 - 🟡 **OPERATIONS PHASE** - Deployment & Monitoring (future expansion)
 
 **Stage**: An individual workflow activity within a phase
@@ -40,7 +40,7 @@
 **Outputs**: Requirements, user stories, architectural decisions, unit definitions
 
 ### CONSTRUCTION PHASE
-**Purpose**: Detailed design and implementation  
+**Purpose**: NFR/infrastructure design and implementation  
 **Focus**: Determine HOW to build it  
 **Location**: `construction/` directory
 

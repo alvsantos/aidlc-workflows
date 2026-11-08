@@ -40,7 +40,7 @@ AI-DLC is a structured yet flexible software development process that adapts to 
                               v
         +---------------------------------------+
         |     CONSTRUCTION PHASE                |
-        |     Design, Implementation & Test     |
+        |     Implementation & Test             |
         +---------------------------------------+
         | * Per-Unit Loop (for each unit):      |
         |   - NFR Requirements Assess (COND)    |
@@ -70,9 +70,9 @@ AI-DLC is a structured yet flexible software development process that adapts to 
 - **Output**: Clear requirements, execution plan, decisions on the number of units of work for parallel development
 - **Your Role**: Answer questions, review plans, approve direction
 
-**CONSTRUCTION PHASE** - *Detailed Design, Implementation & Test*
+**CONSTRUCTION PHASE** - *Implementation & Test*
 - **Purpose**: Determines HOW to build it
-- **Activities**: Detailed design (when needed), code generation, comprehensive testing
+- **Activities**: NFR and infrastructure design (when needed), code generation, comprehensive testing
 - **Output**: Working code, tests, build instructions
 - **Your Role**: Review designs, approve implementation plans, validate results
 

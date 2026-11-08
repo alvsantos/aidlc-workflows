@@ -9,7 +9,7 @@
 
 ## The Three-Phase Lifecycle:
 • **INCEPTION PHASE**: Planning and architecture (Workspace Detection + conditional phases + Workflow Planning)
-• **CONSTRUCTION PHASE**: Design, implementation, build and test (per-unit design + Code Generation + Build & Test)
+• **CONSTRUCTION PHASE**: Implementation, build and test; application design is done in Inception (per-unit NFR/infrastructure design + Code Generation + Build & Test)
 • **OPERATIONS PHASE**: Placeholder for future deployment and monitoring workflows
 
 ## The Adaptive Workflow:
@@ -116,7 +116,7 @@ flowchart TD
 - Application Design: High-level component identification and service layer design (CONDITIONAL)
 - Units Generation: Decompose into units of work (CONDITIONAL)
 
-**🟢 CONSTRUCTION PHASE** - Design, Implementation, Build and Test
+**🟢 CONSTRUCTION PHASE** - Implementation, Build and Test (with per-unit NFR/infrastructure design)
 - NFR Requirements: Determine NFRs and select tech stack (CONDITIONAL, per-unit)
 - NFR Design: Incorporate NFR patterns and logical components (CONDITIONAL, per-unit)
 - Infrastructure Design: Map to actual infrastructure services (CONDITIONAL, per-unit)
