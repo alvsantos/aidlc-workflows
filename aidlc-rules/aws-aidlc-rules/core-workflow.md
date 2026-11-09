@@ -465,7 +465,7 @@ The Operations stage will eventually include:
 
 - **Adaptive Execution**: Only execute stages that add value
 - **Transparent Planning**: Always show execution plan before starting
-- **User Control**: User can request stage inclusion/exclusion
+- **User Control**: User can request stage inclusion/exclusion, a lighter or deeper level of detail, or a pause at any point. When the user asks to change the plan or a stage mid-workflow, load `common/workflow-changes.md` and follow it
 - **Progress Tracking**: Update aidlc-state.md with executed and skipped stages
 - **Complete Audit Trail**: Log ALL user inputs in audit.md with timestamps, plus a short summary of what the AI did in response
   - **CRITICAL**: Capture user's COMPLETE RAW INPUT exactly as provided

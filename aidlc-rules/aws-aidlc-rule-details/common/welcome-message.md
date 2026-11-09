@@ -36,4 +36,13 @@ Workspace Detection, Requirements Analysis, Workflow Planning, Code Generation, 
 4. **You approve each stage** at a checkpoint before I continue
 5. **You get working code** with tests and documentation in `aidlc-docs/`
 
+## You Stay in Control
+
+You don't have to follow every stage to the letter. At any point you can:
+
+- **Skip a stage** you don't need, or add back one I planned to skip
+- **Ask for less (or more) detail** in any document
+- **Accept my recommended answers** by writing "accept recommended" in the question file
+- **Pause** and continue in a later session from where we stopped
+
 Let's begin!

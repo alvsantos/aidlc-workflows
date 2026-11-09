@@ -444,6 +444,7 @@ I recommend skipping [Y] stages:
 > 🔧 **Request Changes** - Ask for modifications to the execution plan if required
 > [IF any stages are skipped:]
 > 📝 **Add Skipped Stages** - Choose to include stages currently marked as SKIP
+> ⏭️ **Skip Stages or Lighten Detail** - Drop stages you don't need (for example, when your team already covers them in its own process) or ask for more concise artifacts
 > ✅ **Approve & Continue** - Approve plan and proceed to **[Next Stage Name]**
 ```
 
@@ -451,7 +452,7 @@ I recommend skipping [Y] stages:
 
 - **If approved**: Proceed to next stage in execution plan
 - **If changes requested**: Update execution plan and re-confirm
-- **If user wants to force include/exclude stages**: Update plan accordingly
+- **If user wants to force include/exclude stages or change detail level**: Update plan accordingly, following `common/workflow-changes.md`. If the user asks to skip a stage marked ALWAYS, recommend running it at minimal depth instead and explain which later stages depend on its artifacts
 
 ## Step 11: Log Interaction
 
