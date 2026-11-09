@@ -8,6 +8,25 @@
 
 **Rerun behavior**: Rerun is controlled by workspace-detection.md. If existing reverse engineering artifacts are found and are still current, they are loaded and reverse engineering is skipped. If artifacts are stale (older than the codebase's last significant modification) or the user explicitly requests a rerun, reverse engineering executes again to ensure artifacts reflect current code state
 
+## Step 0: Set the Analysis Scope
+
+Reverse engineering is often the slowest part of Inception. Spend the effort where the request will make changes.
+
+### 0.1 Reuse Existing Documentation
+- Look for documentation the team already maintains: README files, architecture docs, ADRs, API specs (OpenAPI, Smithy), diagrams, and `AGENTS.md` or similar agent guidance files
+- Treat them as a starting point: verify them against the code, then summarize and link to them instead of rewriting their content
+- Note in each artifact where a section was taken from existing documentation, and flag any place where the docs and the code disagree
+
+### 0.2 Choose Full or Focused Analysis
+- **Full analysis** (default): small workspaces, or requests that change the system as a whole (migrations, re-architecture, cross-cutting changes)
+- **Focused analysis**: large workspaces (many packages or modules) where the request clearly targets specific areas. In this mode:
+  - Still produce every artifact, so later stages find what they expect
+  - Cover the whole system at a high level in `business-overview.md`, `architecture.md`, `component-inventory.md`, `technology-stack.md`, and `dependencies.md`
+  - Go into detail (`code-structure.md`, `api-documentation.md`, `code-quality-assessment.md`) only for the components the request touches and their direct dependencies
+  - State the focus at the top of each detailed artifact, for example `**Scope**: focused on order-service and its direct dependencies`
+- Record the chosen mode and the reason in `reverse-engineering-timestamp.md`, and mention it in the completion message so the user can ask for a full analysis
+- When artifacts from an earlier focused analysis are reused, check the recorded focus. If the new request touches components outside it, extend the detailed artifacts to cover them before Requirements Analysis
+
 ## Step 1: Multi-Package Discovery
 
 ### 1.1 Scan Workspace
@@ -266,8 +285,10 @@ Create `aidlc-docs/inception/reverse-engineering/reverse-engineering-timestamp.m
 **Analyzer**: AI-DLC
 **Workspace**: [Workspace path]
 **Total Files Analyzed**: [Number]
+**Analysis Mode**: [Full/Focused - reason; for Focused, list the components analyzed in detail]
 
 ## Artifacts Generated
+- [x] business-overview.md
 - [x] architecture.md
 - [x] code-structure.md
 - [x] api-documentation.md
@@ -292,7 +313,7 @@ Update `aidlc-docs/aidlc-state.md`:
 ```markdown
 # 🔍 Reverse Engineering Complete
 
-[AI-generated summary of key findings from analysis in the form of bullet points]
+[AI-generated summary of key findings from analysis in the form of bullet points. State the analysis mode (Full or Focused) and, if Focused, which components were analyzed in detail]
 
 > **📋 <u>**REVIEW REQUIRED:**</u>**  
 > Please examine the reverse engineering artifacts at: `aidlc-docs/inception/reverse-engineering/`
