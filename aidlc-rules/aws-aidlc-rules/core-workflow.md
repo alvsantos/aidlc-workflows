@@ -467,7 +467,7 @@ The Operations stage will eventually include:
 - **Transparent Planning**: Always show execution plan before starting
 - **User Control**: User can request stage inclusion/exclusion
 - **Progress Tracking**: Update aidlc-state.md with executed and skipped stages
-- **Complete Audit Trail**: Log ALL user inputs and AI responses in audit.md with timestamps
+- **Complete Audit Trail**: Log ALL user inputs in audit.md with timestamps, plus a short summary of what the AI did in response
   - **CRITICAL**: Capture user's COMPLETE RAW INPUT exactly as provided
   - **CRITICAL**: Never summarize or paraphrase user input in audit log
   - **CRITICAL**: Log every interaction, not just approvals
@@ -492,6 +492,7 @@ The Operations stage will eventually include:
 - **MANDATORY**: Log EVERY user input (prompts, questions, responses) with timestamp in audit.md
 - **MANDATORY**: Capture user's COMPLETE RAW INPUT exactly as provided (never summarize)
 - **MANDATORY**: Log every approval prompt with timestamp before asking the user
+- **Summarize AI output**: In the `AI Response` field, record what was done and which files changed in 1-2 sentences. Do NOT copy the full chat response or artifact content into audit.md; the artifacts themselves are the record. This keeps audit.md small so it is cheap to read when resuming a session
 - **MANDATORY**: Record every user response with timestamp after receiving it
 - **CRITICAL**: ALWAYS append changes to EDIT audit.md file, NEVER use tools and commands that completely overwrite its contents
 - **CRITICAL**: NEVER use file writing tools and commands that overwrite the entire contents of audit.md, as this causes duplication
@@ -503,7 +504,7 @@ The Operations stage will eventually include:
 ## [Stage Name or Interaction Type]
 **Timestamp**: [ISO timestamp]
 **User Input**: "[Complete raw user input - never summarized]"
-**AI Response**: "[AI's response or action taken]"
+**AI Response**: [1-2 sentence summary of the action taken, with paths of files created or changed - never the full response text]
 **Context**: [Stage, action, or decision made]
 
 ---
