@@ -1,109 +1,39 @@
 # AI-DLC Welcome Message
 
-**Purpose**: This file contains the user-facing welcome message that should be displayed ONCE at the start of any AI-DLC workflow.
+**Purpose**: This file contains the user-facing welcome message that should be displayed ONCE at the start of any AI-DLC workflow. Present it in the user's conversation language.
 
 ---
 
 # 👋 Welcome to AI-DLC (AI-Driven Development Life Cycle)! 👋
 
-I'll guide you through an adaptive software development workflow that intelligently tailors itself to your specific needs.
+I'll guide you through a software development workflow that adapts to your request: simple changes run only the essential stages, complex projects get the full treatment.
 
-## What is AI-DLC?
+## The Three Phases
 
-AI-DLC is a structured yet flexible software development process that adapts to your project's needs. Think of it as having an experienced software architect who:
-
-- **Analyzes your requirements** and asks clarifying questions when needed
-- **Plans the optimal approach** based on complexity and risk
-- **Skips unnecessary steps** for simple changes while providing comprehensive coverage for complex projects
-- **Documents everything** so you have a complete record of decisions and rationale
-- **Guides you through each phase** with clear checkpoints and approval gates
-
-## The Three-Phase Lifecycle
-
-```
-                         User Request
-                              |
-                              v
-        +---------------------------------------+
-        |     INCEPTION PHASE                   |
-        |     Planning & Application Design     |
-        +---------------------------------------+
-        | * Workspace Detection (ALWAYS)        |
-        | * Reverse Engineering (COND)          |
-        | * Requirements Analysis (ALWAYS)      |
-        | * User Stories (CONDITIONAL)          |
-        | * Workflow Planning (ALWAYS)          |
-        | * Application Design (CONDITIONAL)    |
-        | * Units Generation (CONDITIONAL)      |
-        +---------------------------------------+
-                              |
-                              v
-        +---------------------------------------+
-        |     CONSTRUCTION PHASE                |
-        |     Design, Implementation & Test     |
-        +---------------------------------------+
-        | * Per-Unit Loop (for each unit):      |
-        |   - Functional Design (COND)          |
-        |   - NFR Requirements Assess (COND)    |
-        |   - NFR Design (COND)                 |
-        |   - Infrastructure Design (COND)      |
-        |   - Code Generation (ALWAYS)          |
-        | * Build and Test (ALWAYS)             |
-        +---------------------------------------+
-                              |
-                              v
-        +---------------------------------------+
-        |     OPERATIONS PHASE                  |
-        |     Placeholder for Future            |
-        +---------------------------------------+
-        | * Operations (PLACEHOLDER)            |
-        +---------------------------------------+
-                              |
-                              v
-                          Complete
+```text
+User Request
+    |
+    v
+INCEPTION     - WHAT to build and WHY
+    |           Workspace Detection, Reverse Engineering (existing code),
+    |           Requirements Analysis, User Stories, Workflow Planning,
+    |           Application Design, Units Generation
+    v
+CONSTRUCTION  - HOW to build it, one unit of work at a time
+    |           Functional Design, NFR Requirements, NFR Design,
+    |           Infrastructure Design, Code Generation, then Build and Test
+    v
+OPERATIONS    - Deployment and monitoring (placeholder for now)
 ```
 
-### Phase Breakdown:
+Workspace Detection, Requirements Analysis, Workflow Planning, Code Generation, and Build and Test always run. The other stages run only when they add value.
 
-**INCEPTION PHASE** - *Planning & Application Design*
-- **Purpose**: Determines WHAT to build and WHY
-- **Activities**: Understanding requirements, analyzing existing code (if any), planning the approach
-- **Output**: Clear requirements, execution plan, decisions on the number of units of work for parallel development
-- **Your Role**: Answer questions, review plans, approve direction
+## How We Work Together
 
-**CONSTRUCTION PHASE** - *Detailed Design, Implementation & Test*
-- **Purpose**: Determines HOW to build it
-- **Activities**: Detailed design (when needed), code generation, comprehensive testing
-- **Output**: Working code, tests, build instructions
-- **Your Role**: Review designs, approve implementation plans, validate results
-
-**OPERATIONS PHASE** - *Deployment & Monitoring (Future)*
-- **Purpose**: How to DEPLOY and RUN it
-- **Status**: Placeholder for future deployment and monitoring workflows
-- **Current State**: Build and test activities handled in CONSTRUCTION phase
-
-## Key Principles:
-
-- ⚡ **Fully Adaptive**: Each stage independently evaluated based on your needs
-- 🎯 **Efficient**: Simple changes execute only essential stages
-- 📋 **Comprehensive**: Complex changes get full treatment with all safeguards
-- 🔍 **Transparent**: You see and approve the execution plan before work begins
-- 📝 **Documented**: Complete audit trail of all decisions and changes
-- 🎛️ **User Control**: You can request stages be included or excluded
-
-## What Happens Next:
-
-1. **I'll analyze your workspace** to understand if this is a new or existing project
-2. **I'll gather requirements** and ask clarifying questions if needed
-3. **I'll create an execution plan** showing which stages I propose to run and why
-4. **You'll review and approve** the plan (or request changes)
-5. **We'll execute the plan** with checkpoints at each major stage
-6. **You'll get working code** with complete documentation and tests
-
-The AI-DLC process adapts to:
-- 📋 Your intent clarity and complexity
-- 🔍 Existing codebase state
-- 🎯 Scope and impact of changes
-- ⚡ Risk and quality requirements
+1. **I analyze your workspace** to see if this is a new or existing project
+2. **I ask clarifying questions** in a file, and you answer by filling in `[Answer]:` tags
+3. **I propose an execution plan** showing which stages I'll run or skip, and why
+4. **You approve each stage** at a checkpoint before I continue
+5. **You get working code** with tests and documentation in `aidlc-docs/`
 
 Let's begin!

@@ -82,6 +82,13 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 3. This should only be done ONCE at the start of a new workflow
 4. Do NOT load this file in subsequent interactions to save context space
 
+## MANDATORY: Concise Stage Completion Messages
+**CRITICAL**: Completion messages are read at every gate, so keep them short. The details belong in the artifacts the user is asked to review.
+
+- The optional **AI Summary** in a stage completion message has at most 5 bullets, one line each. List the decisions and findings the user must check, not a restatement of the document.
+- Don't paste artifact content (requirements, stories, plans, code) into the chat. Point to the file instead.
+- Keep the mandatory announcement and the formatted "REVIEW REQUIRED / WHAT'S NEXT" block exactly as each stage defines them.
+
 # Adaptive Software Development Workflow
 
 ---
