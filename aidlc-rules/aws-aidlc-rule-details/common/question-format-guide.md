@@ -78,6 +78,15 @@ X) Other (please describe after [Answer]: tag below)
 [Answer]: 
 ```
 
+### Plain Language for Mixed Audiences
+
+Question files are often answered by product managers, QA, and business people, not only developers. Write so that someone without a programming background can answer:
+
+- **Explain technical terms**: The first time a question uses a technical term (for example "idempotency", "SSO", "eventual consistency"), add a short plain-language explanation in parentheses.
+- **Describe the consequence**: Each option says what it means for users or the business, not only the technology name. Prefer "C) Single Sign-On (people use their existing company login)" over "C) SSO".
+- **Say who should answer**: When a question needs a specialist, start it with a short hint such as `(Technical)` or `(Business)` so the user can route it to the right person.
+- **One topic per question**: Split compound questions instead of asking two things at once.
+
 ### Complete Example
 
 ```markdown
