@@ -324,9 +324,14 @@ flowchart TD
 ## Package Change Sequence (Brownfield Only)
 [If applicable, list package update sequence with dependencies]
 
-## Estimated Timeline
-- **Total Phases**: [Number]
-- **Estimated Duration**: [Time estimate]
+## Effort Overview
+- **Stages to Execute**: [Number] of [Total] ([Number] skipped)
+- **Units of Work**: [Number, or "decided in Units Generation"]
+- **Approval Gates Ahead**: [Number] - one per remaining stage, plus one plan approval for each stage that has a planning part, with per-unit stages counted once per unit
+- **Question Rounds Expected**: [Number of remaining stages likely to need a question file]
+- **Largest Effort**: [Stage(s) expected to take the most interaction, and why]
+
+**Note**: Don't estimate calendar time or token cost; neither can be predicted reliably. These counts tell the user how many times they will be asked to review and approve.
 
 ## Success Criteria
 - **Primary Goal**: [Main objective]
@@ -432,7 +437,7 @@ I recommend skipping [Y] stages:
 2. [Package] - [Reason]
 ...
 
-**Estimated Timeline**: [Duration]
+**Effort Overview**: [Number] stages to execute, about [Number] approval gates and [Number] question rounds ahead
 
 > **📋 <u>**REVIEW REQUIRED:**</u>**  
 > Please examine the execution plan at: `aidlc-docs/inception/plans/execution-plan.md`
