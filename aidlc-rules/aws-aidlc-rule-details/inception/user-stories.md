@@ -124,7 +124,7 @@ For medium priority cases, execute user stories if ANY of these apply:
 ## Step 3: Generate Context-Appropriate Questions
 **DIRECTIVE**: Thoroughly analyze the requirements and context to identify ALL areas where clarification would improve story quality and team understanding. Be proactive in asking questions to ensure comprehensive user story development.
 
-**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect story quality. It's better to ask too many questions than to create incomplete or unclear stories.
+**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect story quality. Never make a silent assumption. Follow the question budget in `common/question-format-guide.md`: gaps that change the outcome become questions, low-impact defaults become visible assumptions.
 
 **See `common/question-format-guide.md` for question formatting rules**
 

@@ -95,6 +95,16 @@ This guide should be referenced when:
 - Reviewing AI-DLC performance for overconfidence issues
 - Training team members on AI-DLC question generation principles
 
+## Balancing with the Question Budget
+
+Overconfidence means making **silent** assumptions. A default written under `## Assumptions` in a question file is not silent: the user sees it and can correct it before anything is built. Workshop feedback showed that long question rounds make Inception slow and costly, so questioning follows the budget in `common/question-format-guide.md`:
+
+- Gaps that affect scope, architecture, data, security, or user-visible behavior: **ask**
+- Low-impact details with a reasonable, easy-to-change default: **state as a visible assumption**
+- Anything already answered by the request, provided documents, or the code: **don't ask**
+
+The red flags below still apply. A complex project that ends a stage with no questions and no listed assumptions is a sign of overconfidence.
+
 ## Key Takeaway
 
-**It's better to ask too many questions than to make incorrect assumptions.** The cost of asking clarifying questions upfront is far less than the cost of implementing the wrong solution based on assumptions.
+**It's better to ask than to make silent assumptions.** The cost of asking clarifying questions upfront is far less than the cost of implementing the wrong solution, so ask about everything that changes the outcome and make every other assumption visible.

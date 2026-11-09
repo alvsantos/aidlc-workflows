@@ -44,7 +44,7 @@ The model considers these factors when determining appropriate detail:
 - **requirements.md**: Concise functional requirement, minimal sections
 
 ### Complex Scenario (System Migration)
-- **requirement-verification-questions.md**: Multiple rounds, 10+ questions
+- **requirement-verification-questions.md**: Multiple rounds, each within the per-round question budget (see `question-format-guide.md`)
 - **requirements.md**: Comprehensive functional + non-functional requirements, traceability, acceptance criteria
 
 ## Example: Application Design Artifacts

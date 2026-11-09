@@ -78,9 +78,9 @@ Analyze whatever the user has provided:
 
 ### Step 5: Thorough Completeness Analysis
 
-**CRITICAL**: Use comprehensive analysis to evaluate requirements completeness. Default to asking questions when there is ANY ambiguity or missing detail.
+**CRITICAL**: Use comprehensive analysis to evaluate requirements completeness. Ask questions where a missing or ambiguous detail would change what gets built; state reasonable defaults as assumptions instead of asking (see "Question Budget and Prioritization" in `common/question-format-guide.md`).
 
-**MANDATORY**: Evaluate ALL of these areas and ask questions for ANY that are unclear:
+**MANDATORY**: Evaluate ALL of these areas and ask questions for those where the gap matters:
 - **Functional Requirements**: Core features, user interactions, system behaviors
 - **Non-Functional Requirements**: Performance, security, scalability, usability
 - **User Scenarios**: Use cases, user journeys, edge cases, error scenarios
@@ -88,7 +88,7 @@ Analyze whatever the user has provided:
 - **Technical Context**: Integration points, data requirements, system boundaries
 - **Quality Attributes**: Reliability, maintainability, testability, accessibility
 
-**When in doubt, ask questions** - incomplete requirements lead to poor implementations.
+**When in doubt about something that affects scope, architecture, or data, ask** - incomplete requirements lead to poor implementations. For low-impact details, record an assumption the user can correct.
 
 ### Step 5.1: Extension Opt-In Prompts
 
@@ -108,16 +108,18 @@ After receiving answers:
 
 ### Step 6: Generate Clarifying Questions (PROACTIVE APPROACH)
    - **ALWAYS** create `aidlc-docs/inception/requirements/requirement-verification-questions.md` unless requirements are exceptionally clear and complete
-   - Ask questions about ANY missing, unclear, or ambiguous areas
+   - Ask questions about missing, unclear, or ambiguous areas that affect the outcome, highest impact first, within the per-round budget from `common/question-format-guide.md`
+   - Don't ask about anything already answered by the request, provided documents, or reverse engineering artifacts; list low-impact defaults under `## Assumptions` instead
    - Focus on functional requirements, non-functional requirements, user scenarios, and business context
    - Request user to fill in all [Answer]: tags directly in the questions document
    - If presenting multiple-choice options for answers:
      - Label the options as A, B, C, D etc.
      - Ensure options are mutually exclusive and don't overlap
+     - Mark the sensible default with `(Recommended)` when there is one
      - ALWAYS include option for custom response: "X) Other (please describe after [Answer]: tag below)"
    - Wait for user answers in the document
    - **MANDATORY**: Analyze ALL answers for ambiguities and create follow-up questions if needed
-   - **MANDATORY**: Keep asking questions until ALL ambiguities are resolved OR user explicitly asks to proceed
+   - **MANDATORY**: Keep asking questions until all ambiguities that affect the outcome are resolved OR user explicitly asks to proceed
 
 ### ⛔ GATE: Await User Answers
 DO NOT proceed to Step 7 until all questions in requirement-verification-questions.md are answered and validated.

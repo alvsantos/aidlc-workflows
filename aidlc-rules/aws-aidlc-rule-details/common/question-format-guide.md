@@ -39,6 +39,45 @@ X) Other (please describe after [Answer]: tag below)
 - Use as many or as few options as make sense (minimum 2 + Other)
 - **Each option must be separated by a blank line** so strict CommonMark renderers (IntelliJ, PyCharm, etc.) display them on separate lines instead of collapsing them into a single paragraph
 
+### Question Budget and Prioritization
+
+**MANDATORY**: Ask only the questions whose answers would change what gets built. Every question costs the user time and the session tokens.
+
+- **Don't ask what you already know**: Before writing a question, check the user's request, provided documents (vision, technical environment), reverse engineering artifacts, and the existing code. If the answer is there, use it and don't ask.
+- **Prefer a stated assumption over a low-impact question**: When a choice has a reasonable default and is easy to change later, don't ask. List it under an `## Assumptions` section at the top of the question file so the user can correct it.
+- **Cap each round**: Aim for no more than 10 questions per question file. If more are truly needed, ask the highest-impact ones first and leave the rest for a follow-up round once these answers are in.
+- **Order by impact**: Put questions that affect scope, architecture, or data first, and preferences last.
+- **Mark a recommendation**: When one option is the sensible default, append `(Recommended)` to it. Add this line at the top of the question file so the user can move fast:
+
+```markdown
+> To accept every `(Recommended)` option at once, write "accept recommended" in any [Answer]: tag
+> or tell me in the chat. Answer only the questions where you disagree.
+```
+
+**Example with assumptions and a recommendation**:
+
+```markdown
+# Requirements Clarification Questions
+
+> To accept every `(Recommended)` option at once, write "accept recommended" in any [Answer]: tag
+> or tell me in the chat. Answer only the questions where you disagree.
+
+## Assumptions
+- The application is used in Portuguese only (from the vision document). Correct me if not.
+- Dates are stored in UTC and shown in the user's time zone.
+
+## Question 1
+Who can create new orders?
+
+A) Any signed-in user (Recommended)
+
+B) Only users with the "sales" role
+
+X) Other (please describe after [Answer]: tag below)
+
+[Answer]: 
+```
+
 ### Complete Example
 
 ```markdown
@@ -110,6 +149,8 @@ After user confirms completion:
 2. Extract answers after [Answer]: tags
 3. Validate all questions are answered
 4. Proceed with analysis based on responses
+
+**Accepting recommendations**: If the user writes "accept recommended" (in any language) in an [Answer]: tag or in the chat, treat every unanswered question that has a `(Recommended)` option as answered with that option. Questions without a recommendation still need an answer. Record in audit.md that the recommendations were accepted.
 
 ### Multiple Choice Guidelines
 
@@ -295,7 +336,7 @@ Please answer these clarifying questions before I can proceed with classificatio
 ### Best Practices
 
 1. **Be Specific**: Questions should be clear and unambiguous
-2. **Be Comprehensive**: Cover all necessary information
+2. **Be Selective**: Cover what changes the outcome; state assumptions for the rest (see Question Budget and Prioritization)
 3. **Be Concise**: Keep questions focused on one topic
 4. **Be Practical**: Options should be realistic and actionable
 5. **Be Consistent**: Use same format throughout all question files

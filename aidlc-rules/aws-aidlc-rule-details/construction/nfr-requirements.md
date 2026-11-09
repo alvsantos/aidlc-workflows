@@ -22,7 +22,7 @@ Determine non-functional requirements for the unit and make tech stack choices.
 ### Step 3: Generate Context-Appropriate Questions
 **DIRECTIVE**: Thoroughly analyze the functional design to identify ALL areas where NFR clarification would improve system quality and architecture decisions. Be proactive in asking questions to ensure comprehensive NFR coverage.
 
-**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect system quality. It's better to ask too many questions than to make incorrect NFR assumptions.
+**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect system quality. Never make a silent assumption. Follow the question budget in `common/question-format-guide.md`: gaps that change the outcome become questions, low-impact defaults become visible assumptions.
 
 - EMBED questions using [Answer]: tag format
 - Focus on ANY ambiguities, missing information, or areas needing clarification
