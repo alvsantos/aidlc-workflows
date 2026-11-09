@@ -65,6 +65,14 @@ All subsequent rule detail file references (e.g., `common/process-overview.md`, 
 - [Answer]: tag usage
 - Answer validation and ambiguity resolution
 
+## MANDATORY: Conversation Language
+**CRITICAL**: Work in the language the user writes in (for example Portuguese or Spanish), not only in English.
+
+- Write chat messages, question files, completion messages, and all documents under `aidlc-docs/` in the user's language. Translate the fixed templates from the rule files (welcome message, completion messages, menu options) when presenting them.
+- Keep these in English so tools and parsers keep working: file and directory names, the `[Answer]:` tag, stage names used as headings in `aidlc-state.md`, checkbox markers, artifact IDs and their heading prefixes (`FR-`, `NFR-`, `US-`, `Story 1.1`, `Step 1:`), and template field labels (for example `**Component Name**:`). Translate only the text after them.
+- Keep source code, identifiers, and code comments in English unless the user or the existing codebase uses another language.
+- If the user switches language, follow the switch from that point on. Don't rewrite documents that are already approved.
+
 ## MANDATORY: Custom Welcome Message
 **CRITICAL**: When starting ANY software development request, you MUST display the welcome message.
 
